@@ -1,0 +1,121 @@
+<!doctype html>
+<html dir="rtl" lang="ar"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انسياب — نموذج أولي · مقارنة سيناريوهات أعمال الطرق</title>
+<style>
+:root{--navy:#0A2463;--navy2:#123A8C;--ink:#16233D;--mut:#5A6A8A;--line:#DDE3EE;--bg:#F5F7FB;--ok:#0E7C66;--warn:#B3261E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:26px 22px}
+.wrap{max-width:1020px;margin:0 auto}
+.brand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand b{font-size:20px;letter-spacing:.3px}
+.brand span{font-size:12px;opacity:.75}
+h1{font-size:22px;margin:14px 0 4px;font-weight:700}
+header p{margin:0;font-size:13px;opacity:.85;line-height:1.8}
+main{padding:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(10,36,99,.05)}
+.pick{display:flex;gap:10px;flex-wrap:wrap}
+.pick button{flex:1 1 220px;cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:14px;text-align:right;font:inherit;color:var(--ink);transition:.15s}
+.pick button small{display:block;color:var(--mut);font-size:12px;margin-top:4px}
+.pick button.on{border-color:var(--navy);background:#F0F4FF;box-shadow:0 0 0 3px rgba(10,36,99,.07)}
+.pick b{font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi .lab{font-size:12px;color:var(--mut);margin-bottom:8px;line-height:1.6}
+.kpi .val{font-size:30px;font-weight:700;color:var(--navy);line-height:1}
+.kpi .val small{font-size:13px;font-weight:400;color:var(--mut);margin-right:4px}
+.kpi .dlt{font-size:13px;margin-top:8px;font-weight:700;color:var(--mut)}
+.up{color:var(--warn)}.down{color:var(--ok)}
+.bars{margin-top:18px}
+.row{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;margin-bottom:12px;font-size:13px}
+.track{background:var(--bg);border-radius:6px;height:22px;overflow:hidden}
+.fill{height:100%;border-radius:6px;transition:width .5s ease}
+.f-base{background:#9AA9C7}.f-close{background:var(--navy)}
+h2{font-size:14px;color:var(--navy);margin:0 0 14px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:right}
+th{color:var(--mut);font-weight:600;font-size:12px}
+.note{font-size:12px;color:var(--mut);line-height:1.9;margin:0}
+.badge{display:inline-block;background:#EAF0FB;color:var(--navy);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700}
+footer{max-width:1020px;margin:0 auto;padding:0 22px 30px;font-size:11.5px;color:var(--mut);line-height:1.9}
+a{color:var(--navy)}
+</style></head><body>
+<header><div class="wrap"><div class="brand"><b>انسياب</b><span>INFIRAD HOLDING · نموذج أولي (Prototype)</span></div>
+<h1>مقارنة أثر سيناريوهات أعمال الطرق على شبكة الرياض</h1>
+<p>ممر أنس بن مالك — حي حطين، شمال الرياض · طول الممر ٩٫٤ كم · شبكة مستخرجة من OpenStreetMap (٨٬٤٨٥ حرفًا)</p></div></header>
+<main class="wrap">
+<div class="card">
+<h2>١) اختر السيناريو</h2>
+<div class="pick" id="pick">
+<button data-k="base" class="on"><b>خط الأساس — بلا أعمال</b><small>الطلب نفسه · ٧٬٢٤٠ رحلة · ذروة ساعتان</small></button>
+<button data-k="close"><b>إغلاق جزئي للممر ٩٫٤ كم</b><small>الطلب نفسه · تحويل جزئي للمرور على الشارع الموازي</small></button>
+</div>
+</div>
+
+<div class="card">
+<h2>٢) الأثر المقيس</h2>
+<div class="kpis">
+<div class="kpi"><div class="lab">متوسط زمن الرحلة — الرحلات المكتملة</div>
+<div class="val" id="dur">19.2 <small>دقيقة</small></div>
+<div class="dlt" id="durD">خط الأساس</div></div>
+<div class="kpi"><div class="lab">التأخير الكلي (وقت مفقود مقارنة بالتدفق الحر)</div>
+<div class="val" id="del">1,430 <small>مركبة‑ساعة</small></div>
+<div class="dlt" id="delD">خط الأساس</div></div>
+<div class="kpi"><div class="lab">الرحلات المكتملة</div>
+<div class="val" id="trips">7,240 <small>رحلة</small></div>
+<div class="dlt" id="runs">6 تشغيلات · ± 1.3 د</div></div>
+</div>
+<div class="bars">
+<div class="row"><span>خط الأساس</span><div class="track"><div class="fill f-base" id="b1" style="width:53%"></div></div><span id="b1v">19.2 د</span></div>
+<div class="row"><span>الإغلاق الجزئي</span><div class="track"><div class="fill f-close" id="b2" style="width:100%"></div></div><span id="b2v">36.0 د</span></div>
+</div>
+</div>
+
+<div class="card">
+<h2>٣) تفصيل القياس</h2>
+<table>
+<thead><tr><th>القياس</th><th>خط الأساس</th><th>الإغلاق الجزئي</th><th>الفرق</th></tr></thead>
+<tbody>
+<tr><td>متوسط زمن الرحلة</td><td>١٩٫٢ ± ١٫٣ دقيقة</td><td>٣٦٫٠ ± ١٫٥ دقيقة</td><td class="up">+٨٨٪</td></tr>
+<tr><td>التأخير الكلي</td><td>١٬٤٣٠ ± ١٤٧ مركبة‑ساعة</td><td>٣٬١٨٣ ± ١٩٥ مركبة‑ساعة</td><td class="up">+١٢٣٪</td></tr>
+<tr><td>الرحلات المكتملة</td><td>٧٬٢٤٠</td><td>٧٬٢٣٩</td><td>—</td></tr>
+<tr><td>الطلب</td><td colspan="3">نفس ملف الطلب في السيناريوين (٧٬٢٤٠ رحلة · ذروة ساعتان + تصريف ساعتان)</td></tr>
+</tbody></table>
+<p class="note" style="margin-top:12px">التشتت مذكور دائمًا: كل رقم متوسط عدة تشغيلات ببذور مختلفة. تشغيلة واحدة لا تُقرأ كقياس.</p>
+</div>
+
+<div class="card">
+<h2>٤) ما تقيسه هذه الواجهة وما لا تقيسه</h2>
+<p class="note"><span class="badge">نموذج أولي</span> &nbsp;الواجهة تعرض نتائج تشغيلات محاكاة مجهرية فعلية (SUMO 1.27.0) محفوظة، وتتيح المقارنة بين سيناريوهين بضغطة. ما لم يُنجز بعد: تشغيل المحاكاة حيًّا من الواجهة، وإدخال جدول المشاريع ورخص الحفريات بدل السيناريوهات المعدّة مسبقًا، ومعايرة أوسع على قياسات ميدانية.</p>
+<p class="note" style="margin-top:10px">الغاية في النسخة الكاملة: يرفع المستخدم جدول المشاريع ورخص الحفريات، فتكتشف المنصة التعارض الزمني والمكاني بين الأعمال المتزامنة، وتُعيد ترتيب الجدول على أساس الأثر المقيس على زمن الرحلات والتأخير الكلي — قبل الاعتماد.</p>
+</div>
+</main>
+<footer><div class="wrap">الأرقام من تشغيلات محفوظة: خط الأساس ٦ تشغيلات · الإغلاق ٥ تشغيلات · طلب ٧٬٢٤٠ رحلة · SIM_END = ١٤٬٤٠٠ ثانية · الشبكة: OpenStreetMap ← netconvert.<br>انفراد القابضة · «انسياب» — محاكاة SUMO (EPL-2.0) وبيانات OSM (ODbL). لا تُستخدم خرائط تجارية في هذا النموذج.</div></footer>
+<script>
+const D={
+ base:{dur:19.2,sd:1.3,delay:1430,trips:7240,runs:6},
+ close:{dur:36.0,sd:1.5,delay:3183,trips:7239,runs:5}
+};
+const pick=document.getElementById("pick");
+function set(k){
+  document.querySelectorAll("#pick button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+  const d=D[k], b=D.base;
+  document.getElementById("dur").innerHTML=d.dur.toFixed(1)+' <small>دقيقة</small>';
+  document.getElementById("del").innerHTML=d.delay.toLocaleString("en-US")+' <small>مركبة‑ساعة</small>';
+  document.getElementById("trips").innerHTML=d.trips.toLocaleString("en-US")+' <small>رحلة</small>';
+  document.getElementById("runs").textContent=d.runs+' تشغيلات · ± '+d.sd.toFixed(1)+' د';
+  const dd=(d.dur/b.dur-1)*100, ed=(d.delay/b.delay-1)*100;
+  const durD=document.getElementById("durD"), delD=document.getElementById("delD");
+  if(k==="base"){durD.textContent="خط الأساس";durD.className="dlt";delD.textContent="خط الأساس";delD.className="dlt";}
+  else{durD.textContent="+"+dd.toFixed(0)+"٪ عن خط الأساس";durD.className="dlt up";
+       delD.textContent="+"+ed.toFixed(0)+"٪ عن خط الأساس";delD.className="dlt up";}
+  const mx=Math.max(d.dur,b.dur);
+  document.getElementById("b1").style.width=(b.dur/mx*100)+"%";
+  document.getElementById("b2").style.width=(d.dur/mx*100)+"%";
+  document.getElementById("b1v").textContent=b.dur.toFixed(1)+" د";
+  document.getElementById("b2v").textContent=d.dur.toFixed(1)+" د";
+}
+pick.addEventListener("click",e=>{const b=e.target.closest("button");if(b)set(b.dataset.k)});
+</script>
+</body></html>
