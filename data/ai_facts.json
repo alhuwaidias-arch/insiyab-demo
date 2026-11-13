@@ -1,0 +1,326 @@
+{
+ "project": {
+  "name": "انسياب",
+  "city": "الرياض",
+  "corridor": "شارع أنس بن مالك",
+  "intervention": "إغلاق تقاطع أنس × تركي",
+  "engine": "SUMO 1.27.0",
+  "network": {
+   "edges": 8488,
+   "streets": 1169
+  }
+ },
+ "arms": {
+  "baseline": {
+   "duration_mean_min": {
+    "mean": 19.18,
+    "sd": 1.44
+   },
+   "speed_mean_kmh": {
+    "mean": 38.4,
+    "sd": 1.52
+   },
+   "timeloss_mean_s": {
+    "mean": 711.2,
+    "sd": 87.27
+   },
+   "waiting_mean_s": {
+    "mean": 477.0,
+    "sd": 89.01
+   },
+   "route_length_mean_m": {
+    "mean": 8006.6,
+    "sd": 156.52
+   },
+   "trips": {
+    "mean": 7274.6,
+    "sd": 93.29
+   },
+   "teleports": {
+    "mean": 451.2,
+    "sd": 64.01
+   }
+  },
+  "closure": {
+   "duration_mean_min": {
+    "mean": 36.04,
+    "sd": 1.52
+   },
+   "speed_mean_kmh": {
+    "mean": 30.2,
+    "sd": 0.84
+   },
+   "timeloss_mean_s": {
+    "mean": 1574.4,
+    "sd": 82.11
+   },
+   "waiting_mean_s": {
+    "mean": 969.0,
+    "sd": 44.98
+   },
+   "route_length_mean_m": {
+    "mean": 10942.0,
+    "sd": 216.42
+   },
+   "trips": {
+    "mean": 7273.2,
+    "sd": 93.89
+   },
+   "teleports": {
+    "mean": 613.2,
+    "sd": 46.33
+   }
+  },
+  "detour": {
+   "duration_mean_min": {
+    "mean": 35.9,
+    "sd": 1.19
+   },
+   "speed_mean_kmh": {
+    "mean": 29.8,
+    "sd": 0.84
+   },
+   "timeloss_mean_s": {
+    "mean": 1552.4,
+    "sd": 56.5
+   },
+   "waiting_mean_s": {
+    "mean": 960.8,
+    "sd": 33.6
+   },
+   "route_length_mean_m": {
+    "mean": 11114.2,
+    "sd": 258.42
+   },
+   "trips": {
+    "mean": 7273.4,
+    "sd": 94.27
+   },
+   "teleports": {
+    "mean": 589.2,
+    "sd": 87.8
+   }
+  },
+  "policy600": {
+   "duration_mean_min": {
+    "mean": 26.26,
+    "sd": 3.13
+   },
+   "speed_mean_kmh": {
+    "mean": 38.4,
+    "sd": 1.14
+   },
+   "timeloss_mean_s": {
+    "mean": 1123.0,
+    "sd": 181.06
+   },
+   "waiting_mean_s": {
+    "mean": 897.4,
+    "sd": 182.16
+   },
+   "route_length_mean_m": {
+    "mean": 8143.2,
+    "sd": 203.45
+   },
+   "trips": {
+    "mean": 6946.6,
+    "sd": 254.88
+   },
+   "teleports": {
+    "mean": 400.8,
+    "sd": 48.65
+   }
+  }
+ },
+ "damage": {
+  "closure": {
+   "added_vh_positive": 1985.1,
+   "net_vh": 1777.7,
+   "recovered_vh": 207.4,
+   "edges_hit": 664,
+   "empty_edges": 177,
+   "top_streets": [
+    {
+     "street": "طريق الأمير تركي بن عبدالعزيز الأول",
+     "added_vh": 571.1
+    },
+    {
+     "street": "شارع أنس بن مالك",
+     "added_vh": 384.3
+    },
+    {
+     "street": "طريق الأمير تركي بن عبدالعزيز الأول الفرعي",
+     "added_vh": 199.1
+    },
+    {
+     "street": "No. 205",
+     "added_vh": 140.3
+    },
+    {
+     "street": "شارع أبها",
+     "added_vh": 123.6
+    },
+    {
+     "street": "(بلا اسم)",
+     "added_vh": 40.4
+    }
+   ]
+  },
+  "detour": {
+   "added_vh_positive": 1962.4,
+   "net_vh": 1697.1,
+   "recovered_vh": 265.4,
+   "edges_hit": 688,
+   "empty_edges": 208,
+   "top_streets": [
+    {
+     "street": "طريق الأمير تركي بن عبدالعزيز الأول",
+     "added_vh": 347.0
+    },
+    {
+     "street": "شارع أنس بن مالك",
+     "added_vh": 292.3
+    },
+    {
+     "street": "طريق الأمير تركي بن عبدالعزيز الأول الفرعي",
+     "added_vh": 290.2
+    },
+    {
+     "street": "شارع أبها",
+     "added_vh": 169.2
+    },
+    {
+     "street": "No. 205",
+     "added_vh": 80.5
+    },
+    {
+     "street": "شارع الأماسي",
+     "added_vh": 79.0
+    }
+   ]
+  },
+  "identity": {
+   "added_vh_positive": 0,
+   "net_vh": 0,
+   "recovered_vh": 0,
+   "edges_hit": 0,
+   "empty_edges": 0,
+   "top_streets": [
+    {
+     "street": "No. 242",
+     "added_vh": 0.0
+    },
+    {
+     "street": "الراية",
+     "added_vh": 0.0
+    },
+    {
+     "street": "(بلا اسم)",
+     "added_vh": 0.0
+    },
+    {
+     "street": "Al Atraf",
+     "added_vh": 0.0
+    },
+    {
+     "street": "شارع أنس بن مالك",
+     "added_vh": 0.0
+    },
+    {
+     "street": "شارع الراشدية",
+     "added_vh": 0.0
+    }
+   ]
+  }
+ },
+ "trips_mean_min": {
+  "baseline": 19.18,
+  "closure": 36.04,
+  "detour": 35.9,
+  "policy600": 26.26
+ },
+ "canon_numbers": [
+  {
+   "arm": "baseline",
+   "field": "corridor",
+   "value": 22.85,
+   "unit": "دقيقة"
+  },
+  {
+   "arm": "baseline",
+   "field": "duration_mean_min",
+   "value": 19.18,
+   "unit": "دقيقة"
+  },
+  {
+   "arm": "closure",
+   "field": "duration_mean_min",
+   "value": 36.04,
+   "unit": "دقيقة"
+  },
+  {
+   "arm": "closure",
+   "field": "added_vh_positive",
+   "value": 1726.1,
+   "unit": "مركبة-ساعة"
+  },
+  {
+   "arm": "closure",
+   "field": "net_vh",
+   "value": 1777.7,
+   "unit": "مركبة-ساعة"
+  },
+  {
+   "arm": "closure",
+   "field": "recovered_vh",
+   "value": 207.4,
+   "unit": "مركبة-ساعة"
+  },
+  {
+   "arm": "detour",
+   "field": "net_vh",
+   "value": 1697.1,
+   "unit": "مركبة-هour"
+  },
+  {
+   "arm": "policy600",
+   "field": "corridor",
+   "value": 32.81,
+   "unit": "دقيقة"
+  },
+  {
+   "arm": null,
+   "field": null,
+   "value": 32.03,
+   "unit": "ريال/مركبة-ساعة"
+  }
+ ],
+ "banned_numbers": [
+  "20.3 → 41.0",
+  "+122%",
+  "3,183 مركبة-ساعة",
+  "الأماسي 64.5 → 4.6",
+  "9.91 كم/س (متوسط سرعة الشبكة)",
+  "8,485 ضلعًا"
+ ],
+ "policy": {
+  "time_to_teleport": 300,
+  "sim_end_s": 14400,
+  "dial": 8.0,
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ]
+ },
+ "limits": [
+  "لا معايرة ميدانية على زمن رحلة مقيس لهذا المقطع؛ الرقم داخلي صالح للمقارنة لا للتنبؤ المطلق.",
+  "tls.all-off=true: لا إشارات في الشبكة — أُزيلت واقعًا قبل نحو سنة. لا ادعاء إعادة توقيت.",
+  "التوجيه بأقصر مسار زمن حرّ عند الإدخال، لا توازن ديناميكي ⇒ مقدار «انتقال الضرر» حدّ أدنى محافظ.",
+  "6.2% نقل قسري (teleport) بعد 300 ث انتظار ⇒ التأخير الحقيقي أعلى من المقيس.",
+  "أفق 4 ساعات (ذروة + تصريف)، ممر واحد 9.4 كم — لا يُعمَّم على الرياض.",
+  "شبكة مبسّطة: بلا مشاة ولا إشارات، 8,488 ضلعًا."
+ ]
+}

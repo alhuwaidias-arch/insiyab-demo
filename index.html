@@ -1,121 +1,255 @@
-<!doctype html>
-<html dir="rtl" lang="ar"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>انسياب — نموذج أولي · مقارنة سيناريوهات أعمال الطرق</title>
-<style>
-:root{--navy:#0A2463;--navy2:#123A8C;--ink:#16233D;--mut:#5A6A8A;--line:#DDE3EE;--bg:#F5F7FB;--ok:#0E7C66;--warn:#B3261E}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif}
-header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:26px 22px}
-.wrap{max-width:1020px;margin:0 auto}
-.brand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
-.brand b{font-size:20px;letter-spacing:.3px}
-.brand span{font-size:12px;opacity:.75}
-h1{font-size:22px;margin:14px 0 4px;font-weight:700}
-header p{margin:0;font-size:13px;opacity:.85;line-height:1.8}
-main{padding:22px}
-.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(10,36,99,.05)}
-.pick{display:flex;gap:10px;flex-wrap:wrap}
-.pick button{flex:1 1 220px;cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:14px;text-align:right;font:inherit;color:var(--ink);transition:.15s}
-.pick button small{display:block;color:var(--mut);font-size:12px;margin-top:4px}
-.pick button.on{border-color:var(--navy);background:#F0F4FF;box-shadow:0 0 0 3px rgba(10,36,99,.07)}
-.pick b{font-size:15px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-.kpi{border:1px solid var(--line);border-radius:10px;padding:16px}
-.kpi .lab{font-size:12px;color:var(--mut);margin-bottom:8px;line-height:1.6}
-.kpi .val{font-size:30px;font-weight:700;color:var(--navy);line-height:1}
-.kpi .val small{font-size:13px;font-weight:400;color:var(--mut);margin-right:4px}
-.kpi .dlt{font-size:13px;margin-top:8px;font-weight:700;color:var(--mut)}
-.up{color:var(--warn)}.down{color:var(--ok)}
-.bars{margin-top:18px}
-.row{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;margin-bottom:12px;font-size:13px}
-.track{background:var(--bg);border-radius:6px;height:22px;overflow:hidden}
-.fill{height:100%;border-radius:6px;transition:width .5s ease}
-.f-base{background:#9AA9C7}.f-close{background:var(--navy)}
-h2{font-size:14px;color:var(--navy);margin:0 0 14px;font-weight:700}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:right}
-th{color:var(--mut);font-weight:600;font-size:12px}
-.note{font-size:12px;color:var(--mut);line-height:1.9;margin:0}
-.badge{display:inline-block;background:#EAF0FB;color:var(--navy);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700}
-footer{max-width:1020px;margin:0 auto;padding:0 22px 30px;font-size:11.5px;color:var(--mut);line-height:1.9}
-a{color:var(--navy)}
-</style></head><body>
-<header><div class="wrap"><div class="brand"><b>انسياب</b><span>INFIRAD HOLDING · نموذج أولي (Prototype)</span></div>
-<h1>مقارنة أثر سيناريوهات أعمال الطرق على شبكة الرياض</h1>
-<p>ممر أنس بن مالك — حي حطين، شمال الرياض · طول الممر ٩٫٤ كم · شبكة مستخرجة من OpenStreetMap (٨٬٤٨٥ حرفًا)</p></div></header>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>انسياب — نموذج أولي: أثر إغلاق تقاطع على شبكة طريق</title>
+<meta name="description" content="نموذج أولي يعرض أثر سيناريوهات أعمال الطرق على شبكة شارع أنس بن مالك بالرياض: خريطة تفاعلية، منصة اختبار، تحليل آلي، وأدلة مقيسة من محاكاة SUMO.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">انسياب <small>نموذج أولي · انفراد</small></div>
+    <nav class="tabs" role="tablist">
+      <button data-view="overview" aria-selected="true">الخلاصة</button>
+      <button data-view="map" aria-selected="false">الطريق</button>
+      <button data-view="lab" aria-selected="false">الاختبار</button>
+      <button data-view="analyst" aria-selected="false">التحليل</button>
+      <button data-view="images" aria-selected="false">الأثر بالصور</button>
+      <button data-view="method" aria-selected="false">المنهجية</button>
+    </nav>
+  </div>
+</header>
+
 <main class="wrap">
-<div class="card">
-<h2>١) اختر السيناريو</h2>
-<div class="pick" id="pick">
-<button data-k="base" class="on"><b>خط الأساس — بلا أعمال</b><small>الطلب نفسه · ٧٬٢٤٠ رحلة · ذروة ساعتان</small></button>
-<button data-k="close"><b>إغلاق جزئي للممر ٩٫٤ كم</b><small>الطلب نفسه · تحويل جزئي للمرور على الشارع الموازي</small></button>
-</div>
-</div>
 
-<div class="card">
-<h2>٢) الأثر المقيس</h2>
-<div class="kpis">
-<div class="kpi"><div class="lab">متوسط زمن الرحلة — الرحلات المكتملة</div>
-<div class="val" id="dur">19.2 <small>دقيقة</small></div>
-<div class="dlt" id="durD">خط الأساس</div></div>
-<div class="kpi"><div class="lab">التأخير الكلي (وقت مفقود مقارنة بالتدفق الحر)</div>
-<div class="val" id="del">1,430 <small>مركبة‑ساعة</small></div>
-<div class="dlt" id="delD">خط الأساس</div></div>
-<div class="kpi"><div class="lab">الرحلات المكتملة</div>
-<div class="val" id="trips">7,240 <small>رحلة</small></div>
-<div class="dlt" id="runs">6 تشغيلات · ± 1.3 د</div></div>
-</div>
-<div class="bars">
-<div class="row"><span>خط الأساس</span><div class="track"><div class="fill f-base" id="b1" style="width:53%"></div></div><span id="b1v">19.2 د</span></div>
-<div class="row"><span>الإغلاق الجزئي</span><div class="track"><div class="fill f-close" id="b2" style="width:100%"></div></div><span id="b2v">36.0 د</span></div>
-</div>
-</div>
+  <!-- ============================================================ الخلاصة -->
+  <section class="view on" id="view-overview">
+    <h1>إغلاق تقاطع واحد: أين يذهب التأخير؟</h1>
+    <p class="lead">
+      نموذج أولي يبني شبكة شارع أنس بن مالك (الرياض) في محاكي SUMO، يشغّل خط الأساس ثم الإغلاق ثم التحويلة
+      على نفس الطلب ونفس البذور، ويعرض <b>أثر كل مقترح على الطريق</b> — ضلعًا بضلع — لا رقمًا واحدًا في عرض تقديمي.
+    </p>
 
-<div class="card">
-<h2>٣) تفصيل القياس</h2>
-<table>
-<thead><tr><th>القياس</th><th>خط الأساس</th><th>الإغلاق الجزئي</th><th>الفرق</th></tr></thead>
-<tbody>
-<tr><td>متوسط زمن الرحلة</td><td>١٩٫٢ ± ١٫٣ دقيقة</td><td>٣٦٫٠ ± ١٫٥ دقيقة</td><td class="up">+٨٨٪</td></tr>
-<tr><td>التأخير الكلي</td><td>١٬٤٣٠ ± ١٤٧ مركبة‑ساعة</td><td>٣٬١٨٣ ± ١٩٥ مركبة‑ساعة</td><td class="up">+١٢٣٪</td></tr>
-<tr><td>الرحلات المكتملة</td><td>٧٬٢٤٠</td><td>٧٬٢٣٩</td><td>—</td></tr>
-<tr><td>الطلب</td><td colspan="3">نفس ملف الطلب في السيناريوين (٧٬٢٤٠ رحلة · ذروة ساعتان + تصريف ساعتان)</td></tr>
-</tbody></table>
-<p class="note" style="margin-top:12px">التشتت مذكور دائمًا: كل رقم متوسط عدة تشغيلات ببذور مختلفة. تشغيلة واحدة لا تُقرأ كقياس.</p>
-</div>
+    <div class="grid g4">
+      <div class="card kpi plain">
+        <div class="lab">زمن عبور الممر — قبل</div>
+        <div class="val" id="kpi-corridor">—</div>
+        <div class="sub" id="ov-corridor-sub">—</div>
+      </div>
+      <div class="card kpi bad">
+        <div class="lab">زمن الرحلة — بعد الإغلاق</div>
+        <div class="val" id="kpi-fleet">—</div>
+        <div class="sub" id="ov-fleet-sub">—</div>
+      </div>
+      <div class="card kpi warn">
+        <div class="lab">تأخير مضاف على الشبكة</div>
+        <div class="val" id="kpi-added">—</div>
+        <div class="sub" id="ov-added-sub">—</div>
+      </div>
+      <div class="card kpi ok">
+        <div class="lab">يبقى داخل شبكة الممر</div>
+        <div class="val" id="kpi-stay">—</div>
+        <div class="sub" id="ov-stay-sub">—</div>
+      </div>
+    </div>
 
-<div class="card">
-<h2>٤) ما تقيسه هذه الواجهة وما لا تقيسه</h2>
-<p class="note"><span class="badge">نموذج أولي</span> &nbsp;الواجهة تعرض نتائج تشغيلات محاكاة مجهرية فعلية (SUMO 1.27.0) محفوظة، وتتيح المقارنة بين سيناريوهين بضغطة. ما لم يُنجز بعد: تشغيل المحاكاة حيًّا من الواجهة، وإدخال جدول المشاريع ورخص الحفريات بدل السيناريوهات المعدّة مسبقًا، ومعايرة أوسع على قياسات ميدانية.</p>
-<p class="note" style="margin-top:10px">الغاية في النسخة الكاملة: يرفع المستخدم جدول المشاريع ورخص الحفريات، فتكتشف المنصة التعارض الزمني والمكاني بين الأعمال المتزامنة، وتُعيد ترتيب الجدول على أساس الأثر المقيس على زمن الرحلات والتأخير الكلي — قبل الاعتماد.</p>
-</div>
+    <div class="card" style="margin-top:14px;border-inline-start:4px solid var(--navy)">
+      <h3 style="color:var(--navy)">الحكم في ثلاث أسطر</h3>
+      <p id="ov-verdict" style="margin:6px 0 0;font-size:15px">…</p>
+      <div class="kpis-inline">
+        <span>الكلفة/ذروة: <b id="kpi-cost">—</b></span>
+        <span class="sub" id="ov-cost-sub"></span>
+        <span>محرك: <b>SUMO 1.27.0</b></span>
+        <span>بذور: <b>5</b></span>
+        <span>أفق: <b>4 ساعات</b></span>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card">
+        <h3>من يدفع الثمن؟ (تأخير مضاف بالشوارع)</h3>
+        <div id="ov-streets" style="margin-top:10px"></div>
+        <div class="note" style="margin-top:12px">
+          الأعمدة تجميع فعلي لـ<span class="mono">damage_closure300.edges.csv</span> حسب اسم الشارع،
+          لا تصنيف يدوي.
+        </div>
+      </div>
+      <div class="card">
+        <h3>ماذا يفعل النموذج؟</h3>
+        <ul class="tight">
+          <li><b>يعرض الطريق:</b> 8,488 ضلعًا بموقعها الحقيقي (UTM 38N) مع تلوين التأخير.</li>
+          <li><b>يختبر:</b> أربعة أذرع مقيسة، ورفض صريح لأي مقترح بلا تشغيل.</li>
+          <li><b>يحلّل:</b> ترتيب الشوارع، انتقال الضرر، حساسية السياسة، الكلفة.</li>
+          <li><b>يُثبت:</b> 10 فحوص آلية تعمل في المتصفح وفي CI على الأرقام نفسها.</li>
+        </ul>
+        <div class="chips" style="margin-top:14px">
+          <button data-goto="map">افتح الخريطة</button>
+          <button data-goto="lab">جرّب مقترحًا</button>
+          <button data-goto="analyst">اقرأ التحليل</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== الطريق -->
+  <section class="view" id="view-map">
+    <h1>الطريق</h1>
+    <p class="lead">
+      كل ضلع في الشبكة مرسوم من <span class="mono">insyab.net.xml</span> بإحداثياته الجغرافية.
+      بدّل السيناريو لترى أين يظهر التأخير، وأين تنتقل الحركة. مرّر المؤشر على أي ضلع لقراءة أرقامه.
+    </p>
+    <div id="map-host"></div>
+  </section>
+
+  <!-- ============================================================= الاختبار -->
+  <section class="view" id="view-lab">
+    <h1>منصة الاختبار</h1>
+    <p class="lead">
+      اختبار التدخّل هنا لا يعني رسمًا تخيليًا: اختر ذراعًا مقيسًا، أو اكتب مقترحك ليُطابق على ما شُغّل فعلًا.
+      القاعدة الحاكمة: <b>لا يوجد رقم بلا مجلد تشغيل</b>.
+    </p>
+    <div class="card" style="margin-bottom:14px">
+      <div class="grid g2" style="gap:14px">
+        <div>
+          <h3 style="margin:0 0 8px">ذراع مقيس — اختر لعرض تفاصيله</h3>
+          <div id="lab-pick" style="display:grid;gap:7px"></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px">مقترحك على الطريق</h3>
+          <input type="text" id="lab-proposal" placeholder="مثال: إغلاق تقاطع أنس × تركي مع تحويلة مدعومة">
+          <button class="primary" id="lab-run" style="margin-top:8px">طابِق المقترح على ما شُغّل</button>
+          <div class="note" style="margin-top:8px">
+            المطابقة على أربعة أذرع مقيسة فقط. أي مقترح لا يقابل تشغيلًا يخرج بـ<b>«غير مقيس»</b> لا بتقدير.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="lab-body"></div>
+
+    <h2>فحوص آلية على الأرقام</h2>
+    <div class="card"><div id="tests"><div class="note">جارٍ التشغيل…</div></div></div>
+  </section>
+
+  <!-- ============================================================= التحليل -->
+  <section class="view" id="view-analyst">
+    <h1>التحليل الذكي</h1>
+    <p class="lead">
+      طبقتان: <b>محرّك حتمي</b> يحسب من البيانات ويسمّي الملف الذي جاء منه كل رقم (يعمل بلا إنترنت)،
+      و<b>طبقة لغوية اختيارية</b> تُمرّر الأرقام نفسها إلى نموذج لغوي بمفتاحك.
+    </p>
+
+    <div id="ai-brief"></div>
+    <div class="grid g2" id="findings"></div>
+
+    <h2>اسأل البيانات</h2>
+    <div class="grid g2">
+      <div class="card">
+        <div class="chat" id="chatlog"></div>
+        <div class="chips" id="chat-chips"></div>
+        <div class="chatbar">
+          <input type="text" id="chat-in" placeholder="مثال: من يدفع الثمن؟">
+          <button class="primary" id="chat-send">أرسل</button>
+        </div>
+        <div class="note" style="margin-top:10px">
+          المحرّك الحتمي يطابق سؤالك على أدوات محسوبة، ولا يولّد نصًّا حرًّا من خارج البيانات.
+        </div>
+      </div>
+      <div class="card">
+        <h3>طبقة لغوية اختيارية</h3>
+        <p style="font-size:13.5px;color:var(--muted);margin-top:0">
+          تُرسل ملخّص الأرقام (لا الخام) إلى واجهة متوافقة مع OpenAI. المفتاح يبقى في متصفحك؛
+          لا يوجد مفتاح مضمّن في هذا المستودع.
+        </p>
+        <button class="ghost" id="llm-toggle">إعداد الطبقة اللغوية</button>
+        <div id="llm-box" style="display:none;margin-top:12px">
+          <label style="font-size:12.5px;color:var(--muted)">العنوان</label>
+          <input type="text" id="llm-endpoint" value="https://api.deepseek.com" placeholder="https://…/v1">
+          <label style="font-size:12.5px;color:var(--muted);margin-top:8px;display:block">المفتاح</label>
+          <input type="password" id="llm-key" placeholder="sk-…">
+          <label style="font-size:12.5px;color:var(--muted);margin-top:8px;display:block">النموذج</label>
+          <input type="text" id="llm-model" value="deepseek-chat">
+          <button class="primary" id="llm-send" style="margin-top:10px">اسأل النموذج</button>
+        </div>
+        <div id="llm-out" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= الأثر بالصور -->
+  <section class="view" id="view-images">
+    <h1>أثر التغيير بالصور</h1>
+    <p class="lead">
+      كل صورة أدناه مولّدة من التشغيلات نفسها: ثلاث لقطات للطريق من هذا التطبيق (خط الأساس، الإغلاق، الإغلاق مع تحويلة)
+      وثلاثة رسوم مبنية على <span class="mono">runs/*/edgedata.xml</span>. لا سهم مرسوم بيد ولا رقم خارج التشغيل.
+    </p>
+    <div id="beforeafter"></div>
+    <div class="grid g2" id="gallery" style="margin-top:16px"></div>
+    <div class="note" style="margin-top:14px">
+      طريقة التوليد: <span class="mono">build/make_figures.py</span> يقرأ <span class="mono">data/damage.json</span> و<span class="mono">data/trips.json</span>
+      ويكتب <span class="mono">data/figures.json</span>؛ ولقطات الطريق مأخوذة من تاب «الطريق» في هذا التطبيق على السيناريوهات الثلاثة.
+    </div>
+  </section>
+
+  <!-- ============================================================ المنهجية -->
+  <section class="view" id="view-method">
+    <h1>المنهجية والحدود</h1>
+    <p class="lead">
+      ما يصلح أن نقوله، وما لا يصلح — قبل أن يسأل أحد.
+    </p>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3>خط الإنتاج</h3>
+        <ul class="tight">
+          <li><b>الشبكة:</b> <span class="mono">insyab.net.xml</span> (SUMO 1.27.0, UTM 38N).</li>
+          <li><b>الطلب:</b> ملف مسارات واحد يُستخدم في كل الأذرع (نفس الطلب، لا مضاعفة).</li>
+          <li><b>الأذرع:</b> خط أساس · إغلاق · إغلاق + تحويلة مدعومة · سياسة القياس.</li>
+          <li><b>البذور:</b> 1–5 لكل ذراع، 4 ساعات، <span class="mono">dial 8.0</span>.</li>
+          <li><b>القاضي:</b> كاشف الضرر لكل ضلع: <span class="mono">added_vh = (timeLoss_arm × entered) − (timeLoss_base × entered)</span>.</li>
+          <li><b>الحياد:</b> تشغيل مقابل نفسه ⇒ صافي صفر (مفحوص).</li>
+        </ul>
+        <div style="margin-top:12px" id="policybox"></div>
+      </div>
+      <div class="card">
+        <h3>الحدود — تُقال في العرض نفسه</h3>
+        <ul class="tight" id="limits"></ul>
+      </div>
+    </div>
+
+    <h2>الأرقام المسحوبة من التداول</h2>
+    <div class="card">
+      <p style="margin-top:0;font-size:13.5px;color:var(--muted)">
+        هذه صيغ ظهرت في مسودات سابقة ولم تثبت أمام إعادة التشغيل. لا تُذكر في أي مادة، ويفحصها
+        <code>tests/test_no_withdrawn_numbers.py</code> في كل دفع.
+      </p>
+      <ul class="tight" id="banned"></ul>
+    </div>
+
+    <h2>سلسلة الأدلة</h2>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead><tr><th>المكوّن</th><th>المصدر</th><th class="num">الحجم</th><th>بصمة (sha256/16)</th></tr></thead>
+        <tbody id="prov"></tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:12px">
+      الأمر الواحد لإعادة البناء: <code>python build/extract_network.py &amp;&amp; python build/extract_arms.py</code>
+      ثم <code>pytest -q</code>. أي انحراف عن الأرقام المرجعية يُسقط البوابة.
+    </div>
+  </section>
 </main>
-<footer><div class="wrap">الأرقام من تشغيلات محفوظة: خط الأساس ٦ تشغيلات · الإغلاق ٥ تشغيلات · طلب ٧٬٢٤٠ رحلة · SIM_END = ١٤٬٤٠٠ ثانية · الشبكة: OpenStreetMap ← netconvert.<br>انفراد القابضة · «انسياب» — محاكاة SUMO (EPL-2.0) وبيانات OSM (ODbL). لا تُستخدم خرائط تجارية في هذا النموذج.</div></footer>
-<script>
-const D={
- base:{dur:19.2,sd:1.3,delay:1430,trips:7240,runs:6},
- close:{dur:36.0,sd:1.5,delay:3183,trips:7239,runs:5}
-};
-const pick=document.getElementById("pick");
-function set(k){
-  document.querySelectorAll("#pick button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
-  const d=D[k], b=D.base;
-  document.getElementById("dur").innerHTML=d.dur.toFixed(1)+' <small>دقيقة</small>';
-  document.getElementById("del").innerHTML=d.delay.toLocaleString("en-US")+' <small>مركبة‑ساعة</small>';
-  document.getElementById("trips").innerHTML=d.trips.toLocaleString("en-US")+' <small>رحلة</small>';
-  document.getElementById("runs").textContent=d.runs+' تشغيلات · ± '+d.sd.toFixed(1)+' د';
-  const dd=(d.dur/b.dur-1)*100, ed=(d.delay/b.delay-1)*100;
-  const durD=document.getElementById("durD"), delD=document.getElementById("delD");
-  if(k==="base"){durD.textContent="خط الأساس";durD.className="dlt";delD.textContent="خط الأساس";delD.className="dlt";}
-  else{durD.textContent="+"+dd.toFixed(0)+"٪ عن خط الأساس";durD.className="dlt up";
-       delD.textContent="+"+ed.toFixed(0)+"٪ عن خط الأساس";delD.className="dlt up";}
-  const mx=Math.max(d.dur,b.dur);
-  document.getElementById("b1").style.width=(b.dur/mx*100)+"%";
-  document.getElementById("b2").style.width=(d.dur/mx*100)+"%";
-  document.getElementById("b1v").textContent=b.dur.toFixed(1)+" د";
-  document.getElementById("b2v").textContent=d.dur.toFixed(1)+" د";
-}
-pick.addEventListener("click",e=>{const b=e.target.closest("button");if(b)set(b.dataset.k)});
-</script>
-</body></html>
+
+<footer>
+  <div class="wrap" style="display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between">
+    <span>انسياب — نموذج أولي · انفراد القابضة · Riyadh GovJam 2026 / IECE</span>
+    <span>المحرك: Eclipse SUMO 1.27.0 · البيانات: تشغيلات محفوظة · الرخصة: MIT للكود</span>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+
+</body>
+</html>

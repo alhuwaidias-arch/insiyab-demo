@@ -1,0 +1,8 @@
+{
+ "ok": true,
+ "matched": 41,
+ "total": 41,
+ "bad": [],
+ "ran_at": "2026-11-13 14:50",
+ "source": "data/ai_brief.md ← data/ai_facts.json"
+}
