@@ -128,3 +128,13 @@ ul.tight{margin:6px 0;padding-inline-start:20px;font-size:14px}
 ul.tight li{margin:4px 0}
 .kpis-inline{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px}
 .kpis-inline b{color:var(--ink);font-size:15px}
+
+
+/* ---- جداول التحقق الميداني (#view-validation) ---- */
+.vtab{width:100%;border-collapse:collapse;font-size:13px}
+.vtab th{position:sticky;top:0;background:var(--card,#11151c);text-align:right;font-weight:600;
+  padding:8px 10px;border-bottom:1px solid var(--line,rgba(255,255,255,.12));white-space:nowrap}
+.vtab td{padding:7px 10px;border-bottom:1px solid var(--line,rgba(255,255,255,.06))}
+.vtab td.n{font-variant-numeric:tabular-nums;white-space:nowrap;direction:ltr;unicode-bidi:isolate}
+.vtab tbody tr:hover{background:rgba(127,227,196,.06)}
+#view-validation video{border-radius:10px;display:block}

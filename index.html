@@ -14,6 +14,7 @@
     <div class="brand">انسياب <small>نموذج أولي · انفراد</small></div>
     <nav class="tabs" role="tablist">
       <button data-view="overview" aria-selected="true">الخلاصة</button>
+      <button data-view="validation" aria-selected="false">التحقق الميداني</button>
       <button data-view="map" aria-selected="false">الطريق</button>
       <button data-view="lab" aria-selected="false">الاختبار</button>
       <button data-view="analyst" aria-selected="false">التحليل</button>
@@ -32,6 +33,12 @@
       نموذج أولي يبني شبكة شارع أنس بن مالك (الرياض) في محاكي SUMO، يشغّل خط الأساس ثم الإغلاق ثم التحويلة
       على نفس الطلب ونفس البذور، ويعرض <b>أثر كل مقترح على الطريق</b> — ضلعًا بضلع — لا رقمًا واحدًا في عرض تقديمي.
     </p>
+
+    <div class="card" style="margin-top:6px;border-inline-start:4px solid var(--accent,#7fe3c4)">
+      <b>جديد — التحقق الميداني:</b> قياس مسجَّل من مركبة حقيقية على ممر الدراسة (مسجّل ESP32‑S3، تردد 1 هرتز)
+      مقابل الشبكة نفسها، مع جدول انحراف لكل مقطع وفيديو إعادة تشغيل الرحلة.
+      <a href="#" data-goto="validation" style="font-weight:600">افتح تاب «التحقق الميداني» ←</a>
+    </div>
 
     <div class="grid g4">
       <div class="card kpi plain">
@@ -193,6 +200,37 @@
     </div>
   </section>
 
+  <!-- ========================================================== التحقق الميداني -->
+  <section class="view" id="view-validation">
+    <h1>التحقق الميداني — قياس حقيقي مقابل الشبكة</h1>
+    <p class="lead" id="v-lead">…</p>
+
+    <div class="grid g4" id="v-kpis"></div>
+
+    <div class="grid g2" style="margin-top:14px;align-items:start">
+      <div class="card">
+        <h3>إعادة تشغيل الرحلة على الشبكة</h3>
+        <div id="v-video-body">…</div>
+      </div>
+      <div class="card">
+        <h3>ما لا يثبته هذا القياس</h3>
+        <ul class="tight" id="v-limits"></ul>
+      </div>
+    </div>
+
+    <h2>الانحراف مقطعاً بمقطع</h2>
+    <div class="card">
+      <p style="margin-top:0;font-size:13px;color:var(--muted)" id="v-totals">…</p>
+      <div style="max-height:340px;overflow:auto" id="v-table"></div>
+    </div>
+
+    <h2>سلسلة الأدلة</h2>
+    <div class="card">
+      <div style="overflow:auto" id="v-evidence"></div>
+      <p class="note" style="margin:10px 0 0" id="v-source">…</p>
+    </div>
+  </section>
+
   <!-- ============================================================ المنهجية -->
   <section class="view" id="view-method">
     <h1>المنهجية والحدود</h1>
@@ -250,6 +288,7 @@
 </footer>
 
 <script src="assets/app.js"></script>
+  <script src="assets/validation.js"></script>
 
 </body>
 </html>
