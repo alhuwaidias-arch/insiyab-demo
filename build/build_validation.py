@@ -23,7 +23,7 @@ def build(source_path=None):
             "value": round(a["accuracy_agg_pct"], 1),
             "unit": "%",
             "label": "دقة طول المسار على شبكة المحاكاة",
-            "foot": f"خطأ تراكمي {a['agg_err_pct']:+.2f}% على {a['analysed_km']:.2f} كم متصلة "
+            "foot": f"خطأ تراكمي \u2066{a['agg_err_pct']:+.2f}%\u2069 على {a['analysed_km']:.2f} كم متصلة "
                     f"({a['stretches']} مقطعاً بتردد 1 هرتز)",
         },
         {

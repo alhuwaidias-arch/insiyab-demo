@@ -104,7 +104,9 @@ def main():
                  "%.1f%%" % t["uncapped_accuracy_pct"],
                  "{:,.1f}".format(t["field_m"]),
                  "{:,.1f}".format(t["net_m"]),
-                 "%.1f%%" % abs(t["agg_err_pct"])):
+                 "%.1f%%" % abs(t["agg_err_pct"]),
+                 "أسوأ %s%%" % [k for k in v["kpis"] if "متوسط الخطأ" in k["label"]][0]["foot"]
+                 .split("أسوأ ")[1].split("%")[0]):
         if need not in rd:
             bad("readme", "README لا يحمل الرقم الحالي %s" % need)
 
