@@ -62,7 +62,7 @@
  "net": {
   "edges": 5,
   "approach_lanes": 4,
-  "connections_to_uturn": 6,
+  "connections_to_uturn": 3,
   "uturn_lane_speed_ms": 6.0,
   "uturn_lane_length_m": 5.35,
   "traffic_lights": 0

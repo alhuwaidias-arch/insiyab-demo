@@ -323,7 +323,8 @@
       ['متوسط الانتظار قبل الدوران (ث)', j.uturn_mean_wait_s],
       ['ثوانٍ بثلاث دورانات على ثلاث حارات معاً', j.triple_overlap_s],
       ['نسبة خلو المسار الأول من أي متوقف (%)', j.straight_free_pct],
-      ['أول توقف جماعي (ث)', j.jam_onset_s],
+      ['نافذة العرض (ث)', j.window.t0 + '–' + j.window.t1],
+      ['ذروة المركبات (ث)', j.peak_t],
       ['مدى المشهد (ث) / إطارات', j.span_s + ' / ' + j.frames],
       ['حواف الشبكة / إشارات', j.net.edges + ' / ' + j.net.traffic_lights],
       ['سرعة فتحة الدوران (م/ث)', j.net.uturn_lane_speed_ms],
@@ -341,7 +342,7 @@
       var c = document.createElement('div'); c.className = 'c';
       c.innerHTML = '<b>' + l.mean_kmh.toFixed(1) + '<i>كم/س</i></b>' +
         '<span>المسار ' + num + ' · أقصى توقف ' + l.stopped_max +
-        ' · طابور ' + l.queue_m.toFixed(0) + ' م</span>';
+        ' · خلوّه من أي متوقف ' + l.free_share_pct.toFixed(1) + '%</span>';
       cm.appendChild(c);
     });
   }

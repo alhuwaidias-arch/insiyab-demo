@@ -123,7 +123,7 @@ def main():
     edges = [e for e in net.findall("edge") if not e.get("id").startswith(":")]
     conns_to_ut = 0
     for c in net.findall("connection"):
-        if c.get("to") == "ut":
+        if c.get("to") == "ut" and c.get("from") == "app":
             conns_to_ut += 1
     ut_lane = net.find("edge[@id='ut']/lane")
     clip_bytes = os.path.getsize(a.clip)
