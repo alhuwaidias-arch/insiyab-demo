@@ -42,9 +42,12 @@
     .then(function (v) {
       var s = v.session;
 
+      var LRI = "\u2066", PDI = "\u2069";
       document.getElementById("v-lead").textContent =
-        s.rate_hz + " هرتز · " + fmt(s.points) + " نقطة · " + s.window_utc[0] + " ← " + s.window_utc[1] +
-        " (UTC) · " + s.vehicle + " · " + s.logger + " · " + s.firmware;
+        s.rate_hz + " هرتز · " + fmt(s.points) + " نقطة · " +
+        (s.window_local ? LRI + s.window_local[0] + PDI + " ← " + LRI + s.window_local[1] + PDI + " (توقيت الرياض) · " : "") +
+        LRI + s.window_utc[0] + PDI + " ← " + LRI + s.window_utc[1] + PDI + " (UTC) · " +
+        s.vehicle + " · " + s.logger + " · " + LRI + s.firmware + PDI;
 
       var box = document.getElementById("v-kpis");
       v.kpis.forEach(function (k) { box.appendChild(kpiCard(k)); });
@@ -71,7 +74,7 @@
         " م ⇒ دقة " + tt.uncapped_accuracy_pct + "%.";
 
       document.getElementById("v-table").appendChild(table(
-        ["المقطع (UTC)", "نقاط", "ميدان م", "شبكة م", "خطأ %", "كم/س"],
+        ["المقطع (الرياض)", "نقاط", "ميدان م", "شبكة م", "خطأ %", "كم/س"],
         v.stretches.map(function (r) {
           return [r.t0 + "–" + r.t1, r.pts, r.field_m, r.net_m, r.err, r.kmh];
         })

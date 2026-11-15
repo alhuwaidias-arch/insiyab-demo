@@ -1,12 +1,14 @@
 """بوابة أرقام صفحة «التحقق الميداني» — تفشل (exit 3) إن خالف أي رقم خط الإنتاج.
 
 الفحوص:
- 1. data/validation.json يساوي إعادةَ بناء من data/accuracy_final.json (لا رقم مُدخل يدوياً).
- 2. الاتساق الرياضي: accuracy = 100 - |agg_err|، والمجاميع تساوي مجموع المقاطع.
- 3. قسم #view-validation في index.html لا يحمل أي رقم مكتوب بيد (لا [0-9] خارج السماح).
- 4. validation.js لا يحمل رقماً قياسياً (يقرأ من JSON وحده).
- 5. ملف الفيديو موجود وبالحجم والبصمة المعلنة.
- 6. كل KPI له قيمة ووحدة وتسمية وهامش (لا خانة فارغة).
+ 1. data/validation.json = ناتج build() الحالي بالبايت (لا رقم مُدخل يدوياً، ولا ملف قديم).
+ 2. الاتساق الرياضي: accuracy = 100 - |agg_err|، والمجاميع = مجموع المقاطع، والمسقوف/غير المسقوف.
+ 3. نافذة الجولة المحلية = نافذة UTC + 3 ساعات (الرياض) — لا يمرّ خطأ توقيت.
+ 4. #view-validation في index.html لا يحمل أي رقم مكتوب بيد.
+ 5. validation.js لا يحمل رقماً قياسياً (يقرأ من JSON وحده).
+ 6. الفيديو ومقطع التقاطع: موجودان، وبالحجم والبصمة المعلنة.
+ 7. كل KPI له قيمة ووحدة وتسمية وهامش؛ العدد 4.
+ 8. README.md يحمل الأرقام الحالية نصاً.
 """
 import hashlib
 import json
@@ -16,7 +18,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-from build.build_validation import build  # noqa: E402
+from build.build_validation_anas import build  # noqa: E402
 
 FAIL = []
 
@@ -29,12 +31,20 @@ def close(a, b, tol=0.05):
     return abs(float(a) - float(b)) <= tol
 
 
+def h16(p):
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()[:16]
+
+
 def main():
     data_path = os.path.join(ROOT, "data", "validation.json")
     on_disk = json.load(open(data_path, encoding="utf-8"))
-    rebuilt = build()
-    if json.loads(json.dumps(rebuilt)) != on_disk:
-        bad("stale", "data/validation.json ليس ناتج البناء الحالي — أعد تشغيل build/build_validation.py")
+    rebuilt = json.loads(json.dumps(build()))
+    if rebuilt != on_disk:
+        bad("stale", "data/validation.json ليس ناتج البناء الحالي — أعد تشغيل build/build_validation_anas.py")
 
     v = on_disk
     t = v["totals"]
@@ -51,44 +61,66 @@ def main():
     err = (t["net_m"] - t["field_m"]) / t["field_m"] * 100
     if not close(err, t["agg_err_pct"], 0.02):
         bad("math", "الخطأ المشتق %.3f != %s" % (err, t["agg_err_pct"]))
-    if len(v["stretches"]) != len(json.load(open(os.path.join(ROOT, "data", "accuracy_final.json"),
-                                                encoding="utf-8"))["detail"]):
-        bad("math", "عدد المقاطع لا يساوي عدد مقاطع المصدر")
+    unc = (t["net_uncapped_m"] - t["field_m"]) / t["field_m"] * 100
+    if not close(100 - abs(unc), t["uncapped_accuracy_pct"], 0.06):
+        bad("math", "الدقة غير المسقوفة %.2f != %s" % (100 - abs(unc), t["uncapped_accuracy_pct"]))
+    _a = [os.path.join(ROOT, "data", "accuracy_anas.json"),
+          os.path.join(os.path.dirname(ROOT), "ACCURACY_ANAS.json")]
+    src = json.load(open(next(p for p in _a if os.path.exists(p)), encoding="utf-8"))
+    if len(v["stretches"]) != len(src["detail"]):
+        bad("math", "عدد المقاطع %d != %d في المصدر" % (len(v["stretches"]), len(src["detail"])))
 
-    # 3. لا أرقام مكتوبة بيد في الصفحة (تُستثنى المعرّفات والأنماط والبنية)
+    # 3. التوقيت المحلي = UTC+3
+    import datetime as dt
+    u0 = dt.datetime.strptime(v["session"]["window_utc"][0], "%H:%M:%SZ")
+    l0 = dt.datetime.strptime(v["session"]["window_local"][0], "%H:%M:%S")
+    d = (l0.hour * 3600 + l0.minute * 60 + l0.second) - (u0.hour * 3600 + u0.minute * 60 + u0.second)
+    if d != 3 * 3600:
+        bad("tz", "بداية النافذة المحلية ليست UTC+3 (فرق %d ث)" % d)
+    u1 = dt.datetime.strptime(v["session"]["window_utc"][1], "%H:%M:%SZ")
+    l1 = dt.datetime.strptime(v["session"]["window_local"][1], "%H:%M:%S")
+    d1 = (l1.hour * 3600 + l1.minute * 60 + l1.second) - (u1.hour * 3600 + u1.minute * 60 + u1.second)
+    if d1 != 3 * 3600:
+        bad("tz", "نهاية النافذة المحلية ليست UTC+3 (فرق %d ث)" % d1)
+
+    # 4. لا أرقام مكتوبة بيد في الصفحة
     html = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
     m = re.search(r'<section class="view" id="view-validation">(.*?)</section>', html, re.S)
     if not m:
         bad("html", "قسم #view-validation غير موجود")
     else:
-        sect = re.sub(r"<[^>]+>", " ", m.group(1))          # النص الظاهر فقط
+        sect = re.sub(r"<[^>]+>", " ", m.group(1))
         digits = re.findall(r"\d+(?:[.,]\d+)?", sect)
-        allow = {"1", "2", "3", "4"}                        # g2/g4 ليست نصاً؛ السماح أشكال البنية
-        leftovers = [d for d in digits if d not in allow]
+        allow = {"1", "2", "3", "4"}
+        leftovers = [x for x in digits if x not in allow]
         if leftovers:
             bad("html", "أرقام مكتوبة بيد في قسم التحقق: %s" % sorted(set(leftovers)))
 
-    # 4. JS لا يحمل قيماً قياسية
+    # 5. JS لا يحمل قيماً قياسية
     js = open(os.path.join(ROOT, "assets", "validation.js"), encoding="utf-8").read()
     code = re.sub(r"//.*", "", js)
-    code = re.sub(r'style="[^"]*"', " ", code)          # قيم التنسيق ليست قياساً
-    code = re.sub(r"\d+(?:px|%|em|rem|pt)", " ", code)   # وحدات التنسيق
+    code = re.sub(r'style="[^"]*"', " ", code)
+    code = re.sub(r"\d+(?:px|%|em|rem|pt)", " ", code)
     for num in re.findall(r"(?<![\w.])(\d{2,}(?:\.\d+)?)", code):
         bad("js", "رقم قياسي مكتوب في validation.js: %s" % num)
 
-    # 5. الفيديو
-    vp = os.path.join(ROOT, v["video"]["src"])
-    if not os.path.exists(vp):
-        bad("video", "المقطع غير موجود: %s" % v["video"]["src"])
-    else:
-        sz = os.path.getsize(vp)
-        if sz != v["video"]["bytes"]:
-            bad("video", "حجم المقطع %d != %d" % (sz, v["video"]["bytes"]))
-        h16 = hashlib.sha256(open(vp, "rb").read()).hexdigest()[:16]
-        if h16 != v["video"]["sha16"]:
-            bad("video", "بصمة المقطع %s != %s" % (h16, v["video"]["sha16"]))
+    # 6. الفيديوهان
+    for key in ("video", "clip"):
+        blk = v.get(key) or {}
+        if not blk.get("src"):
+            bad(key, "لا مصدر معلن")
+            continue
+        p = os.path.join(ROOT, blk["src"])
+        if not os.path.exists(p):
+            bad(key, "المقطع غير موجود: %s" % blk["src"])
+            continue
+        s = os.path.getsize(p)
+        if s != blk.get("bytes"):
+            bad(key, "حجم %s=%d != %s" % (blk["src"], s, blk.get("bytes")))
+        if h16(p) != blk.get("sha16"):
+            bad(key, "بصمة %s لا تطابق المعلنة" % blk["src"])
 
-    # 6. اكتمال البطاقات
+    # 7. اكتمال البطاقات
     for i, k in enumerate(v["kpis"]):
         for f in ("value", "unit", "label", "foot"):
             if not str(k.get(f, "")).strip():
@@ -96,17 +128,15 @@ def main():
     if len(v["kpis"]) != 4:
         bad("kpi", "عدد البطاقات %d != 4" % len(v["kpis"]))
 
-    # 7. README لا ينحرف عن الأرقام
+    # 8. README
     rd = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
-    cov = [k for k in v["kpis"] if "مطابقة" in k["label"]][0]["value"]
     for need in ("%.1f%%" % t["accuracy_pct"],
-                 "%.1f%%" % float(cov),
                  "%.1f%%" % t["uncapped_accuracy_pct"],
-                 "{:,.1f}".format(t["field_m"]),
-                 "{:,.1f}".format(t["net_m"]),
-                 "%.1f%%" % abs(t["agg_err_pct"]),
-                 "أسوأ %s%%" % [k for k in v["kpis"] if "متوسط الخطأ" in k["label"]][0]["foot"]
-                 .split("أسوأ ")[1].split("%")[0]):
+                 "%.1f" % (t["field_m"] / 1000),
+                 "%.1f" % (t["net_m"] / 1000),
+                 "%.2f%%" % abs(t["agg_err_pct"]),
+                 "%d مقطعاً" % len(v["stretches"]),
+                 v["session"]["window_local"][0]):
         if need not in rd:
             bad("readme", "README لا يحمل الرقم الحالي %s" % need)
 
@@ -115,9 +145,10 @@ def main():
         for f in FAIL:
             print(" -", f)
         return 3
-    print("OK kpis=%d stretches=%d acc=%.1f%% uncapped=%.1f%% video=%d B"
+    print("OK kpis=%d stretches=%d acc=%.1f%% uncapped=%.1f%% field=%.1f km video=%d B clip=%d B"
           % (len(v["kpis"]), len(v["stretches"]), t["accuracy_pct"],
-             t["uncapped_accuracy_pct"], v["video"]["bytes"]))
+             t["uncapped_accuracy_pct"], t["field_m"] / 1000.0,
+             v["video"]["bytes"], v["clip"]["bytes"]))
     return 0
 
 

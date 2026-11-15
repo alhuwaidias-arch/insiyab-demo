@@ -1,0 +1,203 @@
+/* انسياب — واجهة النموذج الأولي (الجيل الثاني)
+   لوحة داكنة، RTL، بلا اعتماد خارجي. مقاسات مرنة، وأرضية 1280×720. */
+
+:root{
+  --bg:#06080b; --bg2:#0a0e13; --panel:rgba(13,18,24,.92); --line:#1b2530;
+  --ink:#e8eef5; --muted:#8fa2b8; --dim:#63788f;
+  --mint:#37e0a4; --mint2:#7fe3c4; --amber:#ffb020; --red:#ff5d5d; --blue:#4aa8ff;
+  --r:14px;
+}
+html,body{height:100%}
+body.app2{
+  margin:0; background:
+    radial-gradient(1100px 620px at 78% -10%, #0e1a20 0%, transparent 60%),
+    radial-gradient(900px 520px at 12% 108%, #10141c 0%, transparent 62%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"Segoe UI","Tajawal",Tahoma,system-ui,sans-serif;
+  font-size:15px; line-height:1.55;
+  display:grid; grid-template-rows:62px 46px 1fr; height:100vh; overflow:hidden;
+}
+.app2 *{box-sizing:border-box}
+.app2 .ltr{direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums}
+.app2 button{font-family:inherit; font-size:inherit; color:inherit; background:none; border:0; cursor:pointer}
+
+/* ── الشريط العلوي ── */
+.app2 .top{
+  display:flex; align-items:center; gap:18px; padding:0 20px;
+  border-bottom:1px solid var(--line); background:linear-gradient(180deg,rgba(11,16,22,.96),rgba(8,11,15,.86));
+}
+.app2 .brand{display:flex; align-items:center; gap:11px}
+.app2 .mark{
+  width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  background:linear-gradient(155deg,var(--mint),#1a9e79); color:#04120c; font-weight:800; font-size:17px;
+  box-shadow:0 0 0 1px rgba(55,224,164,.35), 0 6px 18px -6px rgba(55,224,164,.6);
+}
+.app2 .brand b{display:block; font-size:17px; letter-spacing:.2px}
+.app2 .brand small{display:block; color:var(--dim); font-size:11.5px; margin-top:-2px}
+.app2 .chips{display:flex; gap:8px; align-items:center; margin-inline-start:6px; flex-wrap:wrap}
+.app2 .chip{
+  font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:999px;
+  padding:5px 11px; background:rgba(255,255,255,.02); white-space:nowrap;
+}
+.app2 .chip b{color:var(--ink); font-weight:600}
+.app2 .chip.live{color:var(--mint2); border-color:rgba(55,224,164,.35); background:rgba(55,224,164,.07)}
+.app2 .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);display:inline-block;margin-inline-end:6px;
+  box-shadow:0 0 0 0 rgba(55,224,164,.65); animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(55,224,164,.55)}70%{box-shadow:0 0 0 9px rgba(55,224,164,0)}100%{box-shadow:0 0 0 0 rgba(55,224,164,0)}}
+.app2 .clock{margin-inline-start:auto; text-align:end; line-height:1.15}
+.app2 .clock b{font-size:19px; font-variant-numeric:tabular-nums; letter-spacing:.5px}
+.app2 .clock small{display:block; color:var(--dim); font-size:11px}
+
+/* ── التبويبات ── */
+.app2 .tabs{display:flex; align-items:stretch; gap:2px; padding:0 14px; border-bottom:1px solid var(--line); background:rgba(8,11,15,.6)}
+.app2 .tabs button{
+  padding:0 16px; color:var(--muted); font-size:14px; border-bottom:2px solid transparent; transition:.15s;
+}
+.app2 .tabs button:hover{color:var(--ink)}
+.app2 .tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--mint)}
+.app2 .tabs .spacer{margin-inline-start:auto; display:flex; align-items:center; color:var(--dim); font-size:12px; padding-inline-end:6px}
+
+/* ── المسرح واللوحات ── */
+.app2 main{position:relative; overflow:hidden}
+.app2 .view{position:absolute; inset:0; display:none}
+.app2 .view.on{display:grid}
+.app2 #view-map{grid-template-columns:1fr 322px}
+.app2 #view-map aside{overflow:auto; min-height:0}
+.app2 #view-trip,.app2 #view-junction,.app2 #view-method{grid-template-columns:1fr; padding:22px 26px; overflow:auto; align-content:start}
+.app2 #view-validation{grid-template-columns:1fr; padding:22px 26px; overflow:auto; align-content:start; display:none}
+.app2 #view-validation.on{display:grid}
+
+.app2 .stage{position:relative; overflow:hidden; background:
+  radial-gradient(700px 420px at 50% 30%, #0b1218 0%, #06080b 70%)}
+.app2 #map{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:crosshair}
+.app2 .veil{position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(1200px 700px at 50% 40%, transparent 55%, rgba(4,6,9,.72) 100%)}
+
+.app2 .ov{position:absolute; z-index:3}
+.app2 .ov.tl{top:16px; inset-inline-start:18px; display:flex; flex-direction:column; gap:8px}
+.app2 .ov.tr{top:16px; inset-inline-end:18px; display:flex; gap:10px}
+.app2 .seg-name{font-size:22px; font-weight:700; letter-spacing:.2px; display:flex; align-items:center; gap:9px}
+.app2 .seg-name span.k{font-size:12px; color:var(--mint2); border:1px solid rgba(55,224,164,.35); border-radius:6px; padding:2px 7px; font-weight:600}
+.app2 .seg-sub{color:var(--muted); font-size:12.5px}
+.app2 .hud{display:flex; gap:10px}
+.app2 .stat{
+  min-width:132px; padding:9px 13px; border-radius:12px; background:var(--panel);
+  border:1px solid var(--line); backdrop-filter:blur(8px);
+}
+.app2 .stat .lb{display:block; color:var(--dim); font-size:11px; margin-bottom:2px}
+.app2 .stat .vl{font-size:21px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.4px}
+.app2 .stat .vl i{font-style:normal; font-size:12px; color:var(--muted); margin-inline-start:4px; font-weight:500}
+.app2 .stat.warn .vl{color:var(--amber)}
+
+.app2 .legend{
+  position:absolute; z-index:3; inset-inline-start:18px; bottom:96px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 13px;
+  display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--muted); backdrop-filter:blur(8px);
+}
+.app2 .legend i{width:16px; height:3px; border-radius:2px; display:inline-block; margin-inline-end:8px; vertical-align:middle}
+.app2 .legend .row{display:flex; align-items:center}
+
+.app2 .bar{
+  position:absolute; z-index:4; inset-inline:18px; bottom:16px;
+  display:flex; align-items:center; gap:14px; padding:11px 15px;
+  background:var(--panel); border:1px solid var(--line); border-radius:14px; backdrop-filter:blur(10px);
+  box-shadow:0 18px 40px -24px #000;
+}
+.app2 .play{
+  width:42px; height:42px; border-radius:50%; display:grid; place-items:center; flex:0 0 auto;
+  background:linear-gradient(160deg,var(--mint),#199e78); color:#04120c; font-size:15px; font-weight:800;
+  box-shadow:0 6px 18px -8px rgba(55,224,164,.8);
+}
+.app2 .track{position:relative; flex:1; height:26px; display:flex; align-items:center; cursor:pointer}
+.app2 .track .rail{position:absolute; inset-inline:0; height:5px; border-radius:3px; background:#16202a}
+.app2 .track .fill{position:absolute; inset-inline-start:0; height:5px; border-radius:3px; background:linear-gradient(90deg,#1a9e79,var(--mint))}
+.app2 .track .knob{position:absolute; inset-inline-start:0; width:13px; height:13px; border-radius:50%; background:#eafff7; border:2px solid var(--mint); transform:translateX(50%)}
+.app2 .bar .t{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums; min-width:82px; text-align:center}
+.app2 .bar .sep{width:1px; height:22px; background:var(--line)}
+.app2 .bar select{
+  background:#0f1620; color:var(--ink); border:1px solid var(--line); border-radius:9px;
+  padding:6px 9px; font-family:inherit; font-size:13px;
+}
+
+/* ── اللوحة الجانبية ── */
+.app2 .panel{
+  border-inline-start:1px solid var(--line); background:linear-gradient(180deg,rgba(11,16,22,.92),rgba(7,10,14,.92));
+  padding:16px 16px 18px; overflow:auto; display:flex; flex-direction:column; gap:14px;
+}
+.app2 .panel h4{margin:0; font-size:12px; letter-spacing:.4px; color:var(--dim); font-weight:600; text-transform:none}
+.app2 .kpi{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+.app2 .kpi .c{border:1px solid var(--line); border-radius:12px; padding:10px 11px; background:rgba(255,255,255,.017)}
+.app2 .kpi .c b{display:block; font-size:23px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.3px}
+.app2 .kpi .c b i{font-style:normal; font-size:12px; color:var(--mint2); margin-inline-start:3px; font-weight:600}
+.app2 .kpi .c span{display:block; color:var(--muted); font-size:11.5px; margin-top:1px}
+.app2 .kpi .c small{display:block; color:var(--dim); font-size:10.5px; margin-top:5px}
+
+.app2 .segbar{display:flex; gap:6px; background:#0d141b; border:1px solid var(--line); border-radius:11px; padding:4px}
+.app2 .segbar button{flex:1; padding:7px 4px; border-radius:8px; font-size:12.5px; color:var(--muted)}
+.app2 .segbar button[aria-pressed="true"]{background:rgba(55,224,164,.14); color:var(--mint2); box-shadow:inset 0 0 0 1px rgba(55,224,164,.28)}
+
+.app2 .tog{display:flex; align-items:center; gap:9px; padding:7px 2px; font-size:13px; color:var(--muted)}
+.app2 .tog input{appearance:none; width:34px; height:19px; border-radius:999px; background:#1a2531; position:relative; transition:.18s; cursor:pointer; flex:0 0 auto}
+.app2 .tog input::after{content:""; position:absolute; top:2px; inset-inline-start:2px; width:15px; height:15px; border-radius:50%; background:#5d738a; transition:.18s}
+.app2 .tog input:checked{background:rgba(55,224,164,.24)}
+.app2 .tog input:checked::after{background:var(--mint); transform:translateX(-15px)}
+.app2 .tog label{cursor:pointer}
+
+.app2 .note{color:var(--dim); font-size:11.5px; line-height:1.6; margin:0; background:transparent; border:0; padding:0}
+.app2 .btnline{display:flex; gap:8px}
+.app2 .btn{
+  flex:1; text-align:center; padding:9px 10px; border-radius:10px; font-size:13px; font-weight:600;
+  border:1px solid rgba(55,224,164,.32); color:var(--mint2); background:rgba(55,224,164,.08);
+}
+.app2 .btn.ghost{border-color:var(--line); color:var(--muted); background:rgba(255,255,255,.02)}
+
+/* ── العرض: الجولة والتقاطع ── */
+.app2 .head{display:flex; align-items:flex-end; gap:14px; margin-bottom:14px}
+.app2 .head h1{margin:0; font-size:24px; letter-spacing:.2px}
+.app2 .head p{margin:4px 0 0; color:var(--muted); font-size:13px}
+.app2 .head .pill{font-size:11.5px; color:var(--mint2); border:1px solid rgba(55,224,164,.3); border-radius:999px; padding:3px 10px; margin-inline-start:auto}
+.app2 .player{display:grid; grid-template-columns:1fr 300px; gap:16px; align-items:start}
+.app2 .screen{border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:#04070a; box-shadow:0 24px 60px -34px #000}
+.app2 .screen video{display:block; width:100%; height:auto; max-height:calc(100vh - 326px); object-fit:contain; background:#000}
+.app2 .side{border:1px solid var(--line); border-radius:var(--r); background:var(--panel); padding:14px}
+.app2 .side h3{margin:0 0 10px; font-size:14px; color:var(--mint2); font-weight:600}
+.app2 .kv{display:grid; grid-template-columns:max-content minmax(0,1fr); gap:7px 10px; font-size:13px}
+.app2 .kv dt{color:var(--muted)}
+.app2 .kv dd{margin:0; font-weight:700; font-variant-numeric:tabular-nums; overflow-wrap:anywhere}
+.app2 .side ol,.app2 .side ul{margin:10px 0 0; padding-inline-start:18px; color:var(--muted); font-size:12.5px}
+.app2 .side li{margin-bottom:5px}
+.app2 .srcline{margin-top:12px; color:var(--dim); font-size:11px; direction:ltr; text-align:left}
+.app2 .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:16px}
+.app2 .cards .c{border:1px solid var(--line); border-radius:12px; padding:12px 13px; background:rgba(255,255,255,.016)}
+.app2 .cards .c b{display:block; font-size:22px; font-weight:800; font-variant-numeric:tabular-nums}
+.app2 .cards .c b i{font-style:normal; font-size:12px; color:var(--mint2); margin-inline-start:3px}
+.app2 .cards .c small{display:block; margin-top:4px; font-size:11.5px; color:var(--muted)}
+.app2 .cards .c span{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+.app2 .stack{margin-top:18px; display:grid; gap:14px}
+.app2 .stack .c{border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; background:var(--panel)}
+.app2 .stack h3{margin:0 0 8px; font-size:15px; color:var(--ink)}
+.app2 .stack p,.app2 .stack li{color:var(--muted); font-size:13px}
+
+.app2 .tip{
+  position:absolute; z-index:6; pointer-events:none; opacity:0; transform:translateY(4px); transition:.12s;
+  background:#0f1620; border:1px solid var(--line); border-radius:8px; padding:5px 9px; font-size:12px; color:var(--ink);
+  white-space:nowrap; box-shadow:0 10px 24px -14px #000;
+}
+@media (max-width:1180px){
+  .app2 #view-map{grid-template-columns:1fr 280px}
+  .app2 .player{grid-template-columns:1fr}
+}
+
+/* ── تبويب التحقق الميداني: تباين على الواجهة الداكنة ── */
+.app2 #view-validation .card{background:#0b1119;border:1px solid var(--line);box-shadow:none;color:var(--ink)}
+.app2 #view-validation .card.kpi .lab{color:var(--muted);font-size:12px;letter-spacing:.2px}
+.app2 #view-validation .card.kpi .val{color:var(--mint);font-size:30px;font-weight:800;direction:ltr;unicode-bidi:isolate}
+.app2 #view-validation .card.kpi .val span{font-size:14px;font-weight:600;color:var(--muted)}
+.app2 #view-validation .card.kpi .sub{color:var(--muted);font-size:12px;line-height:1.75;margin-top:6px}
+.app2 #view-validation h1,.app2 #view-validation h2,.app2 #view-validation h3{color:var(--ink)}
+.app2 #view-validation .lead,.app2 #view-validation .note{color:var(--muted)}
+.app2 #view-validation table.vtab{color:var(--ink);background:transparent;border-collapse:collapse}
+.app2 #view-validation table.vtab th{color:var(--muted);background:transparent;border-bottom:1px solid var(--line);font-weight:600}
+.app2 #view-validation table.vtab td{background:transparent;border-bottom:1px solid rgba(27,37,48,.8)}
+.app2 #view-validation table.vtab td.n{direction:ltr;unicode-bidi:isolate;text-align:left;font-variant-numeric:tabular-nums}

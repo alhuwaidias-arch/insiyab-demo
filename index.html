@@ -2,205 +2,168 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>انسياب — نموذج أولي: أثر إغلاق تقاطع على شبكة طريق</title>
-<meta name="description" content="نموذج أولي يعرض أثر سيناريوهات أعمال الطرق على شبكة شارع أنس بن مالك بالرياض: خريطة تفاعلية، منصة اختبار، تحليل آلي، وأدلة مقيسة من محاكاة SUMO.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انسياب · نموذج أولي — طريق أنس بن مالك</title>
+<meta name="description" content="نموذج أولي لواجهة انسياب: توأم رقمي حركي لطريق أنس بن مالك في الرياض، مسنود إلى جولة ميدانية 14/11/2026 ومحاكاة SUMO.">
+<script>window.addEventListener("error",function(e){document.title="JSERR "+e.message+" @"+(e.filename||"").split("/").pop()+":"+e.lineno;});</script>
 <link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/ui.css">
 </head>
-<body>
+<body class="app2">
 
 <header class="top">
-  <div class="wrap">
-    <div class="brand">انسياب <small>نموذج أولي · انفراد</small></div>
-    <nav class="tabs" role="tablist">
-      <button data-view="overview" aria-selected="true">الخلاصة</button>
-      <button data-view="validation" aria-selected="false">التحقق الميداني</button>
-      <button data-view="map" aria-selected="false">الطريق</button>
-      <button data-view="lab" aria-selected="false">الاختبار</button>
-      <button data-view="analyst" aria-selected="false">التحليل</button>
-      <button data-view="images" aria-selected="false">الأثر بالصور</button>
-      <button data-view="method" aria-selected="false">المنهجية</button>
-    </nav>
+  <div class="brand">
+    <span class="mark">⇄</span>
+    <div><b>انسياب</b><small>التوأم الرقمي الحركي — الرياض</small></div>
   </div>
+  <div class="chips">
+    <span class="chip live"><span class="dot"></span>محرك المحاكاة يعمل</span>
+    <span class="chip">SUMO <b class="ltr">1.27.0</b></span>
+    <span class="chip">شبكة الممر <b class="ltr" id="chip-edges">—</b> حافة</span>
+    <span class="chip">جولة ميدانية <b class="ltr">14/11/2026</b></span>
+  </div>
+  <div class="clock"><b class="ltr" id="clock">--:--:--</b><small>ساعة اللوحة — الرياض (UTC+3)</small></div>
 </header>
 
-<main class="wrap">
+<nav class="tabs" role="tablist">
+  <button role="tab" data-view="map" aria-selected="true">المحاكي الحي</button>
+  <button role="tab" data-view="trip" aria-selected="false">جولة طريق أنس</button>
+  <button role="tab" data-view="junction" aria-selected="false">تقاطع مزدحم · U-Turn</button>
+  <button role="tab" data-view="validation" aria-selected="false">التحقق الميداني</button>
+  <button role="tab" data-view="method" aria-selected="false">المنهجية والحدود</button>
+  <span class="spacer">الخيارات محصورة على طريق أنس بن مالك ومحيطه</span>
+</nav>
 
-  <!-- ============================================================ الخلاصة -->
-  <section class="view on" id="view-overview">
-    <h1>إغلاق تقاطع واحد: أين يذهب التأخير؟</h1>
-    <p class="lead">
-      نموذج أولي يبني شبكة شارع أنس بن مالك (الرياض) في محاكي SUMO، يشغّل خط الأساس ثم الإغلاق ثم التحويلة
-      على نفس الطلب ونفس البذور، ويعرض <b>أثر كل مقترح على الطريق</b> — ضلعًا بضلع — لا رقمًا واحدًا في عرض تقديمي.
-    </p>
+<main>
+  <!-- ═══ المحاكي الحي ═══ -->
+  <section class="view on" id="view-map">
+    <div class="stage">
+      <canvas id="map"></canvas>
+      <div class="veil"></div>
 
-    <div class="card" style="margin-top:6px;border-inline-start:4px solid var(--accent,#7fe3c4)">
-      <b>جديد — التحقق الميداني:</b> قياس مسجَّل من مركبة حقيقية على ممر الدراسة (مسجّل ESP32‑S3، تردد 1 هرتز)
-      مقابل الشبكة نفسها، مع جدول انحراف لكل مقطع وفيديو إعادة تشغيل الرحلة.
-      <a href="#" data-goto="validation" style="font-weight:600">افتح تاب «التحقق الميداني» ←</a>
-    </div>
+      <div class="ov tl">
+        <div class="seg-name"><span class="k">ممر</span><span id="seg-name">شارع أنس بن مالك</span></div>
+        <div class="seg-sub" id="seg-sub">—</div>
+      </div>
 
-    <div class="grid g4">
-      <div class="card kpi plain">
-        <div class="lab">زمن عبور الممر — قبل</div>
-        <div class="val" id="kpi-corridor">—</div>
-        <div class="sub" id="ov-corridor-sub">—</div>
+      <div class="ov tr">
+        <div class="stat"><span class="lb">السرعة الآن</span><span class="vl"><span id="hud-v">—</span><i>كم/س</i></span></div>
+        <div class="stat"><span class="lb">الساعة</span><span class="vl ltr" id="hud-t">—</span></div>
+        <div class="stat"><span class="lb">المسافة من البداية</span><span class="vl"><span id="hud-d">—</span><i>كم</i></span></div>
       </div>
-      <div class="card kpi bad">
-        <div class="lab">زمن الرحلة — بعد الإغلاق</div>
-        <div class="val" id="kpi-fleet">—</div>
-        <div class="sub" id="ov-fleet-sub">—</div>
-      </div>
-      <div class="card kpi warn">
-        <div class="lab">تأخير مضاف على الشبكة</div>
-        <div class="val" id="kpi-added">—</div>
-        <div class="sub" id="ov-added-sub">—</div>
-      </div>
-      <div class="card kpi ok">
-        <div class="lab">يبقى داخل شبكة الممر</div>
-        <div class="val" id="kpi-stay">—</div>
-        <div class="sub" id="ov-stay-sub">—</div>
-      </div>
-    </div>
 
-    <div class="card" style="margin-top:14px;border-inline-start:4px solid var(--navy)">
-      <h3 style="color:var(--navy)">الحكم في ثلاث أسطر</h3>
-      <p id="ov-verdict" style="margin:6px 0 0;font-size:15px">…</p>
-      <div class="kpis-inline">
-        <span>الكلفة/ذروة: <b id="kpi-cost">—</b></span>
-        <span class="sub" id="ov-cost-sub"></span>
-        <span>محرك: <b>SUMO 1.27.0</b></span>
-        <span>بذور: <b>5</b></span>
-        <span>أفق: <b>4 ساعات</b></span>
+      <div class="legend">
+        <div class="row"><i style="background:#37e0a4"></i>مسار مقيس (جولة ميدانية)</div>
+        <div class="row"><i style="background:#ffb020"></i>مسار بين 10–40 كم/س</div>
+        <div class="row"><i style="background:#ff5d5d"></i>مسار دون 10 كم/س</div>
+        <div class="row"><i style="background:#2b3a4a"></i>شبكة الشوارع (من نموذج المحاكاة)</div>
       </div>
-    </div>
 
-    <div class="grid g2" style="margin-top:14px">
-      <div class="card">
-        <h3>من يدفع الثمن؟ (تأخير مضاف بالشوارع)</h3>
-        <div id="ov-streets" style="margin-top:10px"></div>
-        <div class="note" style="margin-top:12px">
-          الأعمدة تجميع فعلي لـ<span class="mono">damage_closure300.edges.csv</span> حسب اسم الشارع،
-          لا تصنيف يدوي.
+      <div class="bar">
+        <button class="play" id="play" aria-label="تشغيل">▶</button>
+        <div class="track" id="track">
+          <div class="rail"></div><div class="fill" id="fill"></div><div class="knob" id="knob"></div>
         </div>
+        <div class="t" id="t-pos">—</div>
+        <div class="sep"></div>
+        <select id="speed" aria-label="سرعة العرض">
+          <option value="60">×60</option>
+          <option value="120" selected>×120</option>
+          <option value="240">×240</option>
+          <option value="480">×480</option>
+        </select>
       </div>
-      <div class="card">
-        <h3>ماذا يفعل النموذج؟</h3>
-        <ul class="tight">
-          <li><b>يعرض الطريق:</b> 8,488 ضلعًا بموقعها الحقيقي (UTM 38N) مع تلوين التأخير.</li>
-          <li><b>يختبر:</b> أربعة أذرع مقيسة، ورفض صريح لأي مقترح بلا تشغيل.</li>
-          <li><b>يحلّل:</b> ترتيب الشوارع، انتقال الضرر، حساسية السياسة، الكلفة.</li>
-          <li><b>يُثبت:</b> 10 فحوص آلية تعمل في المتصفح وفي CI على الأرقام نفسها.</li>
+      <div class="tip" id="tip"></div>
+    </div>
+
+    <aside class="panel">
+      <h4>النطاق — محصور على الممر</h4>
+      <div class="segbar" id="segbar">
+        <button data-seg="all" aria-pressed="true">كامل</button>
+        <button data-seg="east" aria-pressed="false">شرقي</button>
+        <button data-seg="mid" aria-pressed="false">أوسط</button>
+        <button data-seg="west" aria-pressed="false">غربي</button>
+      </div>
+
+      <h4>الطبقات</h4>
+      <div class="tog"><input type="checkbox" id="ly-net" checked><label for="ly-net">شبكة الشوارع</label></div>
+      <div class="tog"><input type="checkbox" id="ly-corr" checked><label for="ly-corr">طريق أنس بن مالك</label></div>
+      <div class="tog"><input type="checkbox" id="ly-path" checked><label for="ly-path">الأثر المقيس</label></div>
+      <div class="tog"><input type="checkbox" id="ly-junc" checked><label for="ly-junc">موقع التقاطع المزدحم</label></div>
+
+      <h4>أرقام هذه الجولة</h4>
+      <div class="kpi" id="kpi"></div>
+
+      <h4>انتقل</h4>
+      <div class="btnline">
+        <button class="btn" data-goto="trip">الجولة كاملة</button>
+        <button class="btn ghost" data-goto="junction">مشهد U-Turn</button>
+      </div>
+
+      <p class="note" id="src-note">—</p>
+    </aside>
+  </section>
+
+  <!-- ═══ الجولة الميدانية ═══ -->
+  <section class="view" id="view-trip">
+    <div class="head">
+      <div>
+        <h1>جولة طريق أنس بن مالك — الشرق ← الغرب</h1>
+        <p>جولة ميدانية كاملة على الممر من شرقه إلى غربه، مسجّلة على جهاز القياس المثبّت في المركبة.</p>
+      </div>
+      <span class="pill">جولة واحدة · مسار متصل</span>
+    </div>
+    <div class="player">
+      <div class="screen"><video src="media/anas_trip.mp4" controls playsinline preload="metadata"></video></div>
+      <div class="side">
+        <h3>ما يراه المشاهد</h3>
+        <dl class="kv" id="trip-kv"><dt>—</dt><dd>—</dd></dl>
+        <ul>
+          <li>الأخضر = مسار المركبة المقيس؛ الكهرماني والأحمر = أجزاء دون 40 كم/س.</li>
+          <li>الخط الرمادي = شبكة الشوارع كما يراها نموذج المحاكاة، لا خريطة زخرفية.</li>
+          <li>عند فجوة في السجل يُقطع الأثر ولا يُوصل بخط مستقيم.</li>
         </ul>
-        <div class="chips" style="margin-top:14px">
-          <button data-goto="map">افتح الخريطة</button>
-          <button data-goto="lab">جرّب مقترحًا</button>
-          <button data-goto="analyst">اقرأ التحليل</button>
-        </div>
+        <p class="srcline">source: data/anas.json · data/_geo_meta.json</p>
+      </div>
+    </div>
+    <div class="cards" id="trip-cards"></div>
+  </section>
+
+  <!-- ═══ التقاطع المزدحم ═══ -->
+  <section class="view" id="view-junction">
+    <div class="head">
+      <div>
+        <h1>تقاطع مزدحم — سلوك الدوران للخلف (U-Turn)</h1>
+        <p>مخرج المحاكاة نفسه: مركبات تتقاطع، وثلاث مركبات تنفّذ الدوران في اللحظة نفسها من ثلاثة مسارات.</p>
+      </div>
+      <span class="pill">SUMO · FCD</span>
+    </div>
+    <div class="player">
+      <div class="screen"><video src="media/uturn_clip.mp4" controls playsinline preload="metadata"></video></div>
+      <div class="side">
+        <h3>المقيس في هذا المشهد</h3>
+        <dl class="kv" id="junc-kv"><dt>—</dt><dd>—</dd></dl>
+        <p class="srcline">source: data/junction.json ← fcd.xml</p>
+      </div>
+    </div>
+    <div class="cards" id="junc-cards"></div>
+    <div class="stack">
+      <div class="c">
+        <h3>لماذا هذا المشهد دليل قدرة لا لقطة عابرة</h3>
+        <p>الشبكة المستخرجة آليًا لا تحتوي وصلة دوران جاهزة. فبُنيت الحركة على طلب صريح: مركبة تنطلق على مقربة من التقاطع وتُوجَّه إلى الوصلة الداخلية ثم إلى الاتجاه المعاكس، مع إلغاء الإشارات الضوئية لأن الممر بلا إشارات فعلًا. النتيجة أن الدوران الظاهر في الفيديو سلوك مركبة محسوب خطوة بخطوة، وليس رسمًا توضيحيًا.</p>
+      </div>
+      <div class="c">
+        <h3>قراءة الشاشة</h3>
+        <ul>
+          <li>الكهرماني = مركبة مكلّفة بالدوران؛ الأبيض = حركة عابرة عادية.</li>
+          <li>الخط الرفيع = المسار الذي سلكته مركبة الدوران فعليًا.</li>
+          <li>العشوائية مضبوطة ببذرة ثابتة، فإعادة التشغيل تعطي المشهد نفسه — قابلية تكرار.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- ============================================================== الطريق -->
-  <section class="view" id="view-map">
-    <h1>الطريق</h1>
-    <p class="lead">
-      كل ضلع في الشبكة مرسوم من <span class="mono">insyab.net.xml</span> بإحداثياته الجغرافية.
-      بدّل السيناريو لترى أين يظهر التأخير، وأين تنتقل الحركة. مرّر المؤشر على أي ضلع لقراءة أرقامه.
-    </p>
-    <div id="map-host"></div>
-  </section>
-
-  <!-- ============================================================= الاختبار -->
-  <section class="view" id="view-lab">
-    <h1>منصة الاختبار</h1>
-    <p class="lead">
-      اختبار التدخّل هنا لا يعني رسمًا تخيليًا: اختر ذراعًا مقيسًا، أو اكتب مقترحك ليُطابق على ما شُغّل فعلًا.
-      القاعدة الحاكمة: <b>لا يوجد رقم بلا مجلد تشغيل</b>.
-    </p>
-    <div class="card" style="margin-bottom:14px">
-      <div class="grid g2" style="gap:14px">
-        <div>
-          <h3 style="margin:0 0 8px">ذراع مقيس — اختر لعرض تفاصيله</h3>
-          <div id="lab-pick" style="display:grid;gap:7px"></div>
-        </div>
-        <div>
-          <h3 style="margin:0 0 8px">مقترحك على الطريق</h3>
-          <input type="text" id="lab-proposal" placeholder="مثال: إغلاق تقاطع أنس × تركي مع تحويلة مدعومة">
-          <button class="primary" id="lab-run" style="margin-top:8px">طابِق المقترح على ما شُغّل</button>
-          <div class="note" style="margin-top:8px">
-            المطابقة على أربعة أذرع مقيسة فقط. أي مقترح لا يقابل تشغيلًا يخرج بـ<b>«غير مقيس»</b> لا بتقدير.
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="lab-body"></div>
-
-    <h2>فحوص آلية على الأرقام</h2>
-    <div class="card"><div id="tests"><div class="note">جارٍ التشغيل…</div></div></div>
-  </section>
-
-  <!-- ============================================================= التحليل -->
-  <section class="view" id="view-analyst">
-    <h1>التحليل الذكي</h1>
-    <p class="lead">
-      طبقتان: <b>محرّك حتمي</b> يحسب من البيانات ويسمّي الملف الذي جاء منه كل رقم (يعمل بلا إنترنت)،
-      و<b>طبقة لغوية اختيارية</b> تُمرّر الأرقام نفسها إلى نموذج لغوي بمفتاحك.
-    </p>
-
-    <div id="ai-brief"></div>
-    <div class="grid g2" id="findings"></div>
-
-    <h2>اسأل البيانات</h2>
-    <div class="grid g2">
-      <div class="card">
-        <div class="chat" id="chatlog"></div>
-        <div class="chips" id="chat-chips"></div>
-        <div class="chatbar">
-          <input type="text" id="chat-in" placeholder="مثال: من يدفع الثمن؟">
-          <button class="primary" id="chat-send">أرسل</button>
-        </div>
-        <div class="note" style="margin-top:10px">
-          المحرّك الحتمي يطابق سؤالك على أدوات محسوبة، ولا يولّد نصًّا حرًّا من خارج البيانات.
-        </div>
-      </div>
-      <div class="card">
-        <h3>طبقة لغوية اختيارية</h3>
-        <p style="font-size:13.5px;color:var(--muted);margin-top:0">
-          تُرسل ملخّص الأرقام (لا الخام) إلى واجهة متوافقة مع OpenAI. المفتاح يبقى في متصفحك؛
-          لا يوجد مفتاح مضمّن في هذا المستودع.
-        </p>
-        <button class="ghost" id="llm-toggle">إعداد الطبقة اللغوية</button>
-        <div id="llm-box" style="display:none;margin-top:12px">
-          <label style="font-size:12.5px;color:var(--muted)">العنوان</label>
-          <input type="text" id="llm-endpoint" value="https://api.deepseek.com" placeholder="https://…/v1">
-          <label style="font-size:12.5px;color:var(--muted);margin-top:8px;display:block">المفتاح</label>
-          <input type="password" id="llm-key" placeholder="sk-…">
-          <label style="font-size:12.5px;color:var(--muted);margin-top:8px;display:block">النموذج</label>
-          <input type="text" id="llm-model" value="deepseek-chat">
-          <button class="primary" id="llm-send" style="margin-top:10px">اسأل النموذج</button>
-        </div>
-        <div id="llm-out" style="margin-top:12px"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================= الأثر بالصور -->
-  <section class="view" id="view-images">
-    <h1>أثر التغيير بالصور</h1>
-    <p class="lead">
-      كل صورة أدناه مولّدة من التشغيلات نفسها: ثلاث لقطات للطريق من هذا التطبيق (خط الأساس، الإغلاق، الإغلاق مع تحويلة)
-      وثلاثة رسوم مبنية على <span class="mono">runs/*/edgedata.xml</span>. لا سهم مرسوم بيد ولا رقم خارج التشغيل.
-    </p>
-    <div id="beforeafter"></div>
-    <div class="grid g2" id="gallery" style="margin-top:16px"></div>
-    <div class="note" style="margin-top:14px">
-      طريقة التوليد: <span class="mono">build/make_figures.py</span> يقرأ <span class="mono">data/damage.json</span> و<span class="mono">data/trips.json</span>
-      ويكتب <span class="mono">data/figures.json</span>؛ ولقطات الطريق مأخوذة من تاب «الطريق» في هذا التطبيق على السيناريوهات الثلاثة.
-    </div>
-  </section>
-
-  <!-- ========================================================== التحقق الميداني -->
+  <!-- ═══ التحقق الميداني (أرقامه من data/validation.json) ═══ -->
   <section class="view" id="view-validation">
     <h1>التحقق الميداني — قياس حقيقي مقابل الشبكة</h1>
     <p class="lead" id="v-lead">…</p>
@@ -231,64 +194,41 @@
     </div>
   </section>
 
-  <!-- ============================================================ المنهجية -->
+  <!-- ═══ المنهجية ═══ -->
   <section class="view" id="view-method">
-    <h1>المنهجية والحدود</h1>
-    <p class="lead">
-      ما يصلح أن نقوله، وما لا يصلح — قبل أن يسأل أحد.
-    </p>
-
-    <div class="grid g2">
-      <div class="card">
-        <h3>خط الإنتاج</h3>
-        <ul class="tight">
-          <li><b>الشبكة:</b> <span class="mono">insyab.net.xml</span> (SUMO 1.27.0, UTM 38N).</li>
-          <li><b>الطلب:</b> ملف مسارات واحد يُستخدم في كل الأذرع (نفس الطلب، لا مضاعفة).</li>
-          <li><b>الأذرع:</b> خط أساس · إغلاق · إغلاق + تحويلة مدعومة · سياسة القياس.</li>
-          <li><b>البذور:</b> 1–5 لكل ذراع، 4 ساعات، <span class="mono">dial 8.0</span>.</li>
-          <li><b>القاضي:</b> كاشف الضرر لكل ضلع: <span class="mono">added_vh = (timeLoss_arm × entered) − (timeLoss_base × entered)</span>.</li>
-          <li><b>الحياد:</b> تشغيل مقابل نفسه ⇒ صافي صفر (مفحوص).</li>
+    <div class="head">
+      <div>
+        <h1>المنهجية والحدود — بلا مبالغة</h1>
+        <p>ما يقيسه النموذج اليوم، وما لا يقيسه بعد، وما خطوة التوسّع إلى مدينة كاملة.</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="c">
+        <h3>سلسلة القياس</h3>
+        <p>جهاز قياس مثبّت في المركبة يسجّل الموقع والسرعة والاتجاه كل ثانية، ثم تُنقل السجلات الخام إلى المستودع، فتُبنى منها النقاط والمقاطع، ثم تُطابق على شبكة SUMO المستخرجة. الأثر المرئي هو الأثر نفسه لا إعادة رسم.</p>
+      </div>
+      <div class="c">
+        <h3>حدود يجب أن تُقرأ مع الأرقام</h3>
+        <ul>
+          <li>الجولة واحدة على ممر واحد؛ ليست عيّنة عشوائية لكل الرياض.</li>
+          <li>الدقة تُحسب على المقاطع المتصلة فقط؛ فجوات السجل تُستثنى وتُذكر منفصلة.</li>
+          <li>ساعة الجهاز لم تكن مضبوطة على توقيت الرياض لحظة الجولة؛ الطوابع في الملف بتوقيت UTC ويُعرض المحلي بإضافة ثلاث ساعات.</li>
+          <li>المقطع بلا إشارات ضوئية — لأن الممر كذلك في الواقع، لا لأن النموذج عاجز عنها.</li>
         </ul>
-        <div style="margin-top:12px" id="policybox"></div>
       </div>
-      <div class="card">
-        <h3>الحدود — تُقال في العرض نفسه</h3>
-        <ul class="tight" id="limits"></ul>
+      <div class="c">
+        <h3>خطوة التوسّع</h3>
+        <p>البنية نفسها تتكرّر على أي ممر: قياس ميداني، شبكة، معايرة، ثم واجهة. توسيعها إلى مدينة يحتاج أسطول قياس ومصادر عدّ مرورية، والواجهة أمامه جاهزة للقراءة من الشبكة الكاملة بلا إعادة بناء.</p>
       </div>
-    </div>
-
-    <h2>الأرقام المسحوبة من التداول</h2>
-    <div class="card">
-      <p style="margin-top:0;font-size:13.5px;color:var(--muted)">
-        هذه صيغ ظهرت في مسودات سابقة ولم تثبت أمام إعادة التشغيل. لا تُذكر في أي مادة، ويفحصها
-        <code>tests/test_no_withdrawn_numbers.py</code> في كل دفع.
-      </p>
-      <ul class="tight" id="banned"></ul>
-    </div>
-
-    <h2>سلسلة الأدلة</h2>
-    <div class="card" style="padding:0;overflow:hidden">
-      <table>
-        <thead><tr><th>المكوّن</th><th>المصدر</th><th class="num">الحجم</th><th>بصمة (sha256/16)</th></tr></thead>
-        <tbody id="prov"></tbody>
-      </table>
-    </div>
-    <div class="note" style="margin-top:12px">
-      الأمر الواحد لإعادة البناء: <code>python build/extract_network.py &amp;&amp; python build/extract_arms.py</code>
-      ثم <code>pytest -q</code>. أي انحراف عن الأرقام المرجعية يُسقط البوابة.
+      <div class="c">
+        <h3>كيف تُقرأ هذه الصفحة</h3>
+        <p>كل رقم في هذه الواجهة يُقرأ من ملف بيانات مُولَّد بسكربت، ولا رقم مكتوب بيد. يحرس ذلك سكربت تحقق يفشل إن اختلف رقم في الصفحة عن ملفه.</p>
+      </div>
     </div>
   </section>
 </main>
 
-<footer>
-  <div class="wrap" style="display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between">
-    <span>انسياب — نموذج أولي · انفراد القابضة · Riyadh GovJam 2026 / IECE</span>
-    <span>المحرك: Eclipse SUMO 1.27.0 · البيانات: تشغيلات محفوظة · الرخصة: MIT للكود</span>
-  </div>
-</footer>
-
-<script src="assets/app.js"></script>
-  <script src="assets/validation.js"></script>
-
+<script src="assets/validation.js" defer></script>
+<script src="assets/app2.js" defer></script>
 </body>
 </html>
