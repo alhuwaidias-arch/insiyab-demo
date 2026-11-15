@@ -19,7 +19,7 @@
     d.className = "card kpi ok";
     d.innerHTML =
       '<div class="lab">' + k.label + "</div>" +
-      '<div class="val">' + k.value + "<span> " + k.unit + "</span></div>" +
+      '<div class="val ltr">' + k.value + "<span> " + k.unit + "</span></div>" +
       '<div class="sub">' + k.foot + "</div>";
     return d;
   }
@@ -50,7 +50,21 @@
         s.vehicle + " · " + s.logger + " · " + LRI + s.firmware + PDI;
 
       var box = document.getElementById("v-kpis");
-      v.kpis.forEach(function (k) { box.appendChild(kpiCard(k)); });
+      var totals = v.totals;
+      var percent = new Intl.NumberFormat('en', {
+        style: 'percent', signDisplay: 'always', maximumFractionDigits: 1
+      });
+      var withoutCap = percent.format(totals.net_uncapped_m / totals.field_m - 1);
+      var withCap = percent.format(totals.net_m / totals.field_m - 1);
+      [
+        { label: 'خطأ الطول التراكمي مع السقف', value: withCap, unit: '',
+          foot: 'على المقاطع المؤهلة، بعد تطبيق سقف لطول الوصل بين النقاط.' },
+        { label: 'خطأ الطول التراكمي دون السقف', value: withoutCap, unit: '',
+          foot: 'يكشف حساسية المطابقة لمسار الربط عبر الشبكة.' },
+        { label: 'نسبة مسافة الجولة الداخلة في المطابقة', value: v.kpis[2].value, unit: '%',
+          foot: 'تُحتسب من مسافة الجولة المسجّلة.' },
+        v.kpis[3]
+      ].forEach(function (k) { box.appendChild(kpiCard(k)); });
 
       var vid = document.getElementById("v-video-body");
       vid.innerHTML =
@@ -61,17 +75,18 @@
         v.video.sha16 + "…</span> · الأثر الأخضر مقيس، الأزرق وقوف، الكهرماني سرعة عالية</p>";
 
       var lim = document.getElementById("v-limits");
-      v.limits.forEach(function (t) {
+      v.limits.filter(function (line) { return line.includes("MAPE") || line.includes("n=1"); }).concat([
+        "سجل الجولة يدعم المطابقة المكانية. تقييم دقة زمن الرحلة أو الطوابير في سيناريو الإغلاق يحتاج قياسًا ميدانيًا مستقلًا."
+      ]).forEach(function (t) {
         var li = document.createElement("li");
         li.textContent = t;
         lim.appendChild(li);
       });
 
-      var tt = v.totals;
+      var tt = totals;
       document.getElementById("v-totals").textContent =
         "المجموع: ميدان " + fmt(tt.field_m) + " م مقابل شبكة " + fmt(tt.net_m) + " م (خطأ " +
-        tt.agg_err_pct + "%). ولو رُفع شرط الحركة الفيزيائية: " + fmt(tt.net_uncapped_m) +
-        " م ⇒ دقة " + tt.uncapped_accuracy_pct + "%.";
+        withCap + "). طول الشبكة عند إزالة السقف " + fmt(tt.net_uncapped_m) + " م (" + withoutCap + ").";
 
       document.getElementById("v-table").appendChild(table(
         ["المقطع (الرياض)", "نقاط", "ميدان م", "شبكة م", "خطأ %", "كم/س"],
@@ -82,7 +97,7 @@
 
       document.getElementById("v-evidence").appendChild(table(
         ["الملف", "بايت", "sha256", "ماذا يثبت"],
-        v.evidence.map(function (e) {
+        v.evidence.filter(function (e) { return e.bytes; }).map(function (e) {
           return ['<span class="mono">' + e.file + "</span>",
                   e.bytes ? fmt(e.bytes) : "—",
                   e.sha16 ? '<span class="mono">' + e.sha16 + "…</span>" : "—",

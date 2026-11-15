@@ -5,37 +5,61 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>انسياب · نموذج أولي — طريق أنس بن مالك</title>
 <meta name="description" content="نموذج أولي لواجهة انسياب: توأم رقمي حركي لطريق أنس بن مالك في الرياض، مسنود إلى جولة ميدانية 14/11/2026 ومحاكاة SUMO.">
-<script>window.addEventListener("error",function(e){document.title="JSERR "+e.message+" @"+(e.filename||"").split("/").pop()+":"+e.lineno;});</script>
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/ui.css">
+<link rel="stylesheet" href="assets/ui.css?v=committee">
 </head>
 <body class="app2">
 
 <header class="top">
   <div class="brand">
     <span class="mark">⇄</span>
-    <div><b>انسياب</b><small>التوأم الرقمي الحركي — الرياض</small></div>
+    <div><b>انسياب</b><small>التوأم الرقمي لحركة مرور الرياض</small></div>
   </div>
-  <div class="chips">
-    <span class="chip live"><span class="dot"></span>محرك المحاكاة يعمل</span>
-    <span class="chip">SUMO <b class="ltr">1.27.0</b></span>
-    <span class="chip">شبكة الممر <b class="ltr" id="chip-edges">—</b> حافة</span>
-    <span class="chip">جولة ميدانية <b class="ltr">14/11/2026</b></span>
-  </div>
-  <div class="clock"><b class="ltr" id="clock">--:--:--</b><small>ساعة اللوحة — الرياض (UTC+3)</small></div>
+  <div class="chips"><span class="chip">طريق أنس بن مالك · الممر التجريبي الأول</span></div>
+  <div class="developer">تطوير <strong>انفراد</strong> <span lang="en" dir="ltr">INFIRAD</span></div>
 </header>
 
 <nav class="tabs" role="tablist">
-  <button role="tab" data-view="map" aria-selected="true">المحاكي الحي</button>
+  <button role="tab" data-view="decision" aria-selected="true">تجربة القرار</button>
+  <button role="tab" data-view="map" aria-selected="false">خريطة الجولة</button>
   <button role="tab" data-view="trip" aria-selected="false">جولة طريق أنس</button>
-  <button role="tab" data-view="validation" aria-selected="false">التحقق الميداني</button>
+  <button role="tab" data-view="validation" aria-selected="false">مطابقة القياس بالشبكة</button>
   <button role="tab" data-view="method" aria-selected="false">المنهجية والحدود</button>
-  <span class="spacer">الخيارات محصورة على طريق أنس بن مالك ومحيطه</span>
 </nav>
 
 <main>
-  <!-- ═══ المحاكي الحي ═══ -->
-  <section class="view on" id="view-map">
+  <section class="view on" id="view-decision" aria-labelledby="decision-title">
+    <div class="decision-layout">
+      <div class="decision-intro">
+        <p class="decision-location">الرياض <span></span> أنس بن مالك × الأمير تركي بن عبدالعزيز الأول</p>
+        <h1 id="decision-title">اختبر أثر إغلاق تقاطع <em>قبل تنفيذه</em></h1>
+        <p class="decision-lead">يقارن انسياب بدائل أعمال الطرق في نموذج مروري، ويبيّن لجهة التشغيل أين ينتقل التأخير عند تغيير المسارات.</p>
+        <div class="decision-actions">
+          <button type="button" class="btn" data-goto="map">استعرض الجولة الميدانية</button>
+          <button type="button" class="btn ghost" data-goto="validation">راجع دليل القياس</button>
+        </div>
+        <div class="decision-proof" id="decision-proof" hidden>
+          <strong id="decision-points"></strong>
+          <span id="decision-coverage"></span>
+        </div>
+      </div>
+      <div class="scenario-panel" aria-labelledby="scenario-title">
+        <div class="scenario-head">
+          <div><p>تجربة إغلاق تقاطع أنس × تركي</p><h2 id="scenario-title">كم يتغير زمن الرحلة؟</h2></div>
+          <span class="scenario-tag">محاكاة SUMO محفوظة</span>
+        </div>
+        <p class="scenario-status" id="scenario-status" role="status">جارٍ تحميل نتائج المحاكاة…</p>
+        <div id="scenario-comparison" hidden>
+          <div class="scenario-rows" id="scenario-rows"></div>
+          <div class="scenario-axis" id="scenario-axis" aria-hidden="true"></div>
+          <div class="scenario-impact" id="scenario-impact" aria-live="polite"></div>
+          <p class="scenario-note" id="scenario-note"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-map">
     <div class="stage">
       <canvas id="map"></canvas>
       <div class="veil"></div>
@@ -46,8 +70,8 @@
       </div>
 
       <div class="ov tr">
-        <div class="stat"><span class="lb">السرعة الآن</span><span class="vl"><span id="hud-v">—</span><i>كم/س</i></span></div>
-        <div class="stat"><span class="lb">الساعة</span><span class="vl ltr" id="hud-t">—</span></div>
+        <div class="stat"><span class="lb">السرعة المسجّلة</span><span class="vl"><span id="hud-v">—</span><i>كم/س</i></span></div>
+        <div class="stat"><span class="lb">وقت العرض · الرياض</span><span class="vl ltr" id="hud-t">—</span></div>
         <div class="stat"><span class="lb">المسافة من البداية</span><span class="vl"><span id="hud-d">—</span><i>كم</i></span></div>
       </div>
 
@@ -60,11 +84,11 @@
 
       <div class="bar">
         <button class="play" id="play" aria-label="تشغيل">▶</button>
-        <div class="track" id="track">
-          <div class="rail"></div><div class="fill" id="fill"></div><div class="knob" id="knob"></div>
+        <div class="timeline">
+          <label for="track">الخط الزمني للجولة <span class="ltr" id="t-pos">—</span></label>
+          <input type="range" id="track" min="0" max="0" step="1" value="0" disabled>
+          <div class="timeline-ticks" id="timeline-ticks" aria-hidden="true"></div>
         </div>
-        <div class="t" id="t-pos">—</div>
-        <div class="sep"></div>
         <select id="speed" aria-label="سرعة العرض">
           <option value="60">×60</option>
           <option value="120" selected>×120</option>
@@ -72,11 +96,12 @@
           <option value="480">×480</option>
         </select>
       </div>
+      <p class="playback-gap" id="playback-gap" hidden>فجوة في السجل الميداني</p>
       <div class="tip" id="tip"></div>
     </div>
 
     <aside class="panel">
-      <h4>النطاق — محصور على الممر</h4>
+      <h4>نطاق عرض الجولة</h4>
       <div class="segbar" id="segbar">
         <button data-seg="all" aria-pressed="true">كامل</button>
         <button data-seg="east" aria-pressed="false">شرقي</button>
@@ -88,15 +113,14 @@
       <div class="tog"><input type="checkbox" id="ly-net" checked><label for="ly-net">شبكة الشوارع</label></div>
       <div class="tog"><input type="checkbox" id="ly-corr" checked><label for="ly-corr">طريق أنس بن مالك</label></div>
       <div class="tog"><input type="checkbox" id="ly-path" checked><label for="ly-path">الأثر المقيس</label></div>
-      <div class="tog"><input type="checkbox" id="ly-junc" checked><label for="ly-junc">موقع التقاطع المزدحم</label></div>
+      <div class="tog"><input type="checkbox" id="ly-junc" checked><label for="ly-junc">التقاطع محل الدراسة</label></div>
 
       <h4>أرقام هذه الجولة</h4>
       <div class="kpi" id="kpi"></div>
 
-      <h4>انتقل</h4>
       <div class="btnline">
         <button class="btn" data-goto="trip">الجولة كاملة</button>
-        <button class="btn ghost" data-goto="junction">مشهد U-Turn</button>
+        <button class="btn ghost" data-goto="decision">تجربة القرار</button>
       </div>
 
       <p class="note" id="src-note">—</p>
@@ -110,7 +134,7 @@
         <h1>جولة طريق أنس بن مالك — الشرق ← الغرب</h1>
         <p>جولة ميدانية كاملة على الممر من شرقه إلى غربه، مسجّلة على جهاز القياس المثبّت في المركبة.</p>
       </div>
-      <span class="pill">جولة واحدة · مسار متصل</span>
+      <span class="pill">جولة ميدانية واحدة</span>
     </div>
     <div class="player">
       <div class="screen"><video src="media/anas_trip.mp4" poster="images/poster_anas.jpg" controls playsinline preload="metadata"></video></div>
@@ -130,7 +154,7 @@
 
   <!-- ═══ التحقق الميداني (أرقامه من data/validation.json) ═══ -->
   <section class="view" id="view-validation">
-    <h1>التحقق الميداني — قياس حقيقي مقابل الشبكة</h1>
+    <h1>مطابقة الجولة الميدانية بشبكة الطرق</h1>
     <p class="lead" id="v-lead">…</p>
 
     <div class="grid g4" id="v-kpis"></div>
@@ -141,7 +165,7 @@
         <div id="v-video-body">…</div>
       </div>
       <div class="card">
-        <h3>ما لا يثبته هذا القياس</h3>
+        <h3>حدود المطابقة الميدانية</h3>
         <ul class="tight" id="v-limits"></ul>
       </div>
     </div>
@@ -163,7 +187,7 @@
   <section class="view" id="view-method">
     <div class="head">
       <div>
-        <h1>المنهجية والحدود — بلا مبالغة</h1>
+        <h1>المنهجية والحدود</h1>
         <p>ما يقيسه النموذج اليوم، وما لا يقيسه بعد، وما خطوة التوسّع إلى مدينة كاملة.</p>
       </div>
     </div>
@@ -178,12 +202,12 @@
           <li>الجولة واحدة على ممر واحد؛ ليست عيّنة عشوائية لكل الرياض.</li>
           <li>الدقة تُحسب على المقاطع المتصلة فقط؛ فجوات السجل تُستثنى وتُذكر منفصلة.</li>
           <li>ساعة الجهاز لم تكن مضبوطة على توقيت الرياض لحظة الجولة؛ الطوابع في الملف بتوقيت UTC ويُعرض المحلي بإضافة ثلاث ساعات.</li>
-          <li>المقطع بلا إشارات ضوئية — لأن الممر كذلك في الواقع، لا لأن النموذج عاجز عنها.</li>
+          <li>سيناريو الإغلاق مبني على شبكة مبسّطة. المعايرة التشغيلية تتطلب عدّ المركبات وقياس أزمنة الرحلات والطوابير في المقطع نفسه.</li>
         </ul>
       </div>
       <div class="c">
         <h3>خطوة التوسّع</h3>
-        <p>البنية نفسها تتكرّر على أي ممر: قياس ميداني، شبكة، معايرة، ثم واجهة. توسيعها إلى مدينة يحتاج أسطول قياس ومصادر عدّ مرورية، والواجهة أمامه جاهزة للقراءة من الشبكة الكاملة بلا إعادة بناء.</p>
+        <p>المرحلة الأولى على طريق أنس بن مالك. التوسع إلى ممرات الرياض يتطلب مصادر رصد دورية، وربطها بالشبكة، ومعايرة كل ممر والتحقق منه بقياسات مستقلة.</p>
       </div>
       <div class="c">
         <h3>كيف تُقرأ هذه الصفحة</h3>
@@ -193,7 +217,8 @@
   </section>
 </main>
 
-<script src="assets/validation.js" defer></script>
-<script src="assets/app2.js?v=nojunction" defer></script>
+<script src="assets/validation.js?v=committee" defer></script>
+<script src="assets/app2.js?v=committee" defer></script>
+<script src="assets/decision.js" defer></script>
 </body>
 </html>

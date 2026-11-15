@@ -4,12 +4,13 @@
   'use strict';
 
   var R = 6371008.8;
+  var MAX_LOG_GAP = 3;
   var TZ = 3 * 3600;                      // الرياض = UTC+3 بلا توقيت صيفي
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
   var S = {
-    data: null, junc: null,
+    data: null,
     lon0: 0, lat0: 0, scale: 1, tx: 0, ty: 0,
     W: 0, H: 0, dpr: Math.min(2, window.devicePixelRatio || 1),
     idx: 0, drawn: 0, playing: false, mult: 120, vt: 0,
@@ -93,7 +94,11 @@
       var tr = S.data.trace.p;
       g.strokeStyle = 'rgba(55,224,164,.20)'; g.lineWidth = 2.2;
       g.beginPath(); g.moveTo(px(tr[0][1]), py(tr[0][2]));
-      for (var v = 1; v < tr.length; v++) g.lineTo(px(tr[v][1]), py(tr[v][2]));
+      for (var v = 1; v < tr.length; v++) {
+        var point = tr[v];
+        if (point[0] - tr[v - 1][0] > MAX_LOG_GAP) g.moveTo(px(point[1]), py(point[2]));
+        else g.lineTo(px(point[1]), py(point[2]));
+      }
       g.stroke();
     }
 
@@ -122,10 +127,11 @@
 
   function extendPath(to) {
     var g = S.pctx, p = S.data.trace.p, seg = S.segBox;
+    if (!g) return;
     g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = 3.1;
     for (var i = S.drawn; i < to; i++) {
       var a = p[i], b = p[i + 1]; if (!b) break;
-      if (seg && (a[1] < seg[0] || a[1] > seg[2])) continue;
+      if (b[0] - a[0] > MAX_LOG_GAP || (seg && (a[1] < seg[0] || a[1] > seg[2]))) continue;
       g.strokeStyle = colorFor(a[3]);
       g.beginPath(); g.moveTo(px(a[1]), py(a[2])); g.lineTo(px(b[1]), py(b[2])); g.stroke();
     }
@@ -134,6 +140,10 @@
 
   /* ── الإطار ── */
   function frame() {
+    if (!$('#view-map').classList.contains('on')) {
+      requestAnimationFrame(frame);
+      return;
+    }
     var cv = $('#map'), ctx = cv.getContext('2d');
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, cv.width, cv.height);
@@ -141,7 +151,7 @@
     if ($('#ly-path').checked && S.path) ctx.drawImage(S.path, 0, 0);
 
     var p = S.data.trace.p, i = Math.min(S.idx, p.length - 1), q = p[i];
-    if ($('#ly-path').checked) {
+    if ($('#ly-path').checked && !inGap(p, i, S.vt)) {
       var x = px(q[1]), y = py(q[2]);
       // هالة
       var rg = ctx.createRadialGradient(x, y, 0, x, y, 26);
@@ -168,15 +178,25 @@
     return Math.atan2(y, x) * 180 / Math.PI;
   }
 
+  function inGap(points, i, time) {
+    return i < points.length - 1 && time > points[i][0] &&
+      points[i + 1][0] - points[i][0] > MAX_LOG_GAP;
+  }
+
   function updateHud(i) {
-    var p = S.data.trace.p, q = p[i], t0 = S.data.trace.t0;
-    $('#hud-v').textContent = fmt(q[3], 0);
-    $('#hud-t').textContent = hhmmss(t0 + q[0]);
-    $('#hud-d').textContent = fmt(distTo(i) / 1000, 2);
-    var f = i / Math.max(1, p.length - 1);
-    $('#fill').style.width = (f * 100) + '%';
-    $('#knob').style.insetInlineStart = (f * 100) + '%';
-    $('#t-pos').textContent = hhmmss(t0 + q[0]);
+    var p = S.data.trace.p, elapsed = Math.floor(S.vt);
+    var gap = inGap(p, i, elapsed);
+    var time = hhmmss(S.data.trace.t0 + elapsed);
+    $('#hud-v').textContent = gap ? '—' : fmt(p[i][3], 0);
+    $('#hud-t').textContent = time;
+    $('#hud-d').textContent = gap ? '—' : fmt(distTo(i) / 1000, 2);
+    $('#playback-gap').hidden = !gap;
+    $('#t-pos').textContent = time;
+    var track = $('#track');
+    if (+track.value !== elapsed || !track.hasAttribute('aria-valuetext')) {
+      track.value = elapsed;
+      track.setAttribute('aria-valuetext', time + (gap ? '، فجوة في السجل' : ''));
+    }
   }
 
   function distTo(i) { return S.cum && S.cum[i] != null ? S.cum[i] : 0; }
@@ -184,7 +204,9 @@
   function buildCum() {
     var p = S.data.trace.p; S.cum = [0];
     for (var k = 1; k < p.length; k++) {
-      S.cum[k] = S.cum[k - 1] + hav([p[k - 1][1], p[k - 1][2]], [p[k][1], p[k][2]]);
+      S.cum[k] = S.cum[k - 1];
+      if (p[k][0] - p[k - 1][0] > MAX_LOG_GAP) continue;
+      S.cum[k] += hav([p[k - 1][1], p[k - 1][2]], [p[k][1], p[k][2]]);
     }
   }
 
@@ -203,8 +225,17 @@
     }
     requestAnimationFrame(tick);
   }
-  function play() { S.playing = true; $('#play').textContent = '❚❚'; }
-  function stop() { S.playing = false; $('#play').textContent = '▶'; }
+  function play() {
+    S.playing = true;
+    $('#play').textContent = '❚❚';
+    $('#play').setAttribute('aria-label', 'إيقاف مؤقت');
+  }
+
+  function stop() {
+    S.playing = false;
+    $('#play').textContent = '▶';
+    $('#play').setAttribute('aria-label', 'تشغيل');
+  }
 
   /* ── الفهرس النصّي (اسم الشارع تحت المؤشر) ── */
   function buildIndex() {
@@ -274,23 +305,22 @@
   /* ── الملء من البيانات ── */
   function fillHead() {
     var d = S.data;
-    $('#chip-edges').textContent = d.edges.length.toLocaleString('en-US');
-    var box = $('#kpi'); box.innerHTML = '';
-    d.kpis.forEach(function (k) {
-      var c = document.createElement('div'); c.className = 'c';
-      c.innerHTML = '<b>' + k.value + '<i>' + k.unit + '</i></b><span>' + k.label + '</span>' +
-        (k.foot ? '<small>' + k.foot + '</small>' : '');
-      box.appendChild(c);
+    var totals = d.totals;
+    var cards = [
+      [totals.points.toLocaleString('en-US'), 'نقطة', 'سجل GPS لجولة واحدة'],
+      [fmt(totals.analysed_km, 2), 'كم', 'المسافة التي دخلت المطابقة'],
+      [fmt(totals.analysed_share_pct, 1), '%', 'نسبة مسافة الجولة الداخلة في المطابقة'],
+      [fmt(totals.mape_pct, 2), '%', 'متوسط الخطأ المطلق لطول المقاطع']
+    ];
+    [$('#kpi'), $('#trip-cards')].forEach(function (box) {
+      cards.forEach(function (k) {
+        var card = document.createElement('div');
+        card.className = 'c';
+        card.innerHTML = '<b>' + k[0] + '<i>' + k[1] + '</i></b><span>' + k[2] + '</span>';
+        box.appendChild(card);
+      });
     });
-    var gen = String(d.generated || '').replace('T', ' ').slice(0, 16);
-    $('#src-note').textContent = 'المصدر: سجل الجولة ' + gen + ' — يُولَّد بسكربت من سجل الجولة وشبكة المحاكاة.';
-    var tm = $('#trip-cards'); tm.innerHTML = '';
-    d.kpis.forEach(function (k) {
-      var c = document.createElement('div'); c.className = 'c';
-      c.innerHTML = '<b>' + k.value + '<i>' + k.unit + '</i></b><span>' + k.label + '</span>' +
-        (k.foot ? '<small>' + k.foot + '</small>' : '');
-      tm.appendChild(c);
-    });
+    $('#src-note').textContent = 'المصدر: سجل GPS لجولة ميدانية واحدة وشبكة المحاكاة.';
 
     var p = d.trace.p, dur = (d.trace.t1 - d.trace.t0);
     var kv = $('#trip-kv'); kv.innerHTML = '';
@@ -298,7 +328,6 @@
      ['نهاية الجولة (محلي)', hhmmss(d.trace.t1)],
      ['المدة', Math.floor(dur / 3600) + ' س ' + Math.round((dur % 3600) / 60) + ' د'],
      ['عقد المسار المسجّل', p.length.toLocaleString('en-US')],
-     ['أعلى سرعة مسجّلة', fmt(Math.max.apply(null, p.map(function (x) { return x[3]; })), 1) + ' كم/س'],
      ['شارع الممر', d.corridor + ' · ' + fmt(d.corridor_km, 2) + ' كم'],
      ['مقاطع مقاسة', d.totals.stretches + ' مقطعًا · تغطية ' + fmt(d.totals.analysed_share_pct, 1) + '%'],
      ['فجوات في السجل', d.totals.gaps]
@@ -311,20 +340,22 @@
 
   /* ── التبويبات ── */
   function goto(view) {
+    if (!document.getElementById('view-' + view)) view = 'decision';
+    if (view !== 'map' && S.playing) stop();
     $$('.tabs button').forEach(function (b) {
       b.setAttribute('aria-selected', b.getAttribute('data-view') === view ? 'true' : 'false');
     });
     $$('.view').forEach(function (v) {
       v.classList.toggle('on', v.id === 'view-' + view);
     });
-    if (view === 'map') { resize(); }
+    if (view === 'map' && S.data) { resize(); setSeg(S.seg); }
   }
 
   /* ── القياس ── */
   function resize() {
     var cv = $('#map');
     var rect = cv.getBoundingClientRect();
-    if (!rect.width) return;
+    if (!rect.width || !rect.height) return;
     S.W = rect.width; S.H = rect.height;
     cv.width = Math.round(S.W * S.dpr); cv.height = Math.round(S.H * S.dpr);
     if (S.data) { fit(S.segBox || S.data.bbox); drawBase(); extendPath(S.idx); }
@@ -332,11 +363,11 @@
 
   /* ── الإقلاع ── */
   function boot() {
-    Promise.all([
-      fetch('data/anas.json').then(function (r) { return r.json(); }),
-      fetch('data/junction.json').then(function (r) { return r.json(); }).catch(function () { return null; })
-    ]).then(function (res) {
-      S.data = res[0]; S.junc = res[1];
+    fetch('data/anas.json').then(function (r) {
+      if (!r.ok) throw new Error('تعذّر تحميل بيانات الجولة');
+      return r.json();
+    }).then(function (data) {
+      S.data = data;
       fillHead(); buildIndex(); buildCum();
       S.vt = 0; S.idx = 0;
       var m = /[#&]t=(\d+)/.exec(location.hash);
@@ -345,7 +376,17 @@
         for (var z = 0; z < tr0.length; z++) { if (tr0[z][0] >= want) { S.idx = z; break; } }
         S.vt = tr0[S.idx][0];
       }
-      resize(); setSeg('all'); extendPath(S.idx);
+      var track = $('#track'), duration = data.trace.t1 - data.trace.t0;
+      track.max = duration;
+      track.disabled = false;
+      for (var i = 0; i <= 4; i++) {
+        var label = document.createElement('span');
+        label.textContent = hhmmss(data.trace.t0 + Math.round(duration * i / 4)).slice(0, 5);
+        $('#timeline-ticks').appendChild(label);
+      }
+      var selected = $('.tabs button[aria-selected="true"]');
+      var requested = /[#&]v=(\w+)/.exec(location.hash);
+      goto(requested ? requested[1] : selected.getAttribute('data-view'));
       requestAnimationFrame(frame); requestAnimationFrame(tick);
 
       $('#play').onclick = function () {
@@ -357,24 +398,18 @@
       $('#segbar').onclick = function (e) {
         var b = e.target.closest('button'); if (b) setSeg(b.getAttribute('data-seg'));
       };
-      ['ly-net', 'ly-corr', 'ly-junc'].forEach(function (id) {
+      ['ly-net', 'ly-corr', 'ly-junc', 'ly-path'].forEach(function (id) {
         $('#' + id).onchange = function () { drawBase(); extendPath(S.idx); };
       });
-      $('#ly-path').onchange = function () { };
-      $('#track').onmousedown = function (e) {
-        var r = e.currentTarget.getBoundingClientRect();
-        var f = 1 - (e.clientX - r.left) / r.width;
-        f = Math.min(1, Math.max(0, f));
-        var n = S.data.trace.p.length - 1;
-        S.idx = Math.round(f * n); S.vt = S.data.trace.p[S.idx][0];
+      track.oninput = function () {
+        var points = S.data.trace.p;
+        S.vt = +track.value;
+        S.idx = 0;
+        while (S.idx < points.length - 1 && points[S.idx + 1][0] <= S.vt) S.idx++;
         resetPath(); extendPath(S.idx);
+        updateHud(S.idx);
       };
-      $$('[data-goto]').forEach(function (b) {
-        b.onclick = function () { goto(b.getAttribute('data-goto')); };
-      });
-      $$('.tabs button').forEach(function (b) {
-        b.onclick = function () { goto(b.getAttribute('data-view')); };
-      });
+
 
       // تسمية الشارع تحت المؤشر
       var tip = $('#tip');
@@ -394,20 +429,14 @@
 
       window.addEventListener('resize', resize);
       var box = $('#view-map'); if (box && window.ResizeObserver) new ResizeObserver(resize).observe(box);
-      var mv = /[#&]v=(\w+)/.exec(location.hash);
-      goto(mv ? mv[1] : 'map');
     }).catch(function (err) {
-      document.title = 'فشل تحميل البيانات: ' + err.message;
+      $('#seg-sub').textContent = 'تعذّر تحميل بيانات الجولة.';
       console.error(err);
     });
   }
 
-  function clock() {
-    var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
-    var s = new Date(d.getTime() + (TZ * 1000) + (d.getTimezoneOffset() * 60000));
-    $('#clock').textContent = p(s.getHours()) + ':' + p(s.getMinutes()) + ':' + p(s.getSeconds());
-    setTimeout(clock, 1000);
-  }
-
-  document.addEventListener('DOMContentLoaded', function () { clock(); boot(); });
+  $('.tabs button').forEach(function (button) {
+    button.addEventListener('click', function () { goto(button.getAttribute('data-view')); });
+  });
+  document.addEventListener('DOMContentLoaded', boot);
 })();
