@@ -1,25 +1,76 @@
 {
- "peak_vehicles": 47,
- "peak_t": 45.5,
+ "scene": "sumo4 — أربعة مسارات، ثلاث محاولات دوران، فتحة واحدة",
  "window": [
-  28.0,
-  46.0
+  58.0,
+  102.0
  ],
- "span_s": 18.0,
- "frames": 450,
- "edges": 179,
- "traffic_lights": 0,
- "vehicles_total": 54,
- "uturn_vehicles": [
-  "UT_1",
-  "UT_2",
-  "UT_3"
+ "span_s": 44.0,
+ "fps": 25.0,
+ "frames": 1100,
+ "peak_vehicles": 81,
+ "peak_t": 102.0,
+ "vehicles_total": 102,
+ "lanes": [
+  {
+   "lane": "app_0",
+   "mean_kmh": 50.3,
+   "stopped_max": 1,
+   "queue_m": 49.9,
+   "free_share_pct": 99.1
+  },
+  {
+   "lane": "app_1",
+   "mean_kmh": 27.9,
+   "stopped_max": 9,
+   "queue_m": 50.0,
+   "free_share_pct": 11.3
+  },
+  {
+   "lane": "app_2",
+   "mean_kmh": 23.4,
+   "stopped_max": 10,
+   "queue_m": 55.5,
+   "free_share_pct": 0.0
+  },
+  {
+   "lane": "app_3",
+   "mean_kmh": 21.9,
+   "stopped_max": 9,
+   "queue_m": 62.3,
+   "free_share_pct": 0.0
+  }
  ],
- "turn_times": [
-  33.1,
-  34.6,
-  37.2
- ],
- "turn_spread_s": 4.1,
- "uturn_turned": 3
+ "jam_onset_s": 58.0,
+ "stopped_mean_total": 18.2,
+ "uturn_started": 45,
+ "uturn_completed": 5,
+ "uturn_waiting_peak": 40,
+ "uturn_throughput_veh_h": 409.1,
+ "uturn_mean_wait_s": 20.8,
+ "uturn_wait_max_s": 39.4,
+ "triple_overlap_s": 44.2,
+ "triple_events": 1,
+ "straight_free_pct": 99.1,
+ "demand": {
+  "thru_vph": 1200,
+  "ut_legal_vph": 600,
+  "ut_mid_vph": 520,
+  "ut_right_vph": 420,
+  "wb_vph": 800,
+  "seed": 42
+ },
+ "net": {
+  "edges": 5,
+  "approach_lanes": 4,
+  "connections_to_uturn": 6,
+  "uturn_lane_speed_ms": 6.0,
+  "uturn_lane_length_m": 5.35,
+  "traffic_lights": 0
+ },
+ "clip": {
+  "src": "media/uturn_clip.mp4",
+  "bytes": 1706456,
+  "duration_s": 44.0,
+  "frames": 1100
+ }
 }

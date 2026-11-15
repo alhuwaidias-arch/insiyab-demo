@@ -313,29 +313,35 @@
     var j = S.junc, kv = $('#junc-kv'), cm = $('#junc-cards');
     if (!j) return;
     kv.innerHTML = ''; cm.innerHTML = '';
-    [['أعلى عدد مركبات في خطوة واحدة', j.peak_vehicles],
-     ['زمن الذروة داخل المشهد (ث)', j.peak_t],
-     ['مركبات الدوران المكلّفة', j.uturn_vehicles],
-     ['إجمالي المركبات في المشهد', j.vehicles_total],
-     ['مركبات الدوران التي نفّذته', j.uturn_turned],
-     ['أزمنة الدخول للوصلة الداخلية (ث)', '\u2066' + j.turn_times.join(' · ') + '\u2069'],
-     ['انتشار أزمنة الدوران (ث)', j.turn_spread_s],
-     ['حواف المشهد المقصوص', j.edges],
-     ['إشارات ضوئية في المشهد', j.traffic_lights],
-     ['مدى المشهد (ث)', j.span_s],
-     ['إطارات المشهد عند 25 إطارًا/ث', j.frames]
-    ].forEach(function (r) {
+    var L = (j.lanes || []), free = L[0] || {};
+    var rows = [
+      ['حارات الاقتراب ← فتحة الدوران', L.length + ' ← 1'],
+      ['مركبات في أعلى خطوة / حجم المشهد', j.peak_vehicles + ' / ' + j.vehicles_total],
+      ['بدأت الدوران داخل النافذة', j.uturn_started],
+      ['أكملته عبر الفتحة', j.uturn_completed],
+      ['معدل إنجاز الفتحة (مركبة/ساعة)', j.uturn_throughput_veh_h],
+      ['متوسط الانتظار قبل الدوران (ث)', j.uturn_mean_wait_s],
+      ['ثوانٍ بثلاث دورانات على ثلاث حارات معاً', j.triple_overlap_s],
+      ['نسبة خلو المسار الأول من أي متوقف (%)', j.straight_free_pct],
+      ['أول توقف جماعي (ث)', j.jam_onset_s],
+      ['مدى المشهد (ث) / إطارات', j.span_s + ' / ' + j.frames],
+      ['حواف الشبكة / إشارات', j.net.edges + ' / ' + j.net.traffic_lights],
+      ['سرعة فتحة الدوران (م/ث)', j.net.uturn_lane_speed_ms],
+      ['الطلب: مستقيم / دوران (مركبة/ساعة)',
+        j.demand.thru_vph + ' / ' + ((j.demand.ut_legal_vph || 0) + (j.demand.ut_mid_vph || 0) + (j.demand.ut_right_vph || 0))]
+    ];
+    rows.forEach(function (r) {
       var dt = document.createElement('dt'); dt.textContent = r[0];
-      var dd = document.createElement('dd'); dd.textContent = r[1];
+      var dd = document.createElement('dd');
+      dd.textContent = (typeof r[1] === 'number' && r[1] % 1) ? r[1].toFixed(1) : (r[1] === null ? '—' : r[1]);
       kv.appendChild(dt); kv.appendChild(dd);
     });
-    [[j.peak_vehicles, 'مركبة', 'في الذروة داخل المشهد'],
-     [j.peak_t, 'ث', 'زمن الذروة في المحاكاة'],
-     [j.uturn_turned + '/' + j.uturn_vehicles, '', 'نفّذت الدوران للخلف'],
-     [j.turn_spread_s, 'ث', 'انتشار أزمنة الدوران']
-    ].forEach(function (r) {
+    L.forEach(function (l, i) {
+      var num = i + 1;
       var c = document.createElement('div'); c.className = 'c';
-      c.innerHTML = '<b>' + r[0] + '<i>' + r[1] + '</i></b><span>' + r[2] + '</span>';
+      c.innerHTML = '<b>' + l.mean_kmh.toFixed(1) + '<i>كم/س</i></b>' +
+        '<span>المسار ' + num + ' · أقصى توقف ' + l.stopped_max +
+        ' · طابور ' + l.queue_m.toFixed(0) + ' م</span>';
       cm.appendChild(c);
     });
   }
