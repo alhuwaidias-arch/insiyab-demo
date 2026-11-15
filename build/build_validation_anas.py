@@ -57,7 +57,6 @@ def build():
         })
 
     vid = os.path.join(ROOT, 'media', 'anas_trip.mp4')
-    clip = os.path.join(ROOT, 'media', 'uturn_clip.mp4')
     vsec = 88.08
     span = t1 - t0
     out = {
@@ -129,13 +128,6 @@ def build():
             'bytes': sz(vid),
             'sha16': sha16(vid) if os.path.exists(vid) else '',
         },
-        'clip': {
-            'src': 'media/uturn_clip.mp4',
-            'seconds': 26.56,
-            'bytes': sz(clip),
-            'sha16': sha16(clip) if os.path.exists(clip) else '',
-            'peak_vehicles': json.load(open(os.path.join(ROOT, 'data', 'junction.json'), encoding='utf-8'))['peak_vehicles'],
-        },
         'source': 'ACCURACY_ANAS.json ← acc_anas.py على derived/points_anas.csv × insyab_v2.net.xml',
     }
 
@@ -151,5 +143,5 @@ if __name__ == '__main__':
                       'stretches': len(out['stretches']),
                       'agg': out['totals']['agg_err_pct'],
                       'uncapped': out['totals']['uncapped_accuracy_pct'],
-                      'video': out['video']['bytes'], 'clip': out['clip']['bytes'],
+                      'video': out['video']['bytes'],
                       'window_local': out['session']['window_local']}, ensure_ascii=False))

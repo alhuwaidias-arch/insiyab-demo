@@ -28,7 +28,6 @@
 <nav class="tabs" role="tablist">
   <button role="tab" data-view="map" aria-selected="true">المحاكي الحي</button>
   <button role="tab" data-view="trip" aria-selected="false">جولة طريق أنس</button>
-  <button role="tab" data-view="junction" aria-selected="false">الانعطاف · U-Turn</button>
   <button role="tab" data-view="validation" aria-selected="false">التحقق الميداني</button>
   <button role="tab" data-view="method" aria-selected="false">المنهجية والحدود</button>
   <span class="spacer">الخيارات محصورة على طريق أنس بن مالك ومحيطه</span>
@@ -129,41 +128,6 @@
     <div class="cards" id="trip-cards"></div>
   </section>
 
-  <!-- ═══ التقاطع المزدحم ═══ -->
-  <section class="view" id="view-junction">
-    <div class="head">
-      <div>
-        <h1>أربعة مسارات — ثلاثة تنعطف، ومسار واحد يمضي</h1>
-        <p>مخرج SUMO خام لطريق أنس في اتجاه واحد: أربعة مسارات وفتحة دوران واحدة. ثلاثة تدفقات تنعطف من ثلاث حارات في اللحظة نفسها، فيبقى مسار واحد للمضيّ، ويتحوّل الطريق إلى طابور.</p>
-      </div>
-      <span class="pill">SUMO · FCD</span>
-    </div>
-    <div class="player">
-      <div class="screen"><video src="media/uturn_clip.mp4" poster="images/poster_uturn.jpg" controls playsinline preload="metadata"></video></div>
-      <div class="side">
-        <h3>المقيس في هذا المشهد</h3>
-        <dl class="kv" id="junc-kv"><dt>—</dt><dd>—</dd></dl>
-        <p class="srcline">source: data/junction.json ← fcd4.xml · anas4.net.xml</p>
-      </div>
-    </div>
-    <div class="cards" id="junc-cards"></div>
-    <div class="stack">
-      <div class="c">
-        <h3>لماذا هذا هو الاختناق</h3>
-        <p>الفتحة بعرض مسار واحد، والمداخل إليها ثلاثة: مدخل نظامي من المسار الأيسر، ومدخلان يسلكهما سائقان من المسارين الأوسط والأيمن. كل السيارات تخرج من مخرج واحد، فمعدل إنجاز الفتحة يقلّ عن الطلب، ويتراكم الطابور على الحارات الثلاث بينما يبقى المسار الأول حرًا. الفرق بين هذا المشهد ولقطة توضيحية أنه سلوك مركبات محسوب خطوة بخطوة داخل SUMO: كل تشابك في الفيديو ناتج عن قرار تابع وتفاعل مع الجار، لا عن رسم يدوي.</p>
-      </div>
-      <div class="c">
-        <h3>قراءة الشاشة</h3>
-        <ul>
-          <li>الأصفر والأحمر والبرتقالي = ثلاث مركبات دوران من المسارات ٤ و٣ و٢ على الترتيب (الأول نظامي، والآخران من حارتين غير مخصصتين للانعطاف).</li>
-          <li>الأزرق = مركبة عابرة مستقيمة على المسار الأول؛ الرمادي = حركة الاتجاه المعاكس.</li>
-          <li>القوس الأخضر = مسار الدوران الوحيد المتاح عند الفتحة.</li>
-          <li>العشوائية مضبوطة ببذرة ثابتة، فإعادة التشغيل تعطي المشهد نفسه — قابلية تكرار.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
   <!-- ═══ التحقق الميداني (أرقامه من data/validation.json) ═══ -->
   <section class="view" id="view-validation">
     <h1>التحقق الميداني — قياس حقيقي مقابل الشبكة</h1>
@@ -230,6 +194,6 @@
 </main>
 
 <script src="assets/validation.js" defer></script>
-<script src="assets/app2.js?v=e51998c" defer></script>
+<script src="assets/app2.js?v=nojunction" defer></script>
 </body>
 </html>

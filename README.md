@@ -65,14 +65,13 @@ python build/verify_brief.py     # يفحص كل رقم في data/ai_brief.md م
 ## البنية
 
 ```
-index.html            واجهة واحدة RTL بخمسة تبويبات
+index.html            واجهة واحدة RTL بأربعة تبويبات
 assets/app2.js        محرك الجيل الثاني: يقرأ data/anas.json و data/junction.json فقط
 assets/ui.css         هوية انسياب الداكنة (#06080b · #37e0a4)
 data/anas.json        8,486 حافة + أثر الجولة 4,821 نقطة + بطاقات القياس (مولّد)
 data/junction.json    مشهد التقاطع: الذروة 47 مركبة وأزمنة U-Turn الثلاثة
 data/validation.json  مطابقة الجولة بالشبكة: 27 مقطعاً + البصمات (مولّد)
 media/anas_trip.mp4   فيديو الجولة كاملة شرقاً → غرباً (88 ث · 1600×900)
-media/uturn_clip.mp4  مشهد التقاطع من SUMO (26.6 ث · 1600×900)
 build/build_anas.py            جولة أنس ⇒ anas.json
 build/build_junction.py        مخرج FCD ⇒ junction.json
 build/build_validation_anas.py القياس ⇒ validation.json
@@ -82,6 +81,5 @@ build/verify_validation.py بوابة أرقام التاب (exit 3)
 ## الحدود
 
 - المحاكاة لا تتنبأ بحركة مرور الرياض كلها؛ النموذج الأولي يثبت المنهجية على ممر واحد مقيس.
-- مقطع الـU-Turn مُصمَّم لبيان السلوك غير المنتظم (ثلاثة مسارات تنعطف معاً)، لا لتقدير حجم الطلب.
 - الجولة واحدة في نهار واحد؛ لا تُعمَّم على ساعات الذروة أو أيام الأسبوع.
 - التأخير ليس كلفة مالية: التحويل إلى ريال يحتاج قيمة ساعة مركبة محلية لم تُقس هنا.

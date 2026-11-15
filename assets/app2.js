@@ -309,44 +309,6 @@
     });
   }
 
-  function fillJunction() {
-    var j = S.junc, kv = $('#junc-kv'), cm = $('#junc-cards');
-    if (!j) return;
-    kv.innerHTML = ''; cm.innerHTML = '';
-    var L = (j.lanes || []), free = L[0] || {};
-    var rows = [
-      ['حارات الاقتراب ← فتحة الدوران', L.length + ' ← 1'],
-      ['مركبات في أعلى خطوة / حجم المشهد', j.peak_vehicles + ' / ' + j.vehicles_total],
-      ['بدأت الدوران داخل النافذة', j.uturn_started],
-      ['أكملته عبر الفتحة', j.uturn_completed],
-      ['معدل إنجاز الفتحة (مركبة/ساعة)', j.uturn_throughput_veh_h],
-      ['متوسط الانتظار قبل الدوران (ث)', j.uturn_mean_wait_s],
-      ['ثوانٍ بثلاث دورانات على ثلاث حارات معاً', j.triple_overlap_s],
-      ['نسبة خلو المسار الأول من أي متوقف (%)', j.straight_free_pct],
-      ['نافذة العرض (ث)', j.window[0] + '–' + j.window[1]],
-      ['ذروة المركبات (ث)', j.peak_t],
-      ['مدى المشهد (ث) / إطارات', j.span_s + ' / ' + j.frames],
-      ['حواف الشبكة / إشارات', j.net.edges + ' / ' + j.net.traffic_lights],
-      ['سرعة فتحة الدوران (م/ث)', j.net.uturn_lane_speed_ms],
-      ['الطلب: مستقيم / دوران (مركبة/ساعة)',
-        j.demand.thru_vph + ' / ' + ((j.demand.ut_legal_vph || 0) + (j.demand.ut_mid_vph || 0) + (j.demand.ut_right_vph || 0))]
-    ];
-    rows.forEach(function (r) {
-      var dt = document.createElement('dt'); dt.textContent = r[0];
-      var dd = document.createElement('dd');
-      dd.textContent = (typeof r[1] === 'number' && r[1] % 1) ? r[1].toFixed(1) : (r[1] === null ? '—' : r[1]);
-      kv.appendChild(dt); kv.appendChild(dd);
-    });
-    L.forEach(function (l, i) {
-      var num = i + 1;
-      var c = document.createElement('div'); c.className = 'c';
-      c.innerHTML = '<b>' + l.mean_kmh.toFixed(1) + '<i>كم/س</i></b>' +
-        '<span>المسار ' + num + ' · أقصى توقف ' + l.stopped_max +
-        ' · خلوّه من أي متوقف ' + l.free_share_pct.toFixed(1) + '%</span>';
-      cm.appendChild(c);
-    });
-  }
-
   /* ── التبويبات ── */
   function goto(view) {
     $$('.tabs button').forEach(function (b) {
@@ -375,7 +337,7 @@
       fetch('data/junction.json').then(function (r) { return r.json(); }).catch(function () { return null; })
     ]).then(function (res) {
       S.data = res[0]; S.junc = res[1];
-      fillHead(); fillJunction(); buildIndex(); buildCum();
+      fillHead(); buildIndex(); buildCum();
       S.vt = 0; S.idx = 0;
       var m = /[#&]t=(\d+)/.exec(location.hash);
       if (m) {

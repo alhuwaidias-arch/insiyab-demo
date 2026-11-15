@@ -334,12 +334,5 @@
   "bytes": 4063372,
   "sha16": "37708947ddeb27bf"
  },
- "clip": {
-  "src": "media/uturn_clip.mp4",
-  "seconds": 26.56,
-  "bytes": 1706456,
-  "sha16": "392a3f00ad311c9b",
-  "peak_vehicles": 81
- },
  "source": "ACCURACY_ANAS.json ← acc_anas.py على derived/points_anas.csv × insyab_v2.net.xml"
 }

@@ -105,7 +105,7 @@ def main():
         bad("js", "رقم قياسي مكتوب في validation.js: %s" % num)
 
     # 6. الفيديوهان
-    for key in ("video", "clip"):
+    for key in ("video",):
         blk = v.get(key) or {}
         if not blk.get("src"):
             bad(key, "لا مصدر معلن")
@@ -145,10 +145,10 @@ def main():
         for f in FAIL:
             print(" -", f)
         return 3
-    print("OK kpis=%d stretches=%d acc=%.1f%% uncapped=%.1f%% field=%.1f km video=%d B clip=%d B"
+    print("OK kpis=%d stretches=%d acc=%.1f%% uncapped=%.1f%% field=%.1f km video=%d B"
           % (len(v["kpis"]), len(v["stretches"]), t["accuracy_pct"],
              t["uncapped_accuracy_pct"], t["field_m"] / 1000.0,
-             v["video"]["bytes"], v["clip"]["bytes"]))
+             v["video"]["bytes"]))
     return 0
 
 

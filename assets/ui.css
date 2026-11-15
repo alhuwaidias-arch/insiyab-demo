@@ -64,7 +64,7 @@ body.app2{
 .app2 .view.on{display:grid}
 .app2 #view-map{grid-template-columns:1fr 322px}
 .app2 #view-map aside{overflow:auto; min-height:0}
-.app2 #view-trip,.app2 #view-junction,.app2 #view-method{grid-template-columns:1fr; padding:22px 26px; overflow:auto; align-content:start}
+.app2 #view-trip,.app2 #view-method{grid-template-columns:1fr; padding:22px 26px; overflow:auto; align-content:start}
 .app2 #view-validation{grid-template-columns:1fr; padding:22px 26px; overflow:auto; align-content:start; display:none}
 .app2 #view-validation.on{display:grid}
 
