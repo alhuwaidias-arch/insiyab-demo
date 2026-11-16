@@ -16,11 +16,11 @@
 
   function kpiCard(k) {
     var d = document.createElement("div");
-    d.className = "card kpi ok";
+    d.className = "c";
     d.innerHTML =
-      '<div class="lab">' + k.label + "</div>" +
-      '<div class="val">' + k.value + "<span> " + k.unit + "</span></div>" +
-      '<div class="sub">' + k.foot + "</div>";
+      "<b>" + k.value + "<i>" + k.unit + "</i></b>" +
+      "<span>" + k.label + "</span>" +
+      "<small>" + k.foot + "</small>";
     return d;
   }
 

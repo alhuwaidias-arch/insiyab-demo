@@ -125,8 +125,8 @@ def main():
         for f in ("value", "unit", "label", "foot"):
             if not str(k.get(f, "")).strip():
                 bad("kpi", "البطاقة %d ينقصها الحقل %s" % (i, f))
-    if len(v["kpis"]) != 3:
-        bad("kpi", "عدد البطاقات %d != 3" % len(v["kpis"]))
+    if len(v["kpis"]) != 4:
+        bad("kpi", "عدد البطاقات %d != 4" % len(v["kpis"]))
 
     # 8. README — يتحقق مما يدّعيه README فعلًا (لا من أرقام لا تُعرض في الواجهة)
     rd = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
@@ -141,9 +141,28 @@ def main():
     if "%.1f%%" % t["uncapped_accuracy_pct"] in rd:
         bad("readme", "README يحمل رقمًا داخليًا لا يُعرض (%0.1f%% بلا سقف للوتر)"
             % t["uncapped_accuracy_pct"])
+    sp = [k for k in v["kpis"] if k.get("unit") == "كم/س"]
+    if not sp:
+        bad("kpi", "بطاقة متوسط السرعة مفقودة من البطاقات")
+    elif round(float(sp[0]["value"]), 1) != round(float(v["session"]["field_kmh_mean"]), 1):
+        bad("kpi", "قيمة السرعة %s لا تطابق جلسة القياس %.1f"
+            % (sp[0]["value"], v["session"]["field_kmh_mean"]))
     for gone in ("20 من 27", "من 27 مقطع"):
         if gone in rd:
             bad("readme", "README يعيد بطاقة أُزيلت من الواجهة (%s)" % gone)
+
+    # 8ج. تبويب الجولات (data/anas.json) يحمل نفس البطاقات الأربع ونفس السرعة
+    _anas = os.path.join(ROOT, "data", "anas.json")
+    if os.path.exists(_anas):
+        anas = json.load(open(_anas, encoding="utf-8"))
+        ak = anas.get("kpis", [])
+        if len(ak) != len(v["kpis"]):
+            bad("kpi", "تبويب الجولات: %d بطاقات != %d في تبويب التحقق" % (len(ak), len(v["kpis"])))
+        asp = [k for k in ak if k.get("unit") == "كم/س"]
+        if not asp:
+            bad("kpi", "تبويب الجولات: بطاقة متوسط السرعة مفقودة")
+        elif round(float(asp[0]["value"]), 1) != round(float(anas["session"]["field_kmh_mean"]), 1):
+            bad("kpi", "تبويب الجولات: السرعة %s لا تطابق جلسة القياس" % asp[0]["value"])
 
     if FAIL:
         print("FAIL %d" % len(FAIL))

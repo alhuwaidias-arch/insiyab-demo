@@ -333,7 +333,7 @@
   /* ── الإقلاع ── */
   function boot() {
     Promise.all([
-      fetch('data/anas.json').then(function (r) { return r.json(); }),
+      fetch('data/anas.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
       fetch('data/junction.json').then(function (r) { return r.json(); }).catch(function () { return null; })
     ]).then(function (res) {
       S.data = res[0]; S.junc = res[1];
