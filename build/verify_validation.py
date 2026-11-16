@@ -7,7 +7,8 @@
  4. #view-validation في index.html لا يحمل أي رقم مكتوب بيد.
  5. validation.js لا يحمل رقماً قياسياً (يقرأ من JSON وحده).
  6. الفيديو ومقطع التقاطع: موجودان، وبالحجم والبصمة المعلنة.
- 7. كل KPI له قيمة ووحدة وتسمية وهامش؛ العدد 4.
+ 7. كل KPI له قيمة ووحدة وتسمية وهامش؛ العدد 5.
+ 7ب. بطاقة دقة الزمن = time_accuracy.json حرفيًا، وشبكتها هي نفس شبكة قياس الطول (نفس البصمة).
  8. README.md يحمل الأرقام الحالية نصاً.
 """
 import hashlib
@@ -125,12 +126,40 @@ def main():
         for f in ("value", "unit", "label", "foot"):
             if not str(k.get(f, "")).strip():
                 bad("kpi", "البطاقة %d ينقصها الحقل %s" % (i, f))
-    if len(v["kpis"]) != 4:
-        bad("kpi", "عدد البطاقات %d != 4" % len(v["kpis"]))
+    if len(v["kpis"]) != 5:
+        bad("kpi", "عدد البطاقات %d != 5" % len(v["kpis"]))
+
+    # 7ب. دقة الزمن: البطاقة = الملف، والشبكة واحدة في القياسين
+    tp = os.path.join(ROOT, "data", "time_accuracy.json")
+    if not os.path.exists(tp):
+        bad("time", "data/time_accuracy.json مفقود — دقة الزمن غير مولَّدة")
+    else:
+        tm = json.load(open(tp, encoding="utf-8"))
+        tk = [k for k in v["kpis"] if k.get("unit") == "%" and "زمن" in k.get("label", "")]
+        if not tk:
+            bad("time", "بطاقة دقة الزمن مفقودة")
+        else:
+            if not close(float(tk[0]["value"]), tm["time_accuracy_pct"], 0.06):
+                bad("time", "قيمة دقة الزمن %s != %s في الملف"
+                    % (tk[0]["value"], tm["time_accuracy_pct"]))
+            for need in ("%.1f" % tm["field_min"], "%.1f" % tm["sim_min"],
+                         "%.2f" % abs(tm["err_time_pct"])):
+                if need not in tk[0]["foot"]:
+                    bad("time", "هامش دقة الزمن لا يحمل %s" % need)
+            calc = 100.0 - abs(tm["sim_s"] - tm["field_s"]) / tm["field_s"] * 100.0
+            if not close(calc, tm["time_accuracy_pct"], 0.06):
+                bad("time", "دقة الزمن %.2f != 100-|Δزمن| %.2f (حساب مستقل)" % (tm["time_accuracy_pct"], calc))
+            if tm["net_sha16"] != src["net_sha16"]:
+                bad("time", "شبكة دقة الزمن %s != شبكة قياس الطول %s — قياسان على شبكتين"
+                    % (tm["net_sha16"], src["net_sha16"]))
+            if tm["stretches_analysed"] != len(v["stretches"]):
+                bad("time", "مقاطع دقة الزمن %d != %d" % (tm["stretches_analysed"], len(v["stretches"])))
 
     # 8. README — يتحقق مما يدّعيه README فعلًا (لا من أرقام لا تُعرض في الواجهة)
     rd = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
     for need in ("%.1f%%" % t["accuracy_pct"],
+                 "%.1f%%" % json.load(open(os.path.join(ROOT, "data", "time_accuracy.json"),
+                                           encoding="utf-8"))["time_accuracy_pct"],
                  "%.2f%%" % abs(t["agg_err_pct"]),
                  "%d مقطعاً" % len(v["stretches"]),
                  v["session"]["window_local"][0]):
@@ -170,8 +199,10 @@ def main():
         for f in FAIL:
             print(" -", f)
         return 3
-    print("OK kpis=%d stretches=%d acc=%.1f%% uncapped=%.1f%% field=%.1f km video=%d B"
-          % (len(v["kpis"]), len(v["stretches"]), t["accuracy_pct"],
+    print("OK kpis=%d time=%.1f%% stretches=%d acc=%.1f%% uncapped=%.1f%% field=%.1f km video=%d B"
+          % (len(v["kpis"]), json.load(open(os.path.join(ROOT, "data", "time_accuracy.json"),
+                                          encoding="utf-8"))["time_accuracy_pct"],
+             len(v["stretches"]), t["accuracy_pct"],
              t["uncapped_accuracy_pct"], t["field_m"] / 1000.0,
              v["video"]["bytes"]))
     return 0

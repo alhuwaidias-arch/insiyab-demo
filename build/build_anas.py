@@ -31,6 +31,10 @@ def build(trace_path=None, accuracy_path=None):
     net = json.load(open(os.path.join(ROOT, "data", "network.json"), encoding="utf-8"))
     tr = json.load(open(trace_path, encoding="utf-8"))
     acc = json.load(open(accuracy_path, encoding="utf-8"))
+    _tim = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "time_accuracy.json")
+    if not os.path.exists(_tim):
+        raise SystemExit("data/time_accuracy.json مفقود — شغّل build/build_time_accuracy.py أولًا")
+    tm = json.load(open(_tim, encoding="utf-8"))
     meta = json.load(open(os.path.join(ROOT, "data", "_geo_meta.json"), encoding="utf-8"))
 
     pts = tr["trace"]
@@ -97,6 +101,11 @@ def build(trace_path=None, accuracy_path=None):
         {"value": "%.1f" % acc["accuracy_agg_pct"], "unit": "%",
          "label": "دقة المحاكاة في طول المسار",
          "foot": "خطأ تراكمي %.2f%% على %d مقطعًا متصلًا" % (acc["agg_err_pct"], acc["stretches"])},
+        {"value": "%.1f" % tm["time_accuracy_pct"],
+         "unit": "%",
+         "label": "دقة المحاكاة في زمن المرور على المقاطع",
+         "foot": "%.1f د مقيسة مقابل %.1f د على الشبكة — فرق %.2f%%" % (
+             tm["field_min"], tm["sim_min"], tm["err_time_pct"])},
         {"value": "%.2f" % acc["dev_median_m"], "unit": "م",
          "label": "وسيط انحراف المسار", "foot": "p90 %.1f م · أقصى %.1f م" % (acc["dev_p90_m"], acc["dev_max_m"])},
         {"value": "%.1f" % acc["field_kmh"], "unit": "كم/س",

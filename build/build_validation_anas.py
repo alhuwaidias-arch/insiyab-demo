@@ -11,6 +11,7 @@ ACC = next((p for p in _cand if os.path.exists(p)), _cand[-1])
 ANAS = os.path.join(ROOT, 'data', 'anas.json')
 _c2 = [os.path.join(ROOT, 'data', 'points_anas.csv'), 'D:/INFIRAD/projects/insiyab/data/cx5_trips/derived/points_anas.csv']
 CSV = next((p for p in _c2 if os.path.exists(p)), _c2[-1])
+TIM = os.path.join(ROOT, 'data', 'time_accuracy.json')   # دقة الزمن (SUMO tripinfo) — إلزامي
 _c3 = [os.path.join(ROOT, 'MANIFEST.json'), 'D:/INFIRAD/projects/insiyab/MANIFEST.json']
 MAN = next((p for p in _c3 if os.path.exists(p)), _c3[-1])
 TZ = 3 * 3600
@@ -35,6 +36,9 @@ def f1(x):
 def build():
     a = json.load(open(ACC, encoding='utf-8'))
     an = json.load(open(ANAS, encoding='utf-8'))
+    if not os.path.exists(TIM):
+        raise SystemExit('data/time_accuracy.json مفقود — شغّل build/build_time_accuracy.py أولًا')
+    tm = json.load(open(TIM, encoding='utf-8'))
     tr = an['trace']
     t0, t1 = tr['t0'], tr['t1']
 
@@ -88,6 +92,10 @@ def build():
              'label': 'دقة المحاكاة في طول المسار',
              'foot': 'خطأ تراكمي \u2066' + ('%+.2f' % agg) + '%\u2069 على ' +
                      ('%.2f' % (field_m / 1000)) + ' كم متصلة (' + str(a['stretches']) + ' مقطعاً بتردد 1 هرتز)'},
+            {'value': round(tm['time_accuracy_pct'], 1), 'unit': '%',
+             'label': 'دقة المحاكاة في زمن المرور على المقاطع',
+             'foot': ('{:.1f} د مقيسة مقابل {:.1f} د على الشبكة — فرق {:.2f}%'.format(
+                 tm['field_min'], tm['sim_min'], tm['err_time_pct']))},
             {'value': round(a['dev_median_m'], 2), 'unit': 'م',
              'label': 'وسيط انحراف الأثر المقيس عن الشبكة',
              'foot': 'p90 {:.2f} م · أقصى {:.2f} م على {:,} نقطة'.format(
@@ -115,6 +123,10 @@ def build():
             ('%.2f' % a['worst_err_pct']) + '% — التباين مقطعاً بمقطع معروض في الجدول أدناه.',
             'جلسة قياس واحدة لمركبة واحدة في يوم واحد (14/11/2026) — إثبات دقة على ممر، '
             'لا معايرة إحصائية لأسطول أو لساعات الذروة.',
+            'دقة الزمن من إعادة تشغيل فعلية على SUMO (زمن tripinfo، مركبة واحدة بلا حركة أخرى) '
+            'على ' + str(tm['stretches_simulated']) + ' مقطعًا من ' + str(tm['stretches_analysed']) +
+            '؛ ما استُبعد سببه انقطاع في مطابقة المسار لا تحسين الرقم، وعلى المقاطع الطويلة '
+            '(≥' + ('%d' % tm['long_m_from']) + ' م) الفرق {:.2f}%.'.format(tm['long_err_time_pct']),
             'المطابقة تقيس طول المسار على الشبكة وانحراف نقاطه عنها؛ المسار بين تقاطعين قد يختلف '
             'داخل الشبكة دون أن يتغير الطول الكلي.',
         ],

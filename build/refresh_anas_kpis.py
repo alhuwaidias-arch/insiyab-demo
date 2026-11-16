@@ -10,17 +10,23 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ANAS = os.path.join(ROOT, "data", "anas.json")
 ACC = os.path.join(ROOT, "data", "accuracy_anas.json")
+TIM = os.path.join(ROOT, "data", "time_accuracy.json")
 
 
 def main():
     d = json.load(open(ANAS, encoding="utf-8"))
     acc = json.load(open(ACC, encoding="utf-8"))
+    tm = json.load(open(TIM, encoding="utf-8"))
     t = d["trace"]
     span_s = t["t1"] - t["t0"]
     d["kpis"] = [
         {"value": "%.1f" % acc["accuracy_agg_pct"], "unit": "%",
          "label": "دقة المحاكاة في طول المسار",
          "foot": "خطأ تراكمي %.2f%% على %d مقطعًا متصلًا" % (acc["agg_err_pct"], acc["stretches"])},
+        {"value": "%.1f" % tm["time_accuracy_pct"], "unit": "%",
+         "label": "دقة المحاكاة في زمن المرور على المقاطع",
+         "foot": "%.1f د مقيسة مقابل %.1f د على الشبكة — فرق %.2f%%"
+                 % (tm["field_min"], tm["sim_min"], tm["err_time_pct"])},
         {"value": "%.2f" % acc["dev_median_m"], "unit": "م",
          "label": "وسيط انحراف المسار",
          "foot": "p90 %.1f م · أقصى %.1f م" % (acc["dev_p90_m"], acc["dev_max_m"])},
