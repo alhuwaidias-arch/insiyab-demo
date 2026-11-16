@@ -161,8 +161,9 @@ def main():
         asp = [k for k in ak if k.get("unit") == "كم/س"]
         if not asp:
             bad("kpi", "تبويب الجولات: بطاقة متوسط السرعة مفقودة")
-        elif round(float(asp[0]["value"]), 1) != round(float(anas["session"]["field_kmh_mean"]), 1):
-            bad("kpi", "تبويب الجولات: السرعة %s لا تطابق جلسة القياس" % asp[0]["value"])
+        elif round(float(asp[0]["value"]), 1) != round(float(src["field_kmh"]), 1):
+            bad("kpi", "تبويب الجولات: السرعة %s لا تطابق المصدر %.1f"
+                % (asp[0]["value"], src["field_kmh"]))
 
     if FAIL:
         print("FAIL %d" % len(FAIL))
