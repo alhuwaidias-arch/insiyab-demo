@@ -88,10 +88,6 @@ def build():
              'label': 'دقة المحاكاة في طول المسار',
              'foot': 'خطأ تراكمي \u2066' + ('%+.2f' % agg) + '%\u2069 على ' +
                      ('%.2f' % (field_m / 1000)) + ' كم متصلة (' + str(a['stretches']) + ' مقطعاً بتردد 1 هرتز)'},
-            {'value': within10, 'unit': 'من ' + str(a['stretches']),
-             'label': 'مقاطع ضمن ±10% من الطول المقيس',
-             'foot': 'MAPE {:.2f}% · أفضلها {:.2f}% وأسوأها {:.2f}%'.format(
-                 a['mape_pct'], best_err, a['worst_err_pct'])},
             {'value': round(a['dev_median_m'], 2), 'unit': 'م',
              'label': 'وسيط انحراف الأثر المقيس عن الشبكة',
              'foot': 'p90 {:.2f} م · أقصى {:.2f} م على {:,} نقطة'.format(

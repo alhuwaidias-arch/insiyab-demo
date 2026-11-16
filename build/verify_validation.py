@@ -125,8 +125,8 @@ def main():
         for f in ("value", "unit", "label", "foot"):
             if not str(k.get(f, "")).strip():
                 bad("kpi", "البطاقة %d ينقصها الحقل %s" % (i, f))
-    if len(v["kpis"]) != 4:
-        bad("kpi", "عدد البطاقات %d != 4" % len(v["kpis"]))
+    if len(v["kpis"]) != 3:
+        bad("kpi", "عدد البطاقات %d != 3" % len(v["kpis"]))
 
     # 8. README — يتحقق مما يدّعيه README فعلًا (لا من أرقام لا تُعرض في الواجهة)
     rd = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
@@ -141,6 +141,9 @@ def main():
     if "%.1f%%" % t["uncapped_accuracy_pct"] in rd:
         bad("readme", "README يحمل رقمًا داخليًا لا يُعرض (%0.1f%% بلا سقف للوتر)"
             % t["uncapped_accuracy_pct"])
+    for gone in ("20 من 27", "من 27 مقطع"):
+        if gone in rd:
+            bad("readme", "README يعيد بطاقة أُزيلت من الواجهة (%s)" % gone)
 
     if FAIL:
         print("FAIL %d" % len(FAIL))

@@ -99,8 +99,6 @@ def build(trace_path=None, accuracy_path=None):
          "foot": "خطأ تراكمي %.2f%% على %d مقطعًا متصلًا" % (acc["agg_err_pct"], acc["stretches"])},
         {"value": "%.1f" % acc["dev_median_m"], "unit": "م",
          "label": "وسيط انحراف المسار", "foot": "p90 %.1f م · أقصى %.1f م" % (acc["dev_p90_m"], acc["dev_max_m"])},
-        {"value": "%d" % acc["within_10pct_stretches"], "unit": "من %d" % acc["stretches"],
-         "label": "مقاطع ضمن ±10%", "foot": "أسوأ %.1f%% · أفضل %.1f%%" % (acc["worst_err_pct"], acc["best_err_pct"])},
         {"value": "%.1f" % (span_s / 3600.0), "unit": "ساعة",
          "label": "مدة القياس الميداني على الممر",
          "foot": "%d نقطة متصلة · جولات متعددة في جلسة قياس واحدة" % acc["points"]},
