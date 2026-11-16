@@ -327,12 +327,13 @@ def main():
         if field_s_long else None,
         "detail": per,
     }
-    (DATA / "time_accuracy.json").write_text(
-        json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    # الوسيطان يُحسبان **قبل** الكتابة — كتابة الملف ثم إضافة مفاتيح تُنتج JSON ناقصًا يمرّ من التوليد
     import statistics as _st
     med_abs = _st.median([abs(r["err_time_pct"]) for r in ok]) if ok else 0.0
     out["err_time_median_abs_pct"] = round(med_abs, 2)
     out["err_m_median_abs_pct"] = round(_st.median([abs(r["err_m_pct"]) for r in ok]), 2) if ok else 0.0
+    (DATA / "time_accuracy.json").write_text(
+        json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print("OK  %d/%d مقطعًا · مقيس %.1f د · محاكاة %.1f د · زمن حر %.1f د · خطأ الزمن %+.2f%%"
           % (len(ok), n_all, out["field_min"], out["sim_min"], ff_s / 60.0, out["err_time_pct"]))
     print("    وسيط |خطأ الزمن| لكل مقطع: %.2f%% · وسيط |خطأ الطول|: %.2f%%"

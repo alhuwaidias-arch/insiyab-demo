@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-11-16T05:43:43Z",
+ "generated_utc": "2026-11-16T05:50:51Z",
  "engine": "SUMO 1.27.0 (bin/sumo, tripinfo)",
  "net": "insyab_v2.net.xml",
  "net_sha16": "2f2575f5d3696e6f",
@@ -554,5 +554,7 @@
    "err_m_pct": 0.0,
    "err_time_pct": -37.5
   }
- ]
+ ],
+ "err_time_median_abs_pct": 25.38,
+ "err_m_median_abs_pct": 0.26
 }
