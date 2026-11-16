@@ -69,9 +69,8 @@
 
       var tt = v.totals;
       document.getElementById("v-totals").textContent =
-        "المجموع: ميدان " + fmt(tt.field_m) + " م مقابل شبكة " + fmt(tt.net_m) + " م (خطأ " +
-        tt.agg_err_pct + "%). ولو رُفع شرط الحركة الفيزيائية: " + fmt(tt.net_uncapped_m) +
-        " م ⇒ دقة " + tt.uncapped_accuracy_pct + "%.";
+        "المجموع على المقاطع المتصلة: ميدان " + fmt(tt.field_m) + " م مقابل شبكة " + fmt(tt.net_m) +
+        " م على المسار نفسه (خطأ تراكمي " + tt.agg_err_pct + "%).";
 
       document.getElementById("v-table").appendChild(table(
         ["المقطع (الرياض)", "نقاط", "ميدان م", "شبكة م", "خطأ %", "كم/س"],

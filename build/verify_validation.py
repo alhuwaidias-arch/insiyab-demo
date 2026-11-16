@@ -128,17 +128,19 @@ def main():
     if len(v["kpis"]) != 4:
         bad("kpi", "عدد البطاقات %d != 4" % len(v["kpis"]))
 
-    # 8. README
+    # 8. README — يتحقق مما يدّعيه README فعلًا (لا من أرقام لا تُعرض في الواجهة)
     rd = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
     for need in ("%.1f%%" % t["accuracy_pct"],
-                 "%.1f%%" % t["uncapped_accuracy_pct"],
-                 "%.1f" % (t["field_m"] / 1000),
-                 "%.1f" % (t["net_m"] / 1000),
                  "%.2f%%" % abs(t["agg_err_pct"]),
                  "%d مقطعاً" % len(v["stretches"]),
                  v["session"]["window_local"][0]):
         if need not in rd:
             bad("readme", "README لا يحمل الرقم الحالي %s" % need)
+
+    # 8ب. أرقام لا تُعرض في الواجهة: تُحرس فقط في البيانات، ويجب ألا تتسرّب إلى README
+    if "%.1f%%" % t["uncapped_accuracy_pct"] in rd:
+        bad("readme", "README يحمل رقمًا داخليًا لا يُعرض (%0.1f%% بلا سقف للوتر)"
+            % t["uncapped_accuracy_pct"])
 
     if FAIL:
         print("FAIL %d" % len(FAIL))

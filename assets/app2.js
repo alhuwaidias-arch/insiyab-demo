@@ -283,7 +283,7 @@
       box.appendChild(c);
     });
     var gen = String(d.generated || '').replace('T', ' ').slice(0, 16);
-    $('#src-note').textContent = 'المصدر: سجل الجولة ' + gen + ' — يُولَّد بسكربت من سجل الجولة وشبكة المحاكاة.';
+    $('#src-note').textContent = 'المصدر: سجل الجلسة ' + gen + ' — يُولَّد بسكربت من سجل القياس وشبكة المحاكاة.';
     var tm = $('#trip-cards'); tm.innerHTML = '';
     d.kpis.forEach(function (k) {
       var c = document.createElement('div'); c.className = 'c';
@@ -294,13 +294,13 @@
 
     var p = d.trace.p, dur = (d.trace.t1 - d.trace.t0);
     var kv = $('#trip-kv'); kv.innerHTML = '';
-    [['بداية الجولة (محلي)', hhmmss(d.trace.t0)],
-     ['نهاية الجولة (محلي)', hhmmss(d.trace.t1)],
+    [['بداية الجلسة (محلي)', hhmmss(d.trace.t0)],
+     ['نهاية الجلسة (محلي)', hhmmss(d.trace.t1)],
      ['المدة', Math.floor(dur / 3600) + ' س ' + Math.round((dur % 3600) / 60) + ' د'],
-     ['عقد المسار المسجّل', p.length.toLocaleString('en-US')],
+     ['نقاط المسار المسجّل', p.length.toLocaleString('en-US')],
      ['أعلى سرعة مسجّلة', fmt(Math.max.apply(null, p.map(function (x) { return x[3]; })), 1) + ' كم/س'],
      ['شارع الممر', d.corridor + ' · ' + fmt(d.corridor_km, 2) + ' كم'],
-     ['مقاطع مقاسة', d.totals.stretches + ' مقطعًا · تغطية ' + fmt(d.totals.analysed_share_pct, 1) + '%'],
+     ['مقاطع مقاسة على الممر', d.totals.stretches + ' مقطعًا متصلًا'],
      ['فجوات في السجل', d.totals.gaps]
     ].forEach(function (r) {
       var dt = document.createElement('dt'); dt.textContent = r[0];

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>انسياب · نموذج أولي — طريق أنس بن مالك</title>
-<meta name="description" content="نموذج أولي لواجهة انسياب: توأم رقمي حركي لطريق أنس بن مالك في الرياض، مسنود إلى جولة ميدانية 14/11/2026 ومحاكاة SUMO.">
+<title>انسياب · التوأم الرقمي الحركي — المرحلة الأولى: طريق أنس بن مالك</title>
+<meta name="description" content="المرحلة الأولى من التوأم الرقمي الحركي لمدينة الرياض: ممر أنس بن مالك يُقاس ميدانياً بمحاكاة SUMO، والمطابقة مقطعاً بمقطع هي أساس التوسّع إلى المدينة كاملة.">
 <script>window.addEventListener("error",function(e){document.title="JSERR "+e.message+" @"+(e.filename||"").split("/").pop()+":"+e.lineno;});</script>
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="assets/ui.css">
@@ -20,14 +20,15 @@
     <span class="chip live"><span class="dot"></span>محرك المحاكاة يعمل</span>
     <span class="chip">SUMO <b class="ltr">1.27.0</b></span>
     <span class="chip">شبكة الممر <b class="ltr" id="chip-edges">—</b> حافة</span>
-    <span class="chip">جولة ميدانية <b class="ltr">14/11/2026</b></span>
+    <span class="chip">قياس ميداني <b class="ltr">14/11/2026</b></span>
+    <span class="chip">المرحلة الأولى من التوأم الرقمي</span>
   </div>
   <div class="clock"><b class="ltr" id="clock">--:--:--</b><small>ساعة اللوحة — الرياض (UTC+3)</small></div>
 </header>
 
 <nav class="tabs" role="tablist">
   <button role="tab" data-view="map" aria-selected="true">المحاكي الحي</button>
-  <button role="tab" data-view="trip" aria-selected="false">جولة طريق أنس</button>
+  <button role="tab" data-view="trip" aria-selected="false">جولات طريق أنس</button>
   <button role="tab" data-view="validation" aria-selected="false">التحقق الميداني</button>
   <button role="tab" data-view="method" aria-selected="false">المنهجية والحدود</button>
   <span class="spacer">الخيارات محصورة على طريق أنس بن مالك ومحيطه</span>
@@ -52,7 +53,7 @@
       </div>
 
       <div class="legend">
-        <div class="row"><i style="background:#37e0a4"></i>مسار مقيس (جولة ميدانية)</div>
+        <div class="row"><i style="background:#37e0a4"></i>مسار مقيس (جلسة ميدانية)</div>
         <div class="row"><i style="background:#ffb020"></i>مسار بين 10–40 كم/س</div>
         <div class="row"><i style="background:#ff5d5d"></i>مسار دون 10 كم/س</div>
         <div class="row"><i style="background:#2b3a4a"></i>شبكة الشوارع (من نموذج المحاكاة)</div>
@@ -90,27 +91,26 @@
       <div class="tog"><input type="checkbox" id="ly-path" checked><label for="ly-path">الأثر المقيس</label></div>
       <div class="tog"><input type="checkbox" id="ly-junc" checked><label for="ly-junc">موقع التقاطع المزدحم</label></div>
 
-      <h4>أرقام هذه الجولة</h4>
+      <h4>أرقام الجلسة الميدانية</h4>
       <div class="kpi" id="kpi"></div>
 
       <h4>انتقل</h4>
       <div class="btnline">
-        <button class="btn" data-goto="trip">الجولة كاملة</button>
-        <button class="btn ghost" data-goto="junction">مشهد U-Turn</button>
+        <button class="btn" data-goto="trip">الجلسة كاملة</button>
       </div>
 
       <p class="note" id="src-note">—</p>
     </aside>
   </section>
 
-  <!-- ═══ الجولة الميدانية ═══ -->
+  <!-- ═══ الجولات الميدانية ═══ -->
   <section class="view" id="view-trip">
     <div class="head">
       <div>
-        <h1>جولة طريق أنس بن مالك — الشرق ← الغرب</h1>
-        <p>جولة ميدانية كاملة على الممر من شرقه إلى غربه، مسجّلة على جهاز القياس المثبّت في المركبة.</p>
+        <h1>جولات طريق أنس بن مالك — الشرق ← الغرب</h1>
+        <p>جولات متعددة على الممر خلال جلسة قياس واحدة، مسجّلة على جهاز القياس المثبّت في المركبة.</p>
       </div>
-      <span class="pill">جولة واحدة · مسار متصل</span>
+      <span class="pill">جولات متعددة · جلسة واحدة</span>
     </div>
     <div class="player">
       <div class="screen"><video src="media/anas_trip.mp4" poster="images/poster_anas.jpg" controls playsinline preload="metadata"></video></div>
@@ -130,8 +130,13 @@
 
   <!-- ═══ التحقق الميداني (أرقامه من data/validation.json) ═══ -->
   <section class="view" id="view-validation">
-    <h1>التحقق الميداني — قياس حقيقي مقابل الشبكة</h1>
+    <h1>التحقق الميداني — المحاكاة مقابل القياس على الممر</h1>
     <p class="lead" id="v-lead">…</p>
+
+    <div class="twincall">
+      <b>لماذا هذه الصفحة هي أساس التوأم الرقمي</b>
+      <p>شبكة المحاكاة هنا هي شبكة المدينة نفسها، لا رسم توضيحي: أُسقِط عليها أثر ميداني حقيقي متكرر على الممر، وقُوِّم الاتفاق مقطعاً بمقطع خلال الوقت الفعلي للجلسة. اتفاق المحاكاة مع القياس هو ما يجعل التوسّع من ممر إلى مدينة مسألة توسيع وقياس، لا وعداً.</p>
+    </div>
 
     <div class="grid g4" id="v-kpis"></div>
 
@@ -141,7 +146,7 @@
         <div id="v-video-body">…</div>
       </div>
       <div class="card">
-        <h3>ما لا يثبته هذا القياس</h3>
+        <h3>حدود القياس — تُقرأ مع الأرقام</h3>
         <ul class="tight" id="v-limits"></ul>
       </div>
     </div>
@@ -164,7 +169,7 @@
     <div class="head">
       <div>
         <h1>المنهجية والحدود — بلا مبالغة</h1>
-        <p>ما يقيسه النموذج اليوم، وما لا يقيسه بعد، وما خطوة التوسّع إلى مدينة كاملة.</p>
+        <p>ما يثبته هذا النموذج اليوم، وما لا يثبته بعد، وكيف يصبح ممرٌ مقيس مرحلة أولى لتوأم رقمي لمدينة كاملة.</p>
       </div>
     </div>
     <div class="stack">
@@ -175,15 +180,21 @@
       <div class="c">
         <h3>حدود يجب أن تُقرأ مع الأرقام</h3>
         <ul>
-          <li>الجولة واحدة على ممر واحد؛ ليست عيّنة عشوائية لكل الرياض.</li>
+          <li>المقارنة تُجرى على أجزاء المسار الواقعة على الممر وشبكته؛ ما خرج عن الممر إلى طرق أخرى لا يُحسب خطأً على النموذج.</li>
           <li>الدقة تُحسب على المقاطع المتصلة فقط؛ فجوات السجل تُستثنى وتُذكر منفصلة.</li>
-          <li>ساعة الجهاز لم تكن مضبوطة على توقيت الرياض لحظة الجولة؛ الطوابع في الملف بتوقيت UTC ويُعرض المحلي بإضافة ثلاث ساعات.</li>
+          <li>القياس في يوم واحد لمركبة واحدة — إثبات دقة على ممر، لا معايرة إحصائية لأسطول ولا لساعات الذروة.</li>
+          <li>ساعة الجهاز لم تكن مضبوطة على توقيت الرياض لحظة القياس؛ الطوابع في الملف بتوقيت UTC ويُعرض المحلي بإضافة ثلاث ساعات.</li>
           <li>المقطع بلا إشارات ضوئية — لأن الممر كذلك في الواقع، لا لأن النموذج عاجز عنها.</li>
         </ul>
       </div>
       <div class="c">
-        <h3>خطوة التوسّع</h3>
-        <p>البنية نفسها تتكرّر على أي ممر: قياس ميداني، شبكة، معايرة، ثم واجهة. توسيعها إلى مدينة يحتاج أسطول قياس ومصادر عدّ مرورية، والواجهة أمامه جاهزة للقراءة من الشبكة الكاملة بلا إعادة بناء.</p>
+        <h3>من الممر إلى المدينة — مسار التوأم الرقمي</h3>
+        <p>هذا النموذج مرحلة أولى لا منتج نهائي. القصد أن يعكس التوأم الرقمي حركة الرياض كاملة وحيّة، لا أن تُعمَّم نتيجة ممر على مدينة كاملة.</p>
+        <ol class="steps">
+          <li><b>الممر — الآن:</b> قياس ميداني متكرر، وشبكة مستخرجة، ومعايرة، ثم واجهة تحكم. دقته مقيسة لا مُعلنة.</li>
+          <li><b>الشبكة الفرعية:</b> تكرار السلسلة نفسها على ممرات مترابطة، مع مصادر عدّ مروري دائمة بدل جهاز قياس واحد.</li>
+          <li><b>المدينة الحيّة:</b> ربط الشبكة الكاملة ببيانات الحركة الحيّة، فتُقرأ حالة المدينة الراهنة وتُدار، لا تُقدَّر.</li>
+        </ol>
       </div>
       <div class="c">
         <h3>كيف تُقرأ هذه الصفحة</h3>
@@ -193,7 +204,7 @@
   </section>
 </main>
 
-<script src="assets/validation.js" defer></script>
-<script src="assets/app2.js?v=nojunction" defer></script>
+<script src="assets/validation.js?v=twin2" defer></script>
+<script src="assets/app2.js?v=twin2" defer></script>
 </body>
 </html>

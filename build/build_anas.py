@@ -92,15 +92,18 @@ def build(trace_path=None, accuracy_path=None):
         w = sp[max(0, i - win):i + win + 1]
         tp[i][3] = round(sum(w) / len(w), 1)
 
+    span_s = pts[-1]["e"] - t0
     kpis = [
         {"value": "%.1f" % acc["accuracy_agg_pct"], "unit": "%",
-         "label": "دقة طول المحاكاة", "foot": "خطأ تراكمي %.2f%%" % acc["agg_err_pct"]},
+         "label": "دقة المحاكاة في طول المسار",
+         "foot": "خطأ تراكمي %.2f%% على %d مقطعًا متصلًا" % (acc["agg_err_pct"], acc["stretches"])},
         {"value": "%.1f" % acc["dev_median_m"], "unit": "م",
          "label": "وسيط انحراف المسار", "foot": "p90 %.1f م · أقصى %.1f م" % (acc["dev_p90_m"], acc["dev_max_m"])},
         {"value": "%d" % acc["within_10pct_stretches"], "unit": "من %d" % acc["stretches"],
          "label": "مقاطع ضمن ±10%", "foot": "أسوأ %.1f%% · أفضل %.1f%%" % (acc["worst_err_pct"], acc["best_err_pct"])},
-        {"value": "%.1f" % (acc["dense_km"]), "unit": "كم",
-         "label": "مسار متصل مقيس", "foot": "%d نقطة · تغطية %.1f%%" % (acc["points"], acc["spatial_coverage_pct"])},
+        {"value": "%.1f" % (span_s / 3600.0), "unit": "ساعة",
+         "label": "مدة القياس الميداني على الممر",
+         "foot": "%d نقطة متصلة · جولات متعددة في جلسة قياس واحدة" % acc["points"]},
     ]
 
     out = {

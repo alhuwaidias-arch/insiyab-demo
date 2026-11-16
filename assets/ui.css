@@ -201,3 +201,22 @@ body.app2{
 .app2 #view-validation table.vtab th{color:var(--muted);background:transparent;border-bottom:1px solid var(--line);font-weight:600}
 .app2 #view-validation table.vtab td{background:transparent;border-bottom:1px solid rgba(27,37,48,.8)}
 .app2 #view-validation table.vtab td.n{direction:ltr;unicode-bidi:isolate;text-align:left;font-variant-numeric:tabular-nums}
+
+/* ── الممر كمرحلة أولى من التوأم الرقمي (تبويب التحقق) ── */
+.app2 .twincall{
+  margin:14px 0 0; padding:11px 15px; border-radius:var(--r);
+  border:1px solid rgba(55,224,164,.28);
+  background:linear-gradient(180deg,rgba(55,224,164,.10),rgba(55,224,164,.025));
+  display:flex; gap:14px; align-items:baseline; flex-wrap:wrap;
+}
+.app2 .twincall b{color:var(--mint2); font-size:13.5px; white-space:nowrap}
+.app2 .twincall p{margin:0; color:var(--ink); opacity:.93; font-size:13px; flex:1; min-width:320px; line-height:1.6}
+.app2 ol.steps{margin:8px 0 0; padding-inline-start:18px; font-size:13px; line-height:1.6}
+.app2 ol.steps li{margin-bottom:7px}
+.app2 ol.steps b{color:var(--ink); font-weight:600}
+
+/* صندوق «أساس التوأم الرقمي» وقائمة المسار — خلفية خفيفة تفصله عن البطاقات */
+.app2 .twincall{background:rgba(55,224,164,.055);border-radius:10px}
+.app2 ol.steps{margin:8px 0 0;padding-inline-start:22px;color:var(--txt,#8fa2b8)}
+.app2 ol.steps li{margin:4px 0}
+.app2 ol.steps li b{color:#c9d6e4}

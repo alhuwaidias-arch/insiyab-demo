@@ -129,6 +129,12 @@ def build(source_path=None):
 
 
 def main():
+    # مهجور: نسخة الجولة القديمة (accuracy_final.json) لم تعد مصدر تبويب التحقق؛
+    # المصدر الحيّ هو accuracy_anas.json ⇒ build/build_validation_anas.py.
+    # التشغيل هنا يكتب فوق data/validation.json ويرجّع الواجهة إلى صياغة قديمة.
+    if os.environ.get("INSYAB_ALLOW_LEGACY_VALIDATION") != "1":
+        raise SystemExit("build_validation.py مهجور — استخدم build/build_validation_anas.py "
+                         "(أو INSYAB_ALLOW_LEGACY_VALIDATION=1 لكتابة نسخة قديمة فوق validation.json)")
     out = build()
     with open(os.path.join(DATA, "validation.json"), "w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=1)
