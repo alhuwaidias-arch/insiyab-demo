@@ -6,8 +6,8 @@
 <title>انسياب · التوأم الرقمي الحركي — المرحلة الأولى: طريق أنس بن مالك</title>
 <meta name="description" content="المرحلة الأولى من التوأم الرقمي الحركي لمدينة الرياض: ممر أنس بن مالك يُقاس ميدانياً بمحاكاة SUMO، والمطابقة مقطعاً بمقطع هي أساس التوسّع إلى المدينة كاملة.">
 <script>window.addEventListener("error",function(e){document.title="JSERR "+e.message+" @"+(e.filename||"").split("/").pop()+":"+e.lineno;});</script>
-<link rel="stylesheet" href="assets/style.css?v=twin10">
-<link rel="stylesheet" href="assets/ui.css?v=twin10">
+<link rel="stylesheet" href="assets/style.css?v=twin11">
+<link rel="stylesheet" href="assets/ui.css?v=twin11">
 </head>
 <body class="app2">
 
@@ -24,10 +24,14 @@
     <span class="chip">المرحلة الأولى من التوأم الرقمي</span>
   </div>
   <div class="clock"><b class="ltr" id="clock">--:--:--</b><small>ساعة اللوحة — الرياض (UTC+3)</small></div>
+  <a class="logo" href="https://infiradeng.com" target="_blank" rel="noopener" aria-label="انفراد">
+    <img src="assets/infirad-logo-w.png" alt="انفراد">
+  </a>
 </header>
 
 <nav class="tabs" role="tablist">
   <button role="tab" data-view="map" aria-selected="true">المحاكي الحي</button>
+  <button role="tab" data-view="solutions" aria-selected="false">الحلول المُحاكاة</button>
   <button role="tab" data-view="trip" aria-selected="false">جولات طريق أنس</button>
   <button role="tab" data-view="validation" aria-selected="false">التحقق الميداني</button>
   <button role="tab" data-view="method" aria-selected="false">المنهجية والحدود</button>
@@ -53,7 +57,7 @@
       </div>
 
       <div class="legend">
-        <div class="row"><i style="background:#37e0a4"></i>مسار مقيس (جلسة ميدانية)</div>
+        <div class="row"><i style="background:#37e0a4"></i>مسار سالك (جلسة ميدانية)</div>
         <div class="row"><i style="background:#ffb020"></i>مسار بين 10–40 كم/س</div>
         <div class="row"><i style="background:#ff5d5d"></i>مسار دون 10 كم/س</div>
         <div class="row"><i style="background:#2b3a4a"></i>شبكة الشوارع (من نموذج المحاكاة)</div>
@@ -88,7 +92,7 @@
       <h4>الطبقات</h4>
       <div class="tog"><input type="checkbox" id="ly-net" checked><label for="ly-net">شبكة الشوارع</label></div>
       <div class="tog"><input type="checkbox" id="ly-corr" checked><label for="ly-corr">طريق أنس بن مالك</label></div>
-      <div class="tog"><input type="checkbox" id="ly-path" checked><label for="ly-path">الأثر المقيس</label></div>
+      <div class="tog"><input type="checkbox" id="ly-path" checked><label for="ly-path">مسار الرحلة</label></div>
       <div class="tog"><input type="checkbox" id="ly-junc" checked><label for="ly-junc">موقع التقاطع المزدحم</label></div>
 
       <h4>أرقام الجلسة الميدانية</h4>
@@ -101,6 +105,50 @@
 
       <p class="note" id="src-note">—</p>
     </aside>
+  </section>
+
+  <!-- ═══ الحلول المُحاكاة (أرقامها من data/solutions.json) ═══ -->
+  <section class="view" id="view-solutions">
+    <div class="head">
+      <div>
+        <h1>الحلول — أربعة أذرع، وقياس واحد</h1>
+        <p>كل حل شُغّل على شبكة الممر نفسها وبنفس الطلب، خمس مرات. المقارنة على ساعات الانتظار وحدها — لا على الرأي.</p>
+      </div>
+      <span class="pill" id="sol-pill">—</span>
+    </div>
+
+    <div class="sol-banner" id="sol-banner"></div>
+
+    <div class="arms" id="sol-arms"></div>
+
+    <div class="solrow">
+      <div class="card">
+        <h3>الكثافة — أين يتراكم التأخير؟</h3>
+        <div id="sol-density">…</div>
+      </div>
+      <div class="card">
+        <h3>النموذج المختبر للإغلاق</h3>
+        <div id="sol-model">…</div>
+      </div>
+    </div>
+
+    <div class="solrow solrow-2">
+      <div class="card chosen">
+        <h3>الحل المُختار — كيف يعمل</h3>
+        <div id="sol-chosen">…</div>
+      </div>
+      <div class="card">
+        <h3>توصيات الوكيل</h3>
+        <div id="sol-recs">…</div>
+      </div>
+    </div>
+
+    <div class="card test">
+      <h3>كيف اختُبر كل حل</h3>
+      <div class="tgrid" id="sol-test">…</div>
+    </div>
+
+    <p class="note" id="sol-src"></p>
   </section>
 
   <!-- ═══ الجولات الميدانية ═══ -->
@@ -204,7 +252,14 @@
   </section>
 </main>
 
+<footer class="brandbar">
+  <span class="bb-l"><b>نموذج أولي</b> لمشروع «انسياب» — شركة انفراد الهندسية</span>
+  <span class="bb-c">انفراد الحلول والابتكار للاستشارات الهندسية · سجل تجاري 7055458603 · الرياض، الملقا · infiradeng.com</span>
+  <span class="bb-r">التوأم الرقمي الحركي · المرحلة الأولى — ممر أنس بن مالك</span>
+</footer>
+
+<script src="assets/solutions.js?v=twin11" defer></script>
 <script src="assets/validation.js?v=twin10" defer></script>
-<script src="assets/app2.js?v=twin10" defer></script>
+<script src="assets/app2.js?v=twin11" defer></script>
 </body>
 </html>
