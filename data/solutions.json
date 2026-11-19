@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-20T00:52:50+03:00",
+ "generated": "2026-11-20T01:02:44+03:00",
  "sources": {
   "results": "runs/results.csv",
   "edges_dir": "runs/damage_*.edges.csv",
