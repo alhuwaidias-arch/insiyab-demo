@@ -1,208 +1,373 @@
 {
- "generated": "2026-11-20T14:04:36+03:00",
- "sources": {
-  "results": "runs/results.csv",
-  "edges_dir": "runs/damage_*.edges.csv",
-  "numbers": "analysis/qa_v5/NUMBERS_V5.json"
- },
- "test": {
-  "seeds": 5,
-  "network_edges": 1424,
-  "ttt_s": 300,
-  "criterion": "ساعات الانتظار",
-  "trips": 7275
- },
- "arms": {
-  "baseline": {
-   "tag": "canon300",
-   "n": 5,
-   "dur_min": 19.18,
-   "dur_sd": 1.44,
-   "speed_kmh": 39.0,
-   "route_km": 8.01,
-   "trips": 7275,
-   "wait_h": 965,
-   "runs": [
-    "20261023_203005_d8_s1_canon300",
-    "20261023_203302_d8_s2_canon300",
-    "20261023_203557_d8_s3_canon300",
-    "20261023_203858_d8_s4_canon300",
-    "20261023_204144_d8_s5_canon300"
-   ],
-   "d_min": 0.0,
-   "wait_delta_h": 0
+  "generated": "2026-11-20T16:14:28+03:00",
+  "sources": {
+    "results": "runs/results.csv",
+    "edges_dir": "runs/damage_*.edges.csv",
+    "numbers": "analysis/qa_v7/CANON600.json",
+    "method": "analysis/make_canon600.py"
   },
-  "closure": {
-   "tag": "closure300",
-   "n": 5,
-   "dur_min": 36.04,
-   "dur_sd": 1.52,
-   "speed_kmh": 30.6,
-   "route_km": 10.94,
-   "trips": 7273,
-   "wait_h": 1959,
-   "runs": [
-    "20261023_211135_d8_s1_closure300",
-    "20261023_211534_d8_s2_closure300",
-    "20261023_211927_d8_s3_closure300",
-    "20261023_212355_d8_s4_closure300",
-    "20261023_212756_d8_s5_closure300"
-   ],
-   "edges_total": 1807,
-   "edges_hit": 68,
-   "net_vh": 1777.7,
-   "top": [
-    {
-     "street": "طريق الأمير تركي بن عبدالعزيز الأول",
-     "vh": 571.1
-    },
-    {
-     "street": "شارع أنس بن مالك",
-     "vh": 384.3
-    },
-    {
-     "street": "طريق الأمير تركي بن عبدالعزيز الأول الفرعي",
-     "vh": 199.1
-    }
-   ],
-   "top3_share": 64.1,
-   "edges_pct": 3.8,
-   "d_min": 16.86,
-   "wait_delta_h": 994
+  "test": {
+    "seeds": 5,
+    "network_edges": 1603,
+    "ttt_s": 600,
+    "criterion": "ساعات زمن الرحلة المضافة (Δduration) — مقارنة مقترنة بالمركبة",
+    "trips": 6946,
+    "note": "كل الأذرع عند time-to-teleport = 600 ث؛ لا تُنقل مركبة قسرًا في خط الأساس."
   },
-  "detour": {
-   "tag": "detour300",
-   "n": 5,
-   "dur_min": 35.9,
-   "dur_sd": 1.19,
-   "speed_kmh": 30.6,
-   "route_km": 11.11,
-   "trips": 7273,
-   "wait_h": 1942,
-   "runs": [
-    "20261024_095528_d8_s1_detour300",
-    "20261024_095805_d8_s2_detour300",
-    "20261024_100043_d8_s3_detour300",
-    "20261024_100340_d8_s4_detour300",
-    "20261024_100633_d8_s5_detour300"
-   ],
-   "edges_total": 1808,
-   "edges_hit": 85,
-   "net_vh": 1697.0,
-   "top": [
-    {
-     "street": "طريق الأمير تركي بن عبدالعزيز الأول",
-     "vh": 347.0
+  "arms": {
+    "baseline": {
+      "tag": "canon600",
+      "n": 5,
+      "dur_min": 26.26,
+      "dur_sd": 2.8,
+      "speed_kmh": 38.9,
+      "route_km": 8.14,
+      "trips": 6946,
+      "wait_h": 1733,
+      "runs": [
+        "20261120_133141_d8_s1_canon600",
+        "20261120_133509_d8_s2_canon600",
+        "20261120_141740_d8_s3_canon600",
+        "20261120_142100_d8_s4_canon600",
+        "20261120_142408_d8_s5_canon600"
+      ],
+      "d_min": 0.0,
+      "wait_delta_h": 0
     },
-    {
-     "street": "شارع أنس بن مالك",
-     "vh": 292.3
+    "closure": {
+      "tag": "closure600b",
+      "n": 5,
+      "dur_min": 38.39,
+      "dur_sd": 0.96,
+      "speed_kmh": 30.3,
+      "route_km": 11.29,
+      "trips": 7013,
+      "wait_h": 2248,
+      "runs": [
+        "20261120_152047_d8_s1_closure600b",
+        "20261120_152511_d8_s2_closure600b",
+        "20261120_152942_d8_s3_closure600b",
+        "20261120_153444_d8_s4_closure600b",
+        "20261120_153934_d8_s5_closure600b"
+      ],
+      "edges_total": 1603,
+      "edges_hit": 68,
+      "net_vh": 1777.7,
+      "top": [
+        {
+          "street": "طريق الأمير تركي بن عبدالعزيز الأول",
+          "vh": 571.1
+        },
+        {
+          "street": "شارع أنس بن مالك",
+          "vh": 384.3
+        },
+        {
+          "street": "طريق الأمير تركي بن عبدالعزيز الأول الفرعي",
+          "vh": 199.1
+        }
+      ],
+      "top3_share": 64.1,
+      "edges_pct": 4.2,
+      "d_min": 12.13,
+      "wait_delta_h": 994
     },
-    {
-     "street": "طريق الأمير تركي بن عبدالعزيز الأول الفرعي",
-     "vh": 290.2
+    "detour": {
+      "tag": "detour600",
+      "n": 3,
+      "dur_min": 38.6,
+      "dur_sd": 1.13,
+      "speed_kmh": 30.0,
+      "route_km": 11.41,
+      "trips": 7147,
+      "wait_h": 2224,
+      "runs": [
+        "20261120_154058_d8_s1_detour600",
+        "20261120_154600_d8_s2_detour600",
+        "20261120_155111_d8_s3_detour600"
+      ],
+      "edges_total": 1603,
+      "edges_hit": 85,
+      "net_vh": 1697.0,
+      "top": [
+        {
+          "street": "طريق الأمير تركي بن عبدالعزيز الأول",
+          "vh": 347.0
+        },
+        {
+          "street": "شارع أنس بن مالك",
+          "vh": 292.3
+        },
+        {
+          "street": "طريق الأمير تركي بن عبدالعزيز الأول الفرعي",
+          "vh": 290.2
+        }
+      ],
+      "top3_share": 53.9,
+      "edges_pct": 5.3,
+      "d_min": 12.34,
+      "wait_delta_h": 977
+    },
+    "uturn": {
+      "tag": "uturn600",
+      "n": 3,
+      "dur_min": 41.55,
+      "dur_sd": 0.25,
+      "speed_kmh": 29.4,
+      "route_km": 8.56,
+      "trips": 6827,
+      "wait_h": 2981,
+      "runs": [
+        "20261120_155634_d8_s1_uturn600",
+        "20261120_160119_d8_s2_uturn600",
+        "20261120_160555_d8_s3_uturn600"
+      ],
+      "d_min": 15.29
+    },
+    "works": {
+      "tag": "works300",
+      "n": 5,
+      "dur_min": 26.81,
+      "dur_sd": 2.48,
+      "speed_kmh": 38.8,
+      "route_km": 8.26,
+      "trips": 6844,
+      "wait_h": 1748,
+      "runs": [
+        "20261120_134201_d8_s1_works300",
+        "20261120_134201_d8_s2_works300",
+        "20261120_134201_d8_s3_works300",
+        "20261120_134201_d8_s4_works300",
+        "20261120_134201_d8_s5_works300"
+      ],
+      "edges_total": 1603,
+      "edges_hit": 48,
+      "net_vh": 1239.5,
+      "top": [
+        {
+          "street": "شارع أنس بن مالك",
+          "vh": 948.1
+        },
+        {
+          "street": "(بلا اسم)",
+          "vh": 96.1
+        },
+        {
+          "street": "شارع انس بن مالك الفرعي",
+          "vh": 28.1
+        }
+      ],
+      "top3_share": 83.9,
+      "edges_pct": 3.0,
+      "d_min": 0.55,
+      "wait_delta_h": 783
     }
-   ],
-   "top3_share": 53.9,
-   "edges_pct": 4.7,
-   "d_min": 16.72,
-   "wait_delta_h": 977
   },
-  "uturn": {
-   "tag": "uturn300",
-   "n": 5,
-   "dur_min": 40.04,
-   "dur_sd": 1.12,
-   "speed_kmh": 27.1,
-   "route_km": 8.54,
-   "trips": 6750,
-   "wait_h": 2552,
-   "runs": [
-    "20261024_093456_d8_s1_uturn300",
-    "20261024_093755_d8_s2_uturn300",
-    "20261024_094058_d8_s3_uturn300",
-    "20261024_094417_d8_s4_uturn300",
-    "20261024_094734_d8_s5_uturn300"
-   ],
-   "edges_total": 1863,
-   "edges_hit": 125,
-   "net_vh": 3536.5,
-   "top": [
-    {
-     "street": "شارع أنس بن مالك",
-     "vh": 1746.3
-    },
-    {
-     "street": "شارع أبها",
-     "vh": 330.8
-    },
-    {
-     "street": "No. 205",
-     "vh": 266.7
-    }
-   ],
-   "top3_share": 66.0,
-   "edges_pct": 6.7,
-   "d_min": 20.86,
-   "wait_delta_h": 1587
+  "display": {
+    "added_vh": "1,408",
+    "closure_vh": 1408,
+    "detour_vh": null,
+    "uturn_vh": null,
+    "half_vh": "159",
+    "detour_pct": "1%",
+    "uturn_ratio": 1.6,
+    "base_min": "26",
+    "closure_min": "38",
+    "extra_min": "+12",
+    "extra_km": "3",
+    "works_vh": 159,
+    "works_min": "+0.6",
+    "works_share_pct": 11,
+    "stays_pct": "75%",
+    "trips": "6,946",
+    "cost_low_k": 45,
+    "cost_high_k": 59,
+    "labelled_threshold": "600 ث",
+    "_detour_vh_old": "1,408"
   },
-  "works": {
-   "tag": "works300",
-   "n": 5,
-   "dur_min": 26.81,
-   "dur_sd": 2.77,
-   "speed_kmh": 38.8,
-   "route_km": 8.26,
-   "trips": 6844,
-   "wait_h": 1748,
-   "runs": [
-    "20261120_134201_d8_s4_works300",
-    "20261120_134201_d8_s5_works300",
-    "20261120_134201_d8_s1_works300",
-    "20261120_134201_d8_s3_works300",
-    "20261120_134201_d8_s2_works300"
-   ],
-   "edges_total": 1603,
-   "edges_hit": 48,
-   "net_vh": 1239.5,
-   "top": [
-    {
-     "street": "شارع أنس بن مالك",
-     "vh": 948.1
+  "paired": {
+    "works": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "wait_h_mean": 128.28738888888887,
+      "wait_h_sd": 188.57699511652797,
+      "dur_h_mean": 159.37349999999998,
+      "tl_h_mean": 141.79379111111118,
+      "tl_h_sd": 207.68483578165186,
+      "per_trip_tl_s_mean": 72.462146749938,
+      "per_trip_s_mean": 65.70369374640002,
+      "share_unaffected_mean": 0.2475596241147205,
+      "median_wait_s_mean": 0.0,
+      "per_seed": [
+        {
+          "matched": 6781,
+          "wait_h": 353.17277777777775,
+          "dur_h": 395.54027777777776,
+          "tl_h": 363.6566944444449,
+          "per_trip_tl_s": 193.0635746939982,
+          "per_trip_s": 187.4977142014452,
+          "per_trip_dur_s": 209.99041439315735,
+          "median_wait_s": 0.0,
+          "share_unaffected": 0.24996313228137443,
+          "seed": 1,
+          "dir": "20261120_134201_d8_s1_works300",
+          "trips_arm": 6830
+        },
+        {
+          "matched": 6323,
+          "wait_h": -142.78833333333333,
+          "dur_h": -171.78277777777777,
+          "tl_h": -170.15257499999998,
+          "per_trip_tl_s": -96.87636723074489,
+          "per_trip_s": -81.29653645421477,
+          "per_trip_dur_s": -97.80452316938162,
+          "median_wait_s": 0.0,
+          "share_unaffected": 0.24656017713110864,
+          "seed": 2,
+          "dir": "20261120_134201_d8_s2_works300",
+          "trips_arm": 6540
+        },
+        {
+          "matched": 6901,
+          "wait_h": 160.02305555555554,
+          "dur_h": 235.99444444444444,
+          "tl_h": 198.75946111111094,
+          "per_trip_tl_s": 103.68556151282414,
+          "per_trip_s": 83.47819156643965,
+          "per_trip_dur_s": 123.10969424721056,
+          "median_wait_s": 0.0,
+          "share_unaffected": 0.22735835386175918,
+          "seed": 3,
+          "dir": "20261120_134201_d8_s3_works300",
+          "trips_arm": 6973
+        },
+        {
+          "matched": 6701,
+          "wait_h": -26.718611111111112,
+          "dur_h": -12.453333333333333,
+          "tl_h": -22.392699999999763,
+          "per_trip_tl_s": -12.030102969705887,
+          "per_trip_s": -14.354126249813461,
+          "per_trip_dur_s": -6.69034472466796,
+          "median_wait_s": 0.0,
+          "share_unaffected": 0.21578868825548425,
+          "seed": 4,
+          "dir": "20261120_134201_d8_s4_works300",
+          "trips_arm": 6829
+        },
+        {
+          "matched": 6997,
+          "wait_h": 297.74805555555554,
+          "dur_h": 349.56888888888886,
+          "tl_h": 339.09807499999977,
+          "per_trip_tl_s": 174.46806774331844,
+          "per_trip_s": 153.1932256681435,
+          "per_trip_dur_s": 179.85536658567958,
+          "median_wait_s": 0.0,
+          "share_unaffected": 0.29812776904387595,
+          "seed": 5,
+          "dir": "20261120_134201_d8_s5_works300",
+          "trips_arm": 7049
+        }
+      ]
     },
-    {
-     "street": "(بلا اسم)",
-     "vh": 96.1
+    "closure": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "wait_h_mean": 486.65472222222223,
+      "wait_h_sd": 351.73153279859014,
+      "dur_h_mean": 1407.9915555555556,
+      "tl_h_mean": 1092.6242183333334,
+      "tl_h_sd": 330.25246802660445,
+      "per_trip_tl_s_mean": 576.2775072578909,
+      "per_trip_s_mean": 256.7143925159465,
+      "share_unaffected_mean": 0.10468064983246782,
+      "median_wait_s_mean": 62.9,
+      "per_seed": [
+        {
+          "matched": 6679,
+          "wait_h": 691.5119444444445,
+          "dur_h": 1527.1058333333333,
+          "tl_h": 1224.2433277777768,
+          "per_trip_tl_s": 659.8706363228023,
+          "per_trip_s": 372.72690522533316,
+          "per_trip_dur_s": 823.1143883814942,
+          "median_wait_s": 106.0,
+          "share_unaffected": 0.10810001497230125,
+          "seed": 1,
+          "dir": "20261120_152047_d8_s1_closure600b",
+          "trips_arm": 6726
+        },
+        {
+          "matched": 6567,
+          "wait_h": -92.88666666666667,
+          "dur_h": 796.6830555555556,
+          "tl_h": 520.967661111111,
+          "per_trip_tl_s": 285.59213948530527,
+          "per_trip_s": -50.920054819552306,
+          "per_trip_dur_s": 436.7380843611999,
+          "median_wait_s": 39.0,
+          "share_unaffected": 0.08710217755443886,
+          "seed": 2,
+          "dir": "20261120_152511_d8_s2_closure600b",
+          "trips_arm": 7084
+        },
+        {
+          "matched": 7130,
+          "wait_h": 534.2116666666667,
+          "dur_h": 1598.6152777777777,
+          "tl_h": 1241.9169166666652,
+          "per_trip_tl_s": 627.0548246844312,
+          "per_trip_s": 269.728190743338,
+          "per_trip_dur_s": 807.1549789621318,
+          "median_wait_s": 75.0,
+          "share_unaffected": 0.11430575035063113,
+          "seed": 3,
+          "dir": "20261120_152942_d8_s3_closure600b",
+          "trips_arm": 7351
+        },
+        {
+          "matched": 6673,
+          "wait_h": 954.3341666666666,
+          "dur_h": 1839.9622222222222,
+          "tl_h": 1499.4005805555569,
+          "per_trip_tl_s": 808.9078510415112,
+          "per_trip_s": 514.8513412258354,
+          "per_trip_dur_s": 992.6365952345272,
+          "median_wait_s": 55.0,
+          "share_unaffected": 0.10894650082421699,
+          "seed": 4,
+          "dir": "20261120_153444_d8_s4_closure600b",
+          "trips_arm": 6819
+        },
+        {
+          "matched": 7032,
+          "wait_h": 346.1025,
+          "dur_h": 1277.5913888888888,
+          "tl_h": 976.5926055555566,
+          "per_trip_tl_s": 499.96208475540436,
+          "per_trip_s": 177.18558020477815,
+          "per_trip_dur_s": 654.0570250284414,
+          "median_wait_s": 39.5,
+          "share_unaffected": 0.10494880546075085,
+          "seed": 5,
+          "dir": "20261120_153934_d8_s5_closure600b",
+          "trips_arm": 7088
+        }
+      ]
     },
-    {
-     "street": "شارع انس بن مالك الفرعي",
-     "vh": 28.1
-    }
-   ],
-   "top3_share": 83.9,
-   "edges_pct": 3.0,
-   "d_min": 7.63,
-   "wait_delta_h": 783
+    "works_share_of_closure_pct": 11
   }
- },
- "display": {
-  "added_vh": "2,000",
-  "closure_vh": 2000,
-  "detour_vh": 1700,
-  "uturn_vh": 3400,
-  "half_vh": "870",
-  "detour_pct": "3%",
-  "uturn_ratio": 2,
-  "base_min": "19",
-  "closure_min": "36",
-  "extra_min": "17",
-  "extra_km": "3",
-  "works_vh": "870",
-  "works_min": "+8",
-  "works_share_pct": 43,
-  "stays_pct": "90%",
-  "trips": "7,275",
-  "cost_low_k": 28,
-  "cost_high_k": 36
- }
 }

@@ -19,8 +19,10 @@
   <div class="chips">
     <span class="chip live"><span class="dot"></span>محرك المحاكاة يعمل</span>
     <span class="chip">SUMO <b class="ltr">1.27.0</b></span>
-    <span class="chip">شبكة الممر <b class="ltr" id="chip-edges">—</b> حافة</span>
+    <span class="chip">شبكة النموذج <b class="ltr" id="chip-edges">—</b> حافة · نطاق الممر <b class="ltr" id="chip-scope">1,603</b></span>
     <span class="chip">قياس ميداني <b class="ltr">14/11/2026</b></span>
+    <span class="chip">عتبة النقل القسري <b class="ltr">600 ث</b></span>
+    <span class="chip" title="وقت توليد نتائج الحلول">تحديث القياس <b class="ltr" id="chip-time">—</b></span>
     <span class="chip">المرحلة الأولى من التوأم الرقمي</span>
   </div>
   <div class="clock"><b class="ltr" id="clock">--:--:--</b><small>ساعة اللوحة — الرياض (UTC+3)</small></div>
@@ -210,9 +212,11 @@
       <img src="images/map_chosen.png" alt="المُطبَّق على الأرض: حارتان لكل اتجاه بلا إغلاق مسار" loading="lazy">
       <figcaption>
         <b>٤ · المُطبَّق على الأرض.</b> لا مسار مغلق: المحور مقسوم <b>حارتان لكل اتجاه</b> على مقطع
-        الأعمال وحده، والمتقاطع يعمل. النتيجة المقيسة: <b>+870 ساعة</b> تأخير على نافذة الذروة —
-        أي <b>43%</b> من كلفة الإغلاق الكامل (<b>+2,000</b> ساعة)، وتأخيرها يتركّز في
-        <b>48 ضلعًا</b> من 1,603، و<b>84%</b> منه في ثلاثة شوارع.
+        الأعمال وحده، والمتقاطع يعمل. النتيجة المقيسة: <b>+<span id="m4-cost">…</span> ساعة</b>
+        زمن رحلة مضاف على نافذة الذروة — أي <b><span id="m4-share">…</span>%</b> من كلفة الإغلاق
+        الكامل (<b>+<span id="m4-closure">…</span></b> ساعة)، وتأخيرها يتركّز في
+        <b><span id="m4-edges">…</span> ضلعًا</b> من <span id="m4-edges-total">…</span>،
+        و<b><span id="m4-top3">…</span>%</b> منه في ثلاثة شوارع.
       </figcaption>
     </figure>
 
@@ -327,7 +331,7 @@
   <span class="bb-r">التوأم الرقمي الحركي · المرحلة الأولى — ممر أنس بن مالك</span>
 </footer>
 
-<script src="assets/solutions.js?v=926a6e" defer></script>
+<script src="assets/solutions.js?v=b1c0de" defer></script>
 <script src="assets/validation.js?v=e3d7db" defer></script>
 <script src="assets/app2.js?v=449d96" defer></script>
 </body>

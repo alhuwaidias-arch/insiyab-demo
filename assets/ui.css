@@ -310,6 +310,7 @@ body.app2{
 .app2 .v{font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; flex:0 0 auto}
 .app2 .v-bad{color:#ffb9b9; background:rgba(255,93,93,.12); border:1px solid rgba(255,93,93,.3)}
 .app2 .v-ok{color:#d8ecff; background:rgba(58,133,184,.22); border:1px solid rgba(58,133,184,.45)}
+.v-wait{color:#e9d9a6; background:rgba(184,148,58,.18); border:1px solid rgba(184,148,58,.45)}
 .app2 .arm-num{display:flex; align-items:baseline; gap:6px; flex-wrap:wrap}
 .app2 .arm-num b{font-size:25px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.3px; color:#e9f1f8}
 .app2 .arm-num.bad b{color:#ff8f8f}
