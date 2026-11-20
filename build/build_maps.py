@@ -83,7 +83,7 @@ ARMS = [
     ("uturn", "damage_uturn300.edges.csv", "دوران إجباري",
      f"{_m('uturn')} د ({_x('uturn')} عن الأساس) — مرفوض", PURPLE),
     ("works", "damage_works300.edges.csv", "المُطبَّق: حارتان لكل اتجاه",
-     f"+{D['works_vh']:,} ساعة · {D['works_share_pct']}% من الإغلاق", SKY),
+     f"+{D['works_vh']:,} ساعة · {D['works_share_pct']}% من الإغلاق · {_m('works')} د", SKY),
 ]
 dmg = {k: read_damage(f) for k, f, _, _, _ in ARMS if f}
 
@@ -383,14 +383,14 @@ def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
     if chrome:
         b.append(f'<rect x="34" y="28" width="900" height="132" rx="14" fill="#081b4a" fill-opacity=".92"/>')
         b.append(T(918, 76, "الحل المُطبَّق على الخريطة", 33, INK, "r", "700"))
-        b.append(T(918, 112, f"حارتان لكل اتجاه · {D['works_vh']} ساعة تأخير مضاف · "
-                             f"بلا التفاف", 23, SKY, "r", "700"))
+        b.append(T(918, 112, f"حارتان لكل اتجاه · {_m('works')} د/رحلة · "
+                             f"{D['works_vh']} ساعة تأخير مضاف · بلا التفاف", 23, SKY, "r", "700"))
         b.append(T(918, 142, f"{SOL['arms']['works']['edges_hit']} ضلعًا يتأثر فقط من "
                              f"{SOL['arms']['works']['edges_total']:,} ضلعًا في نطاق القياس", 19, MUTED, "r"))
 
         # مفتاح مقروء: كل بند على سطرين (الاسم ثم شرحه تحته). في سطر واحد كان
         # الشرح (يمينًا) يدخل تحت الاسم الطويل مثل «طريق الأمير تركي الأول».
-        lx, bw = w - 34 - 700, 700     # الزاوية اليمنى: لا تتعارض مع التقاطع في الوسط
+        lx, bw = w - 34 - 380, 380     # الزاوية اليمنى؛ نصف العرض السابق (700) بطلب المالك
         rows = [(SKY, "", "المحور مفتوح في الاتجاهين", "سهمان متعاكسان على الشارع نفسه"),
                 (SKY, ' casing', "مقطع الأعمال", "حارتان لكل اتجاه — لا مسار مغلق"),
                 (TURKI_C, ' stroke-dasharray="8 6"', "طريق الأمير تركي الأول", "الطريق المتقاطع"),
@@ -400,13 +400,13 @@ def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
         bh = 78 + 46 * len(rows)
         ly = h - 42 - bh               # فوق الحاشية بمسافة، ولا تلامسها
         b.append(f'<rect x="{lx}" y="{ly}" width="{bw}" height="{bh}" rx="12" fill="#081b4a" fill-opacity=".92"/>')
-        b.append(T(lx + bw - 34, ly + 36, "كيف تُقرأ الخريطة", 22, INK, "r", "700"))
+        b.append(T(lx + bw - 26, ly + 34, "كيف تُقرأ الخريطة", 21, INK, "r", "700"))
         for i, (colr, dash, name, note) in enumerate(rows):
             yy = ly + 78 + i * 46
-            b.append(swatch(lx + bw - 76, yy - 8, colr, dash if not dash.startswith(' casing') else "",
-                            wd=36, thick=8, casing=dash.startswith(' casing')))
-            b.append(T(lx + bw - 88, yy, name, 18, INK, "r", "700"))
-            b.append(T(lx + bw - 88, yy + 21, note, 14, MUTED, "r"))
+            b.append(swatch(lx + bw - 60, yy - 8, colr, dash if not dash.startswith(' casing') else "",
+                            wd=30, thick=7, casing=dash.startswith(' casing')))
+            b.append(T(lx + bw - 72, yy, name, 17, INK, "r", "700"))
+            b.append(T(lx + bw - 72, yy + 20, note, 13, MUTED, "r"))
         b.append(T(40, h - 26, "السهم = اتجاه الحركة · سماكة الخط = حجم التأخير المضاف على الضلع",
                    18, MUTED, "l"))
     open(os.path.join(IMG, out + ".svg"), "w", encoding="utf-8").write(doc(w, h, "".join(b)))
