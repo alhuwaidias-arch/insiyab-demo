@@ -205,7 +205,12 @@ def fig_problem(w=1600, h=900):
         b.append(T(px + dx, py + dy, lab, 21, "#dce6f7", anchor))
     # اسم الطريق المتقاطع على خطّه نفسه — لا يترك للقارئ أن يستنتج
     tp = [p for e in net["edges"] if ST[e[1]] == TURKI for p in pts(e)]
-    tN, tS = max(tp, key=lambda p: p[1]), min(tp, key=lambda p: p[1])
+    # التسمية على منتصف الجزأين — الطرف الشمالي يقع تحت بطاقة العنوان
+    _y = JUNC[1]
+    north = [p for p in tp if p[1] < _y - 0.004]
+    south = [p for p in tp if p[1] > _y + 0.004]
+    tN = min(north, key=lambda p: abs(p[1] - (_y - 0.007))) if north else max(tp, key=lambda p: p[1])
+    tS = min(south, key=lambda p: abs(p[1] - (_y + 0.007))) if south else min(tp, key=lambda p: p[1])
     for p, anchor, dy, lab in ((tN, "l", -14, TURKI), (tS, "r", 26, TURKI)):
         px, py = P(p)
         b.append(T(px + (16 if anchor == "l" else -16), py + dy, lab, 20, "#ffd79a", anchor))

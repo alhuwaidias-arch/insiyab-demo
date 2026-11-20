@@ -317,6 +317,16 @@
     $$('.view').forEach(function (v) {
       v.classList.toggle('on', v.id === 'view-' + view);
     });
+    if (history.replaceState) {
+      history.replaceState(null, '', '#v=' + view);
+    } else { location.hash = '#v=' + view; }
+    if (view === 'maps') {
+      // lazy داخل حاوية قابلة للتمرير لا يُحمَّل تلقائيًّا: نطلب التحميل عند فتح التبويب
+      $$('#view-maps img').forEach(function (im) {
+        if (im.getAttribute('loading') === 'lazy') { im.setAttribute('loading', 'eager'); }
+        if (!im.complete && im.src) { var u = im.src; im.src = u; }
+      });
+    }
     if (view === 'map') { resize(); }
   }
 
@@ -396,6 +406,10 @@
       var box = $('#view-map'); if (box && window.ResizeObserver) new ResizeObserver(resize).observe(box);
       var mv = /[#&]v=(\w+)/.exec(location.hash);
       goto(mv ? mv[1] : 'map');
+      window.addEventListener('hashchange', function () {
+        var h = /[#&]v=(\w+)/.exec(location.hash);
+        if (h) goto(h[1]);
+      });
     }).catch(function (err) {
       document.title = 'فشل تحميل البيانات: ' + err.message;
       console.error(err);

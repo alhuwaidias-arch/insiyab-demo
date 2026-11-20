@@ -7,7 +7,7 @@
 <meta name="description" content="المرحلة الأولى من التوأم الرقمي الحركي لمدينة الرياض: ممر أنس بن مالك يُقاس ميدانياً بمحاكاة SUMO، والمطابقة مقطعاً بمقطع هي أساس التوسّع إلى المدينة كاملة.">
 <script>window.addEventListener("error",function(e){document.title="JSERR "+e.message+" @"+(e.filename||"").split("/").pop()+":"+e.lineno;});</script>
 <link rel="stylesheet" href="assets/style.css?v=twin11">
-<link rel="stylesheet" href="assets/ui.css?v=maps2">
+<link rel="stylesheet" href="assets/ui.css?v=maps3">
 </head>
 <body class="app2">
 
@@ -171,7 +171,14 @@
       </div>
     </div>
 
-    <figure class="fig">
+    <nav class="mapnav" aria-label="انتقال بين الرسوم">
+      <a href="#m1">١ · موقع المشكلة</a>
+      <a href="#m2">٢ · خمسة أذرع</a>
+      <a href="#m3">٣ · كثافة التأخير</a>
+      <a href="#m4">٤ · الحل المُختار</a>
+    </nav>
+
+    <figure class="fig" id="m1">
       <img src="images/map_problem.png" alt="موقع تقاطع طريق أنس بن مالك مع طريق الأمير تركي الأول" loading="lazy">
       <figcaption>
         <b>١ · ما نحاول عمله.</b> هذا هو التقاطع الذي ندرسه: <b>طريق أنس بن مالك</b> (المحور
@@ -180,7 +187,7 @@
       </figcaption>
     </figure>
 
-    <figure class="fig">
+    <figure class="fig" id="m2">
       <img src="images/map_arms.png" alt="خمسة أذرع: خط الأساس، إغلاق كامل، توسعة المجاورة، دوران، الحل المُختار" loading="lazy">
       <figcaption>
         <b>٢ · خمسة أذرع في صورة واحدة.</b> الخط نفسه، والطلب نفسه، وخمسة ترتيبات: بلا إغلاق،
@@ -190,7 +197,7 @@
       </figcaption>
     </figure>
 
-    <figure class="fig">
+    <figure class="fig" id="m3">
       <img src="images/map_density.png" alt="كثافة التأخير على طول الطريق" loading="lazy">
       <figcaption>
         <b>٣ · كثافة التأخير على طول الطريق.</b> التأخير لا يقف عند التقاطع: يتراكم على المحور
@@ -199,7 +206,7 @@
       </figcaption>
     </figure>
 
-    <figure class="fig fig-wide">
+    <figure class="fig fig-wide" id="m4">
       <img src="images/map_chosen.png" alt="الحل المُختار: اتجاه واحد بمرحلتين" loading="lazy">
       <figcaption>
         <b>٤ · الحل المُختار.</b> التقاطع لا يُغلق كليًّا: المحور يبقى مفتوحًا باتجاه واحد، ثم
@@ -321,6 +328,6 @@
 
 <script src="assets/solutions.js?v=maps1" defer></script>
 <script src="assets/validation.js?v=twin10" defer></script>
-<script src="assets/app2.js?v=twin11" defer></script>
+<script src="assets/app2.js?v=maps4" defer></script>
 </body>
 </html>
