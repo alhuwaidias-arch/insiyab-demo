@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-20T16:41:06+03:00",
+  "generated": "2026-11-20T16:44:09+03:00",
   "sources": {
     "results": "runs/results.csv",
     "edges_dir": "runs/damage_*.edges.csv",
@@ -370,5 +370,5 @@
     },
     "works_share_of_closure_pct": 11
   },
-  "net_edges": 8488
+  "net_edges": 8486
 }
