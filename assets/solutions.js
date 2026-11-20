@@ -122,7 +122,7 @@
         anyArm = d.arms.closure || d.arms.baseline;
     var cs = document.getElementById("chip-scope");
     if (cs && anyArm && anyArm.edges_total) cs.textContent = Number(anyArm.edges_total).toLocaleString("en-US");
-    if (ce) ce.textContent = Number(d.net_edges || 8486).toLocaleString("en-US");
+    if (ce) ce.textContent = Number(d.net_edges || 8488).toLocaleString("en-US");
     if (ct && d.generated) {
       var g = new Date(d.generated);
       ct.textContent = g.toLocaleDateString("en-GB") + " " + g.toTimeString().slice(0, 5);

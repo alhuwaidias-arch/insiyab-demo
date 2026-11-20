@@ -61,12 +61,29 @@ def read_damage(name):
     return out
 
 
+_A = SOL["arms"]
+
+
+def _m(k):
+    """زمن الرحلة لذراع بالدقيقة، مقرَّبًا — لا رقم مكتوب بيد."""
+    return f"{_A[k]['dur_min']:.0f}"
+
+
+def _x(k):
+    """فرق الذراع عن خط الأساس بالدقيقة، بإشارته."""
+    return f"{_A[k]['dur_min'] - _A['baseline']['dur_min']:+.0f}"
+
+
 ARMS = [
-    ("baseline", None, "خط الأساس", f"{D['base_min']} دقيقة · بلا إغلاق", GREY),
-    ("closure", "damage_closure300.edges.csv", "إغلاق كامل", f"+{D['added_vh']} ساعة انتظار", RED),
-    ("detour", "damage_detour300.edges.csv", "توسعة المجاورة", f"−{D['detour_pct']} من التأخير", AMBER),
-    ("uturn", "damage_uturn300.edges.csv", "دوران", f"×{D['uturn_ratio']} التأخير — مرفوض", PURPLE),
-    ("works", "damage_works300.edges.csv", "المُطبَّق: حارتان لكل اتجاه", f"+{D['works_vh']} ساعة تأخير", SKY),
+    ("baseline", None, "خط الأساس", f"{_m('baseline')} دقيقة · بلا إغلاق", GREY),
+    ("closure", "damage_closure300.edges.csv", "إغلاق كامل",
+     f"+{D['closure_vh']:,} ساعة تأخير · {_m('closure')} د/رحلة", RED),
+    ("detour", "damage_detour300.edges.csv", "توسعة المجاورة",
+     f"{_m('detour')} د · تعادل الإغلاق — مرفوض", AMBER),
+    ("uturn", "damage_uturn300.edges.csv", "دوران إجباري",
+     f"{_m('uturn')} د ({_x('uturn')} عن الأساس) — مرفوض", PURPLE),
+    ("works", "damage_works300.edges.csv", "المُطبَّق: حارتان لكل اتجاه",
+     f"+{D['works_vh']:,} ساعة · {D['works_share_pct']}% من الإغلاق", SKY),
 ]
 dmg = {k: read_damage(f) for k, f, _, _, _ in ARMS if f}
 
@@ -210,8 +227,8 @@ def fig_problem(w=1600, h=900):
     b.append(f'<circle cx="{x:.0f}" cy="{y:.0f}" r="52" fill="{RED}" fill-opacity=".16"/>')
     b.append(f'<path d="M {x-22:.0f} {y-22:.0f} L {x+22:.0f} {y+22:.0f} M {x+22:.0f} {y-22:.0f} '
              f'L {x-22:.0f} {y+22:.0f}" stroke="{RED}" stroke-width="8" stroke-linecap="round"/>')
-    b.append(T(x - 60, y - 6, "التقاطع مغلق", 26, INK, "l", "700"))
-    b.append(T(x - 60, y + 28, "لأعمال تطوير طريق الأمير تركي الأول", 19, "#ffb3ab", "l"))
+    b.append(T(x - 76, y - 6, "التقاطع مغلق", 26, INK, "r", "700"))
+    b.append(T(x - 76, y + 28, "لأعمال تطوير طريق الأمير تركي الأول", 19, "#ffb3ab", "r"))
     west, east = min(ap, key=lambda p: p[0]), max(ap, key=lambda p: p[0])
     for p, anchor, dx, dy, lab in ((west, "l", 16, -16, "شارع أنس بن مالك — الغرب"),
                                    (east, "r", -16, -16, "شارع أنس بن مالك — الشرق")):
@@ -233,14 +250,17 @@ def fig_problem(w=1600, h=900):
     b.append(T(784, 80, "ما نفعله بالضبط", 34, INK, "r", "700"))
     b.append(T(784, 120, "نغلق تقاطع أنس بن مالك مع طريق الأمير تركي الأول مدة الأعمال", 21, MUTED, "r"))
     b.append(T(784, 152, "ونقيس أين يذهب التأخير، وأي تدبير يخففه فعلًا", 21, MUTED, "r"))
-    lx, ly = 40, h - 78
-    b.append(f'<rect x="{lx-16}" y="{ly-34}" width="720" height="86" rx="12" fill="#081b4a" fill-opacity=".92"/>')
+    lx = 40                                   # المفتاح رأسًا: مفتاحٌ لكل سطر، لا تزاحم أفقي
+    bw_, bh_ = 500, 132
+    ly = h - 26 - bh_
+    b.append(f'<rect x="{lx-16}" y="{ly}" width="{bw_}" height="{bh_}" rx="12" fill="#081b4a" fill-opacity=".92"/>')
     for i, (colr, dash, lab) in enumerate(((SKY, "", "شارع أنس بن مالك (المحور)"),
                                           (TURKI_C, ' stroke-dasharray="7 5"', TURKI),
                                           (RED, "", "التقاطع المُغلق"))):
-        b.append(f'<rect x="{lx + i*258}" y="{ly-6}" width="28" height="9" rx="4" fill="{colr}"/>')
-        b.append(T(lx + i*258 + 36, ly + 4, lab, 18, "#dbe5f7", "l"))
-    b.append(T(lx + 2, ly + 34, "الشبكة من نموذج المحاكاة (SUMO)، لا خريطة زخرفية", 17, MUTED, "l"))
+        yy = ly + 30 + i * 28
+        b.append(swatch(lx + bw_ - 58, yy - 5, colr, dash, wd=30, thick=8))
+        b.append(T(lx + bw_ - 68, yy + 6, lab, 18, "#dbe5f7", "r"))
+    b.append(T(lx + 2, ly + bh_ - 12, "الشبكة من نموذج المحاكاة (SUMO)، لا خريطة زخرفية", 17, MUTED, "l"))
     open(os.path.join(IMG, "map_problem.svg"), "w", encoding="utf-8").write(doc(w, h, "".join(b)))
 
 
@@ -370,7 +390,7 @@ def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
 
         # مفتاح مقروء: كل بند على سطرين (الاسم ثم شرحه تحته). في سطر واحد كان
         # الشرح (يمينًا) يدخل تحت الاسم الطويل مثل «طريق الأمير تركي الأول».
-        lx, bw = 34, 700
+        lx, bw = w - 34 - 700, 700     # الزاوية اليمنى: لا تتعارض مع التقاطع في الوسط
         rows = [(SKY, "", "المحور مفتوح في الاتجاهين", "سهمان متعاكسان على الشارع نفسه"),
                 (SKY, ' casing', "مقطع الأعمال", "حارتان لكل اتجاه — لا مسار مغلق"),
                 (TURKI_C, ' stroke-dasharray="8 6"', "طريق الأمير تركي الأول", "الطريق المتقاطع"),
@@ -387,8 +407,8 @@ def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
                             wd=36, thick=8, casing=dash.startswith(' casing')))
             b.append(T(lx + bw - 88, yy, name, 18, INK, "r", "700"))
             b.append(T(lx + bw - 88, yy + 21, note, 14, MUTED, "r"))
-        b.append(T(w - 40, h - 26, "السهم = اتجاه الحركة · سماكة الخط = حجم التأخير المضاف على الضلع",
-                   18, MUTED, "r"))
+        b.append(T(40, h - 26, "السهم = اتجاه الحركة · سماكة الخط = حجم التأخير المضاف على الضلع",
+                   18, MUTED, "l"))
     open(os.path.join(IMG, out + ".svg"), "w", encoding="utf-8").write(doc(w, h, "".join(b)))
 
 
@@ -444,7 +464,7 @@ def fig_density(W=1600, H=980):
     jx = x0 + along(JUNC) * (x1 - x0)
     b.append(f'<circle cx="{jx:.1f}" cy="{y-30}" r="7" fill="{SKY}"/>')
     b.append(T(jx - 14, y - 34, "التقاطع", 18, SKY, "l", "700"))
-    b.append(T(W - 40, y + 46, "كل خليج ≈ 2% من طول المحور", 17, MUTED, "r"))
+    b.append(T(W - 40, y + 46, "كل شريحة ≈ 2% من طول المحور", 17, MUTED, "r"))
     open(os.path.join(IMG, "map_density.svg"), "w", encoding="utf-8").write(doc(W, H, "".join(b)))
     return nb, gmax
 
