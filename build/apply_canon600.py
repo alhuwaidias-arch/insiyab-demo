@@ -89,7 +89,7 @@ def main():
                     "numbers": "analysis/qa_v7/CANON600.json",
                     "method": "analysis/make_canon600.py"}
     d["generated"] = datetime.now().astimezone().isoformat(timespec="seconds")
-    d["net_edges"] = 8488
+    d["net_edges"] = 8486     # المرسوم داخل نطاق الخريطة؛ net.xml فيه 8,488 واثنان خارج الإطار
     d["arms"] = arms
     d["paired"] = {"works": pair_works, "closure": pair_closure,
                    "works_share_of_closure_pct": share}
