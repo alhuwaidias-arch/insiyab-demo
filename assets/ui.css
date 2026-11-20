@@ -17,7 +17,7 @@ body.app2{
   color:var(--ink);
   font-family:"Segoe UI","Tajawal",Tahoma,system-ui,sans-serif;
   font-size:15px; line-height:1.55;
-  display:grid; grid-template-rows:62px 46px 1fr 34px; height:100vh; overflow:hidden;
+  display:grid; grid-template-rows:62px 46px auto 1fr 34px; height:100vh; overflow:hidden;
 }
 .app2 *{box-sizing:border-box}
 .app2 .ltr{direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums}
@@ -265,7 +265,7 @@ body.app2{
 
 /* ── شريط الهوية السفلي (تذييل النموذج الأولي) ── */
 .app2 footer.brandbar{
-  grid-row:4; display:flex; align-items:center; gap:14px; padding:0 18px; margin:0; height:auto;
+  grid-row:5; display:flex; align-items:center; gap:14px; padding:0 18px; margin:0; height:auto;
   border-top:1px solid var(--line); background:linear-gradient(180deg,rgba(8,11,15,.92),rgba(10,20,38,.96));
   font-size:11.5px; color:#93a4b6; overflow:hidden; white-space:nowrap;
 }
@@ -276,6 +276,7 @@ body.app2{
 
 /* ── تبويب الحلول ── */
 .app2 #view-solutions{grid-template-columns:1fr; padding:18px 26px 22px; overflow:auto; align-content:start; min-height:0}
+.app2 #view-maps{grid-template-columns:1fr; padding:18px 26px 22px; overflow:auto; align-content:start; min-height:0}
 .app2 #view-solutions h1{margin:0; font-size:23px}
 .app2 #view-solutions .head p{margin:4px 0 0; color:var(--muted); font-size:12.5px}
 
@@ -389,3 +390,34 @@ body.app2{
   .app2 .tgrid{grid-template-columns:1fr}
   .app2 .brandbar .bb-c{display:none}
 }
+
+
+/* ── شريط «ما نحاول عمله» (طلب المالك: اشرح المشكلة ولا تفترض الفهم) ── */
+.prob {
+  display: flex; gap: 18px; align-items: flex-start;
+  margin: 0 22px 14px; padding: 14px 18px;
+  background: rgba(58,133,184,.10);
+  border: 1px solid rgba(58,133,184,.45);
+  border-right: 4px solid var(--sky);
+  border-radius: 10px;
+}
+.prob .k {
+  flex: 0 0 auto; font-size: 13px; font-weight: 700; letter-spacing: .2px;
+  color: var(--sky); padding: 3px 10px; border: 1px solid rgba(58,133,184,.5);
+  border-radius: 999px; white-space: nowrap;
+}
+.prob p { margin: 0; font-size: 14.5px; line-height: 1.85; color: var(--ink-2, #dbe5f7); }
+.prob b { color: #fff; }
+
+/* ── صور الشبكة: «صورة عن 1000 كلمة» ── */
+.fig { margin: 0 0 22px; }
+.fig img {
+  width: 100%; height: auto; display: block; border-radius: 12px;
+  border: 1px solid rgba(159,179,200,.28); background: #08122e;
+}
+.fig figcaption {
+  margin-top: 10px; font-size: 14px; line-height: 1.9; color: var(--ink-2, #cfd9e6);
+  padding-right: 4px;
+}
+.fig figcaption b { color: #fff; }
+.fig-wide img { border-color: rgba(58,133,184,.55); }

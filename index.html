@@ -7,7 +7,7 @@
 <meta name="description" content="المرحلة الأولى من التوأم الرقمي الحركي لمدينة الرياض: ممر أنس بن مالك يُقاس ميدانياً بمحاكاة SUMO، والمطابقة مقطعاً بمقطع هي أساس التوسّع إلى المدينة كاملة.">
 <script>window.addEventListener("error",function(e){document.title="JSERR "+e.message+" @"+(e.filename||"").split("/").pop()+":"+e.lineno;});</script>
 <link rel="stylesheet" href="assets/style.css?v=twin11">
-<link rel="stylesheet" href="assets/ui.css?v=twin11">
+<link rel="stylesheet" href="assets/ui.css?v=maps2">
 </head>
 <body class="app2">
 
@@ -32,11 +32,20 @@
 <nav class="tabs" role="tablist">
   <button role="tab" data-view="map" aria-selected="true">المحاكي الحي</button>
   <button role="tab" data-view="solutions" aria-selected="false">الحلول المُحاكاة</button>
+  <button role="tab" data-view="maps" aria-selected="false">الحلول على الخريطة</button>
   <button role="tab" data-view="trip" aria-selected="false">جولات طريق أنس</button>
   <button role="tab" data-view="validation" aria-selected="false">التحقق الميداني</button>
   <button role="tab" data-view="method" aria-selected="false">المنهجية والحدود</button>
   <span class="spacer">الخيارات محصورة على طريق أنس بن مالك ومحيطه</span>
 </nav>
+
+<div class="prob">
+  <span class="k">ما نحاول عمله</span>
+  <p>إغلاق تقاطع <b>طريق أنس بن مالك</b> مع <b>طريق الأمير تركي الأول</b> — لأن أعمال تطوير
+  طريق الأمير تركي الأول تقتضي إغلاقه. نُحاكي الإغلاق <b>قبل وقوعه</b> على شبكة الممر
+  المعايَرة بقياس ميداني، ونجيب عن سؤال واحد: <b>أين يذهب التأخير؟</b> كم يزيد على المحور،
+  وأي شوارع مجاورة تستقبل الزحام، وهل يوجد ترتيب أقلّ كلفة من الإغلاق الكامل.</p>
+</div>
 
 <main>
   <!-- ═══ المحاكي الحي ═══ -->
@@ -151,6 +160,58 @@
     <p class="note" id="sol-src"></p>
   </section>
 
+  <!-- ═══ الحلول على الخريطة (تُولَّد بـ build/build_maps.py) ═══ -->
+  <section class="view" id="view-maps">
+    <div class="head">
+      <div>
+        <h1>الحلول على الخريطة — كيف تبدو على شبكة الطرق؟</h1>
+        <p>أربع صور تُغني عن صفحة نص: موقع المشكلة، والأذرع المختبرة في صورة واحدة، وكثافة
+        التأخير على طول الطريق، ثم الحل المُختار كما يعمل. كل رقم في هذه الصور يُقرأ من
+        ملف بيانات مُولَّد، لا يُكتب بيد.</p>
+      </div>
+    </div>
+
+    <figure class="fig">
+      <img src="images/map_problem.png" alt="موقع تقاطع طريق أنس بن مالك مع طريق الأمير تركي الأول" loading="lazy">
+      <figcaption>
+        <b>١ · ما نحاول عمله.</b> هذا هو التقاطع الذي ندرسه: <b>طريق أنس بن مالك</b> (المحور
+        الذي نقيسه) يعبر <b>طريق الأمير تركي الأول</b> (الطريق المتقاطع). أعمال تطوير طريق
+        الأمير تركي الأول تقتضي إغلاق هذا التقاطع، والسؤال: من يدفع الثمن، وأين؟
+      </figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/map_arms.png" alt="خمسة أذرع: خط الأساس، إغلاق كامل، توسعة المجاورة، دوران، الحل المُختار" loading="lazy">
+      <figcaption>
+        <b>٢ · خمسة أذرع في صورة واحدة.</b> الخط نفسه، والطلب نفسه، وخمسة ترتيبات: بلا إغلاق،
+        إغلاق كامل، توسعة الشوارع المجاورة، دوران، ثم الحل المُختار. اللوحات من اليمين إلى
+        اليسار، ولون الضلع وسماكته يقيسان التأخير المضاف عليه — فالفرق بين الإغلاق الكامل
+        والحل المُختار يُرى بالعين قبل أن يُقرأ بالرقم.
+      </figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/map_density.png" alt="كثافة التأخير على طول الطريق" loading="lazy">
+      <figcaption>
+        <b>٣ · كثافة التأخير على طول الطريق.</b> التأخير لا يقف عند التقاطع: يتراكم على المحور
+        ويمتد إلى شوارع مجاورة. كل ضلع له لون وسماكة بحجم ما أُضيف إليه من تأخير، والمقياس
+        لوغاريتمي كي لا يطمس الضلعُ الأشدّ بقيةَ الشبكة.
+      </figcaption>
+    </figure>
+
+    <figure class="fig fig-wide">
+      <img src="images/map_chosen.png" alt="الحل المُختار: اتجاه واحد بمرحلتين" loading="lazy">
+      <figcaption>
+        <b>٤ · الحل المُختار.</b> التقاطع لا يُغلق كليًّا: المحور يبقى مفتوحًا باتجاه واحد، ثم
+        يُقلب الاتجاه بعد انتهاء أعمال الجهة الأولى (المرحلتان ١ و٢). النتيجة: التأخير المضاف
+        ينتقل من الشبكة كلها إلى <b>20 ضلعًا</b> فقط، والالتفاف لا يتجاوز <b>0.9 كم</b>.
+      </figcaption>
+    </figure>
+
+    <p class="note">الصور تُولَّد بـ <span class="ltr">build/build_maps.py</span> من
+      <span class="ltr">data/solutions.json</span> و<span class="ltr">runs/damage_*.edges.csv</span>.</p>
+  </section>
+
   <!-- ═══ الجولات الميدانية ═══ -->
   <section class="view" id="view-trip">
     <div class="head">
@@ -258,7 +319,7 @@
   <span class="bb-r">التوأم الرقمي الحركي · المرحلة الأولى — ممر أنس بن مالك</span>
 </footer>
 
-<script src="assets/solutions.js?v=twin11" defer></script>
+<script src="assets/solutions.js?v=maps1" defer></script>
 <script src="assets/validation.js?v=twin10" defer></script>
 <script src="assets/app2.js?v=twin11" defer></script>
 </body>
