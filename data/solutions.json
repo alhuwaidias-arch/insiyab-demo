@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-20T01:02:44+03:00",
+ "generated": "2026-11-20T14:04:36+03:00",
  "sources": {
   "results": "runs/results.csv",
   "edges_dir": "runs/damage_*.edges.csv",
@@ -66,7 +66,7 @@
     }
    ],
    "top3_share": 64.1,
-   "edges_pct": 4.8,
+   "edges_pct": 3.8,
    "d_min": 16.86,
    "wait_delta_h": 994
   },
@@ -104,7 +104,7 @@
     }
    ],
    "top3_share": 53.9,
-   "edges_pct": 6.0,
+   "edges_pct": 4.7,
    "d_min": 16.72,
    "wait_delta_h": 977
   },
@@ -142,66 +142,67 @@
     }
    ],
    "top3_share": 66.0,
-   "edges_pct": 8.8,
+   "edges_pct": 6.7,
    "d_min": 20.86,
    "wait_delta_h": 1587
   },
-  "half": {
-   "tag": "halfe",
+  "works": {
+   "tag": "works300",
    "n": 5,
-   "dur_min": 19.25,
-   "dur_sd": 0.47,
-   "speed_kmh": 39.3,
-   "route_km": 8.9,
-   "trips": 7274,
-   "wait_h": 859,
+   "dur_min": 26.81,
+   "dur_sd": 2.77,
+   "speed_kmh": 38.8,
+   "route_km": 8.26,
+   "trips": 6844,
+   "wait_h": 1748,
    "runs": [
-    "20261119_212544_d8_s1_halfe",
-    "20261119_212849_d8_s2_halfe",
-    "20261119_213146_d8_s3_halfe",
-    "20261119_213502_d8_s4_halfe",
-    "20261119_213805_d8_s5_halfe"
+    "20261120_134201_d8_s4_works300",
+    "20261120_134201_d8_s5_works300",
+    "20261120_134201_d8_s1_works300",
+    "20261120_134201_d8_s3_works300",
+    "20261120_134201_d8_s2_works300"
    ],
-   "edges_total": 1560,
-   "edges_hit": 20,
-   "net_vh": -78.5,
+   "edges_total": 1603,
+   "edges_hit": 48,
+   "net_vh": 1239.5,
    "top": [
     {
-     "street": "رقم 398",
-     "vh": 37.5
+     "street": "شارع أنس بن مالك",
+     "vh": 948.1
     },
     {
-     "street": "رقم 461",
-     "vh": 18.7
+     "street": "(بلا اسم)",
+     "vh": 96.1
     },
     {
-     "street": "طريق الأمير محمد بن سعد بن عبدالعزيز",
-     "vh": 9.3
+     "street": "شارع انس بن مالك الفرعي",
+     "vh": 28.1
     }
    ],
-   "top3_share": 52.1,
-   "edges_pct": 1.4,
-   "d_min": 0.07,
-   "wait_delta_h": -106
+   "top3_share": 83.9,
+   "edges_pct": 3.0,
+   "d_min": 7.63,
+   "wait_delta_h": 783
   }
  },
  "display": {
-  "added_vh": "1,700",
-  "closure_vh": 1700,
+  "added_vh": "2,000",
+  "closure_vh": 2000,
   "detour_vh": 1700,
   "uturn_vh": 3400,
-  "half_vh": "80",
+  "half_vh": "870",
   "detour_pct": "3%",
   "uturn_ratio": 2,
   "base_min": "19",
   "closure_min": "36",
   "extra_min": "17",
   "extra_km": "3",
-  "half_extra_km": "0.9",
-  "half_reduction_pct": "104%",
+  "works_vh": "870",
+  "works_min": "+8",
+  "works_share_pct": 43,
   "stays_pct": "90%",
-  "trips": "7275",
-  "cost_low_k": "55",
-  "cost_high_k": "72"
+  "trips": "7,275",
+  "cost_low_k": 28,
+  "cost_high_k": 36
  }
 }

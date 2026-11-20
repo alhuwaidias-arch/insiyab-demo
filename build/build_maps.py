@@ -27,10 +27,13 @@ RUNS = os.path.join(MODEL, "runs")
 os.makedirs(IMG, exist_ok=True)
 
 SKY, AMBER, RED, PURPLE = "#4c9ee0", "#d68910", "#d94a3d", "#8e5bb5"
-GREY, BG, CARD, INK, MUTED = "#8d99ae", "#081533", "#0d2150", "#ffffff", "#a8b8d8"
+# بلا تغيير = رمادي فاتح داكن رفيع مصمت · التقاطع = أبيض مزرق متقطّع
+# الفرق بينهما الآن في ثلاث قنوات (سطوع · نمط · سماكة) لا في درجة رمادية متقاربة.
+GREY, GREY_L, BG, CARD = "#6b7684", "#9aa6bb", "#081533", "#0d2150"
+INK, MUTED = "#ffffff", "#a8b8d8"
 ANAS, TURKI = "شارع أنس بن مالك", "طريق الأمير تركي بن عبدالعزيز الأول"
 # لون الطريق المتقاطع مستقل عن سلّم التأخير (الكهرماني) وإلا التبس بالمفتاح
-TURKI_C = "#9fb3c8"
+TURKI_C = "#e6eef9"
 FONT = "Segoe UI, Tahoma, Arial, sans-serif"
 
 net = json.load(open(os.path.join(DATA, "network.json"), encoding="utf-8"))
@@ -63,7 +66,7 @@ ARMS = [
     ("closure", "damage_closure300.edges.csv", "إغلاق كامل", f"+{D['added_vh']} ساعة انتظار", RED),
     ("detour", "damage_detour300.edges.csv", "توسعة المجاورة", f"−{D['detour_pct']} من التأخير", AMBER),
     ("uturn", "damage_uturn300.edges.csv", "دوران", f"×{D['uturn_ratio']} التأخير — مرفوض", PURPLE),
-    ("half", "damage_halfe.edges.csv", "المُختار: اتجاه واحد بمرحلتين", f"−{D['half_vh']} ساعة انتظار", SKY),
+    ("works", "damage_works300.edges.csv", "المُطبَّق: حارتان لكل اتجاه", f"+{D['works_vh']} ساعة تأخير", SKY),
 ]
 dmg = {k: read_damage(f) for k, f, _, _, _ in ARMS if f}
 
@@ -138,6 +141,18 @@ def heat(v, vmax):
     return col, 1.7 + 4.0 * t
 
 
+def swatch(x, y, colr, dash="", wd=34, thick=8, casing=False):
+    """شريط المفتاح خطٌّ لا مستطيل: النمط المتقطّع وحدّ التمييز لا يظهران على
+    مستطيل مُعبّأ (dasharray وstroke بلا أثر على الشكل الممتلئ)."""
+    out = []
+    if casing:                                  # حاشية بيضاء تحت الشريط = «مقطع»
+        out.append(f'<line x1="{x}" y1="{y}" x2="{x+wd}" y2="{y}" stroke="#f0f6ff" '
+                   f'stroke-width="{thick+7}" stroke-linecap="round"/>')
+    out.append(f'<line x1="{x}" y1="{y}" x2="{x+wd}" y2="{y}" stroke="{colr}" '
+               f'stroke-width="{thick}" stroke-linecap="round" {dash}/>')
+    return "".join(out)
+
+
 def doc(w, h, body):
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
             f'viewBox="0 0 {w} {h}" font-family="{FONT}">'
@@ -165,8 +180,8 @@ def network(P, arm=None, vmax=None, anas=True, turki=True, base_w=1.0, base_op=.
     if turki:
         for eid, street, ps in GEOM:
             if street == TURKI:
-                out.append(f'<path d="{path(ps, P)}" fill="none" stroke="{TURKI_C}" stroke-width="2.4" '
-                           f'stroke-opacity=".45" stroke-dasharray="7 5" stroke-linecap="round"/>')
+                out.append(f'<path d="{path(ps, P)}" fill="none" stroke="{TURKI_C}" stroke-width="2.6" '
+                           f'stroke-opacity=".5" stroke-dasharray="9 6" stroke-linecap="round"/>')
     if anas:
         for eid, street, ps in GEOM:
             if street == ANAS:
@@ -230,12 +245,12 @@ def fig_problem(w=1600, h=900):
 
 
 # ── 2 · الأذرع الخمسة ───────────────────────────────────────────────────────
-def fig_arms(W=1680, H=1230):
+def fig_arms(W=1680, H=1272):
     pw, ph = (W - 4 * 18) // 3, 566
     hh = 78
     vmax = max(VMAX.values()) if VMAX else 1
-    b = [T(W - 30, 52, "أربعة أذرع على الشبكة نفسها والطلب نفسه", 30, INK, "r", "700"),
-         T(W - 30, 86, "كل لوحة تُظهر أين يظهر التأخير — والتقاطع واحد في الخمس", 20, MUTED, "r")]
+    b = [T(W - 30, 52, "خط الأساس وأربعة حلول — الشبكة نفسها والطلب نفسه", 30, INK, "r", "700"),
+         T(W - 30, 86, "كل لوحة تُظهر أين يظهر التأخير — والتقاطع واحد في الجميع", 20, MUTED, "r")]
     for i, (arm, f, title, big, accent) in enumerate(ARMS):
         # RTL: اللوحة 1 أقصى اليمين، ثم 2، ثم 3 — وإلا قرأها القارئ العربي معكوسة
         col, row = 2 - (i % 3), i // 3
@@ -243,8 +258,8 @@ def fig_arms(W=1680, H=1230):
         P = make_proj(pw, ph - hh, m=16)
         b.append(f'<g transform="translate({x0},{y0})">'
                  f'<rect width="{pw}" height="{ph}" rx="16" fill="{CARD}" stroke="{accent}" '
-                 f'stroke-opacity="{0.85 if arm == "half" else 0.28}" '
-                 f'stroke-width="{2.5 if arm == "half" else 1}"/>')
+                 f'stroke-opacity="{0.85 if arm == "works" else 0.28}" '
+                 f'stroke-width="{2.5 if arm == "works" else 1}"/>')
         b.append(f'<rect x="16" y="16" width="40" height="28" rx="8" fill="{accent}" fill-opacity=".9"/>')
         b.append(f'<text x="36" y="37" fill="#08122e" font-size="19" font-weight="700" '
                  f'text-anchor="middle">{i+1}</text>')
@@ -252,32 +267,38 @@ def fig_arms(W=1680, H=1230):
         b.append(T(pw - 18, 68, big, 20, accent, "r", "700"))
         _closed = arm in ("closure", "uturn")
         b.append(f'<g transform="translate(0,{hh})">{network(P, arm, vmax)}'
-                 f'{junction(P, 7 if arm == "half" else 6, closed=_closed)}</g></g>')
+                 f'{junction(P, 7 if arm == "works" else 6, closed=_closed)}</g></g>')
     # خلية المفتاح
     x0, y0 = 18, 106 + (ph + 18)          # خلية المفتاح: يسار الصف الثاني
     b.append(f'<g transform="translate({x0},{y0})"><rect width="{pw}" height="{ph}" rx="16" '
              f'fill="{CARD}" fill-opacity=".72"/>')
     b.append(T(pw - 20, 48, "كيف تُقرأ الخريطة", 24, INK, "r", "700"))
-    rows = [(RED, "تأخير كبير", "أضلاع يزيد تأخيرها كثيرًا"),
-            (AMBER, "تأخير متوسط", "أضلاع تتأثر جزئيًا"),
-            (GREY, "بلا تغيير", "أضلاع لم يتغير تأخيرها"),
-            (SKY, "المحور", "شارع أنس بن مالك"),
-            (TURKI_C, "المتقاطع", "طريق الأمير تركي الأول")]
-    ty = 108
-    for colr, name, note in rows:
-        b.append(f'<rect x="{pw-44}" y="{ty-14}" width="26" height="9" rx="4" fill="{colr}"/>')
-        b.append(T(pw - 56, ty - 2, name, 19, INK, "r", "700"))
-        b.append(T(pw - 56, ty + 24, note, 15, MUTED, "r"))
-        ty += 70
-    b.append(T(pw - 20, ty + 8, "سماكة الخط = حجم التأخير على الضلع", 15, MUTED, "r"))
+    # كل صفّ: اسم + شرح تحت بعضهما، ومسافة 64px بين الصفوف ⇒ لا تلامس بين صفّين
+    rows = [(RED, "", "تأخير كبير", "أضلاع يزيد تأخيرها كثيرًا"),
+            (AMBER, "", "تأخير متوسط", "أضلاع تتأثر جزئيًا"),
+            (GREY, "", "بلا تغيير", "خط رمادي رفيع مصمت — لم يتغير تأخيرها"),
+            (SKY, "", "المحور", "شارع أنس بن مالك"),
+            (TURKI_C, ' stroke-dasharray="8 6"', "المتقاطع", "خط متقطّع رفيع — طريق الأمير تركي الأول")]
+    ty = 100
+    for colr, dash, name, note in rows:
+        b.append(swatch(pw - 48, ty - 8, colr, dash, wd=32,
+                        thick=7, casing=dash.startswith(' casing')))
+        b.append(T(pw - 58, ty - 2, name, 19, INK, "r", "700"))
+        b.append(T(pw - 58, ty + 21, note, 15, MUTED, "r"))
+        ty += 62
+    b.append(T(pw - 20, ty + 12, "سماكة الخط = حجم التأخير على الضلع", 16, "#cfd9e6", "r"))
     b.append("</g>")
     open(os.path.join(IMG, "map_arms.svg"), "w", encoding="utf-8").write(doc(W, H, "".join(b)))
 
 
 # ── 3 · الحل المُختار ────────────────────────────────────────────────────────
+WORKS_EDGES = ("40639443#9", "244175211#17")   # مقطع الأعمال: ضلعا المحور عبر التقاطع
+
+
 def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
-    """لوحة الحل المُختار — تُقرأ بذاتها: أين التقاطع، أين يبقى المحور مفتوحًا،
-    وما المرحلتان، وما معنى اللون والسماكة.
+    """لوحة الحل المُختار — تُقرأ بذاتها: أين التقاطع، وأين يضيق المحور إلى
+    حارتين لكل اتجاه، وما معنى اللون والسماكة. لا شارتا مراحل: الوضع المطبَّق
+    فعليًا يُبقي الاتجاهين سالكين معًا ويضيّق المقطع فقط.
 
     fs     : مضاعف أحجام الخط (شريحة العرض تحتاج ≈2× لأنها تصغير)
     chrome : إطار العنوان والمفتاح والحاشية — تُحذف حين يحملها نصّ الشريحة
@@ -285,66 +306,89 @@ def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
     P = make_proj(w, h - 10, m=34, box=WB)
     x, y = P(JUNC)
     b = [f'<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" '
-         f'markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="{SKY}"/></marker></defs>']
-    b.append(network(P, "half", VMAX["half"]))
+         f'markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="{SKY}"/></marker>'
+         f'<marker id="arw2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" '
+         f'markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f0f6ff"/></marker></defs>']
+    b.append(network(P, "works", VMAX["works"]))
     b.append(junction(P, 9))
 
-    # أسهم على المحور نفسه: اتجاه واحد، والاتجاه المقابل لا يسير في هذا الوقت
     cor = sorted(((eid, ps) for eid, street, ps in GEOM if street == ANAS),
                  key=lambda t: sum(p[0] for p in t[1]) / len(t[1]))
-    picks = [cor[int(len(cor) * f)] for f in (.18, .82)] if len(cor) > 3 else []
-    for _eid, ps in picks:
+
+    def seg_at(f):
+        return cor[int(len(cor) * f)][1] if len(cor) > 3 else None
+
+    # سهمان متعاكسان: المحور مفتوح في الاتجاهين (حارتان لكل اتجاه)
+    for f, rev in ((.30, False), (.70, True)):
+        ps = seg_at(f)
+        if not ps:
+            continue
         a, c = (ps[0], ps[-1]) if ps[0][0] < ps[-1][0] else (ps[-1], ps[0])
+        if rev:
+            a, c = c, a
         pa, pc = P(a), P(c)
         b.append(f'<path d="M {pa[0]:.0f} {pa[1]:.0f} L {pc[0]:.0f} {pc[1]:.0f}" stroke="{SKY}" '
                  f'stroke-width="4.2" stroke-opacity=".95" fill="none" marker-end="url(#arw)"/>')
 
-    # أسماء الشوارع على خطوطها — لا يترك للقارئ أن يستنتج
-    west = min(ap, key=lambda p: p[0])
-    px, py = P(west)
-    b.append(T(px + 18, py - 14, "شارع أنس بن مالك", round(21 * fs), "#dce6f7", "l"))
+    # مقطع الأعمال: إطار أبيض حول الضلعين المضيّقين + شريحة تسمية على خطّ قائد
+    wps = [ps for eid, street, ps in GEOM if eid in WORKS_EDGES]
+    if wps:
+        _w = [p for ps in wps for p in ps]
+        fx = sum(along(p) for p in _w) / len(_w)
+        wx, wy = P((sum(p[0] for p in _w) / len(_w), sum(p[1] for p in _w) / len(_w)))
+        b.append(f'<path d="{" ".join(path(ps, P) for ps in wps)}" fill="none" stroke="#f0f6ff" '
+                 f'stroke-width="7.5" stroke-opacity=".22" stroke-linecap="round"/>')
+        ANCH = "l" if fx < .35 else ("r" if fx > .65 else "c")
+        ly_ = wy - 46 * fs
+        b.append(f'<path d="M {wx:.0f} {wy - 12:.0f} L {wx:.0f} {ly_ + 10:.0f}" stroke="#f0f6ff" '
+                 f'stroke-width="1.6" stroke-opacity=".55" stroke-dasharray="4 4"/>')
+        b.append(T(wx + (12 if ANCH == "l" else (-12 if ANCH == "r" else 0)), ly_,
+                   "مقطع الأعمال: حارتان لكل اتجاه — لا مسار مغلق", round(19 * fs),
+                   "#eaf2ff", ANCH, "700"))
+
+    # أسماء الشوارع على خطوطها، ومفصولة عن التسمية السابقة مكانيًّا
+    cand = [f for f in (.5, .28, .72, .16, .84)]
+    if wps:
+        cand = [f for f in cand if abs(f - fx) > .17] or [.5]
+    nm = seg_at(cand[0])
+    if nm:
+        nx, ny = P(nm[len(nm) // 2])
+        # تحت المحور لا فوقه: تسمية مقطع الأعمال تحجز الحيّز العلوي
+        b.append(T(nx, ny + 34 * fs, "شارع أنس بن مالك", round(21 * fs), "#dce6f7", "c"))
     tp = [p for e in net["edges"] if ST[e[1]] == TURKI for p in pts(e)]
     tS = min(tp, key=lambda p: p[1])
     tpx, tpy = P(tS)
     b.append(T(tpx - 16, tpy - 10, TURKI, round(19 * fs), "#cfd9e6", "r"))
 
-    # المرحلتان: شارتا رقم قرب طرفي المحور
-    for k, (p, lab) in enumerate(((west, "المرحلة ١: نصف المحور مفتوح"),
-                                  (max(ap, key=lambda p: p[0]), "المرحلة ٢: يُقلب بعد انتهاء الأولى")), 1):
-        qx, qy = P(p)
-        r = 15 * fs
-        b.append(f'<circle cx="{qx:.0f}" cy="{qy:.0f}" r="{r:.0f}" fill="{SKY}" fill-opacity=".95"/>')
-        b.append(f'<text x="{qx:.0f}" y="{qy + r * .42:.0f}" fill="#08122e" font-size="{round(17 * fs)}" '
-                 f'font-weight="700" text-anchor="middle">{k}</text>')
-        b.append(T(qx, qy - 26 * fs, lab, round(18 * fs), "#dce6f7", "c"))
-
     if chrome:
-        b.append(f'<rect x="34" y="28" width="880" height="132" rx="14" fill="#081b4a" fill-opacity=".92"/>')
-        b.append(T(898, 76, "الحل المُختار على الخريطة", 33, INK, "r", "700"))
-        b.append(T(898, 112, f"اتجاه واحد بمرحلتين · −{D['half_vh']} ساعة انتظار · "
-                             f"+{D['half_extra_km']} كم التفاف", 23, SKY, "r", "700"))
-        b.append(T(898, 142, f"{SOL['arms']['half']['edges_hit']} ضلعًا يتأثر فقط من "
-                             f"{SOL['arms']['half']['edges_total']:,} ضلعًا في نطاق القياس", 19, MUTED, "r"))
+        b.append(f'<rect x="34" y="28" width="900" height="132" rx="14" fill="#081b4a" fill-opacity=".92"/>')
+        b.append(T(918, 76, "الحل المُطبَّق على الخريطة", 33, INK, "r", "700"))
+        b.append(T(918, 112, f"حارتان لكل اتجاه · {D['works_vh']} ساعة تأخير مضاف · "
+                             f"بلا التفاف", 23, SKY, "r", "700"))
+        b.append(T(918, 142, f"{SOL['arms']['works']['edges_hit']} ضلعًا يتأثر فقط من "
+                             f"{SOL['arms']['works']['edges_total']:,} ضلعًا في نطاق القياس", 19, MUTED, "r"))
 
-    if chrome:
-        # مفتاح مقروء بدل سطر صغير في الحاشية
-        lx, ly = 34, h - 214
-        b.append(f'<rect x="{lx}" y="{ly}" width="600" height="178" rx="12" fill="#081b4a" fill-opacity=".92"/>')
-        b.append(T(lx + 568, ly + 32, "كيف تُقرأ الخريطة", 22, INK, "r", "700"))
-        rows = [(SKY, "", "المحور مفتوح — اتجاه واحد"),
-                (TURKI_C, ' stroke-dasharray="7 5"', TURKI),
-                (RED, "", "تأخير كبير على الضلع"),
-                ("#e2701e", "", "تأخير متوسط"),
-                (GREY, "", "بلا تغيير")]
-        for i, (colr, dash, lab) in enumerate(rows):
-            yy = ly + 58 + i * 21
-            b.append(f'<rect x="{lx + 540}" y="{yy - 9}" width="30" height="9" rx="4" fill="{colr}"/>'
-                     + (f'<rect x="{lx + 540}" y="{yy - 9}" width="30" height="9" rx="4" fill="none" '
-                        f'stroke="{colr}" stroke-width="2" stroke-dasharray="6 4"/>' if dash else ""))
-            b.append(T(lx + 524, yy, lab, 18, "#dbe5f7", "r"))
-        b.append(T(w - 40, h - 26, "السهم = الاتجاه المفتوح · سماكة الخط = حجم التأخير المضاف على الضلع",
+        # مفتاح مقروء: كل بند على سطرين (الاسم ثم شرحه تحته). في سطر واحد كان
+        # الشرح (يمينًا) يدخل تحت الاسم الطويل مثل «طريق الأمير تركي الأول».
+        lx, bw = 34, 700
+        rows = [(SKY, "", "المحور مفتوح في الاتجاهين", "سهمان متعاكسان على الشارع نفسه"),
+                (SKY, ' casing', "مقطع الأعمال", "حارتان لكل اتجاه — لا مسار مغلق"),
+                (TURKI_C, ' stroke-dasharray="8 6"', "طريق الأمير تركي الأول", "الطريق المتقاطع"),
+                (RED, "", "تأخير كبير", "سماكة أكبر = تأخير أكبر على الضلع"),
+                ("#e2701e", "", "تأخير متوسط", "أضلاع تتأثر جزئيًا"),
+                (GREY, "", "بلا تغيير", "لم يتغير تأخيرها")]
+        bh = 78 + 46 * len(rows)
+        ly = h - 42 - bh               # فوق الحاشية بمسافة، ولا تلامسها
+        b.append(f'<rect x="{lx}" y="{ly}" width="{bw}" height="{bh}" rx="12" fill="#081b4a" fill-opacity=".92"/>')
+        b.append(T(lx + bw - 34, ly + 36, "كيف تُقرأ الخريطة", 22, INK, "r", "700"))
+        for i, (colr, dash, name, note) in enumerate(rows):
+            yy = ly + 78 + i * 46
+            b.append(swatch(lx + bw - 76, yy - 8, colr, dash if not dash.startswith(' casing') else "",
+                            wd=36, thick=8, casing=dash.startswith(' casing')))
+            b.append(T(lx + bw - 88, yy, name, 18, INK, "r", "700"))
+            b.append(T(lx + bw - 88, yy + 21, note, 14, MUTED, "r"))
+        b.append(T(w - 40, h - 26, "السهم = اتجاه الحركة · سماكة الخط = حجم التأخير المضاف على الضلع",
                    18, MUTED, "r"))
-        b.append(T(lx + 568, ly + 152, "المرحلتان: يُقلب الاتجاه بعد انتهاء أعمال الجهة الأولى", 16, MUTED, "r"))
     open(os.path.join(IMG, out + ".svg"), "w", encoding="utf-8").write(doc(w, h, "".join(b)))
 
 

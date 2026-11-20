@@ -24,7 +24,9 @@ ARMS = [
     ("closure", "closure300", "damage_closure300.edges.csv", "closure"),
     ("detour", "detour300", "damage_detour300.edges.csv", "detour"),
     ("uturn", "uturn300", "damage_uturn300.edges.csv", "uturn"),
-    ("half", "halfe", "damage_halfe.edges.csv", "half"),
+    # الوضع المطبَّق فعليًّا على الأرض: تضييق المحور إلى حارتين لكل اتجاه.
+    # حلّ محلّ ذراع «اتجاه واحد بمرحلتين» (half) لأنه ما نُفِّذ فعلًا.
+    ("works", "works300", "damage_works300.edges.csv", "works"),
 ]
 THRESH_VH = 5.0   # ضلع «متأثر» إذا زاد تأخيره أكثر من خمس ثوانٍ
 
@@ -98,7 +100,9 @@ for arm_id, tag, ed, dmg_key in ARMS:
     }
     if ed:
         rec.update(edges(ed))
-        rec["edges_pct"] = round(100.0 * rec["edges_hit"] / max(network_edges, 1), 1)
+        # المقام هو نطاق الممر المرسوم (1603) لا صفوف شبكة التشغيل (1424):
+        # رقمان مختلفان في صفحة واحدة يفتحان سؤالًا لا جواب له.
+        rec["edges_pct"] = round(100.0 * rec["edges_hit"] / max(rec.get("edges_total") or network_edges, 1), 1)
     data["arms"][arm_id] = rec
 
 base = data["arms"]["baseline"]
@@ -109,27 +113,28 @@ for a in data["arms"].values():
 data["test"]["trips"] = base["trips"]
 data["test"]["network_edges"] = network_edges
 
-NUM = os.path.join(MODEL, "tasks", "003_prototype-and-pitch", "analysis", "qa_v5", "NUMBERS_V5.json")
+NUM = os.path.join(MODEL, "tasks", "003_prototype-and-pitch", "analysis", "qa_v6", "NUMBERS_V6.json")
 if os.path.exists(NUM):
     d = json.load(open(NUM, encoding="utf-8"))
     data["display"] = {
-        "added_vh": d["delay"]["added_vh_display"],
-        "closure_vh": int(round(d["delay"]["added_vh_exact"], -2)),
+        "added_vh": d["delay"]["closure_vh_display"],        # ٢٠٠٠ — لا ١٧٠٠
+        "closure_vh": int(round(d["delay"]["closure_vh_exact"], -2)),
         "detour_vh": int(round(d["delay"]["detour_vh_exact"], -2)),
         "uturn_vh": int(round(d["delay"]["uturn_vh_exact"], -2)),
-        "half_vh": str(int(round(abs(d["delay"]["half_vh_exact"]) / 10.0)) * 10),
+        "half_vh": d["delay"]["works_vh_display"],           # half متقاعد ⇒ يشير إلى المُطبَّق
         "detour_pct": d["delay"]["detour_effect_display"],
         "uturn_ratio": int(round(d["delay"]["uturn_ratio_exact"])),
         "base_min": d["trip"]["base_min_display"],
         "closure_min": d["trip"]["closure_min_display"],
         "extra_min": d["trip"]["extra_min_display"],
         "extra_km": d["trip"]["extra_km_display"],
-        "half_extra_km": d["display"]["half_extra_km"],
-        "half_reduction_pct": d["display"]["half_reduction_pct"],
+        "works_vh": d["delay"]["works_vh_display"],
+        "works_min": d["trip"]["works_display"],
+        "works_share_pct": d["delay"]["works_share_of_closure_pct"],
         "stays_pct": d["delay"]["stays_pct_display"],
         "trips": d["trip"]["trips_display"],
-        "cost_low_k": d["money"]["cost_low_k"],
-        "cost_high_k": d["money"]["cost_high_k"],
+        "cost_low_k": d["money"]["cost_works_low_k"],
+        "cost_high_k": d["money"]["cost_works_high_k"],
     }
     data["sources"]["numbers"] = "analysis/qa_v5/NUMBERS_V5.json"
 

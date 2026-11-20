@@ -4,32 +4,32 @@
   "use strict";
   var AR = {
     closure: {
-      t: "إغلاق التقاطع كاملًا",
+      t: "إغلاق الممر كاملًا",
       how: ["الممر يُغلق عند التقاطع المزدحم كاملًا.",
             "كل الحركة تُحوَّل إلى طريق الأمير تركي والمحيط."],
       v: "مرفوض", cls: "bad",
-      verdict: "يزيد الانتظار ألفًا وسبع مئة ساعة"
+      verdict: "أغلى الخيارات: +2,000 ساعة تأخير على نافذة الذروة"
     },
     detour: {
       t: "توسعة الشوارع المجاورة",
       how: ["نفس الإغلاق، لكن تُضاف سعة للشوارع البديلة.",
             "التوسعة لا تحلّ: السيارة تدور أطول، والتأخير ينتقل ولا يختفي."],
       v: "مرفوض", cls: "bad",
-      verdict: "لا يفرق عن الإغلاق: التوسعة تنقل الوقوف ولا تخفّضه"
+      verdict: "يعادل الإغلاق: نفس زمن الرحلة تقريبًا"
     },
     uturn: {
       t: "دوران إجباري بدل الإغلاق",
       how: ["يُمنع العبور المباشر، وتُفرض دورة طويلة للوصول إلى الجهة الأخرى.",
             "الوقوف يتضاعف لأن الدوران يمرّ بالتقاطع نفسه."],
       v: "مرفوض", cls: "bad",
-      verdict: "يضاعف التأخير: أسوأ من الإغلاق الكامل"
+      verdict: "يضاعف زمن الرحلة: أسوأ من الإغلاق الكامل"
     },
-    half: {
-      t: "بقاء المحور مفتوحًا — اتجاه واحد",
-      how: ["الممر يبقى مفتوحًا باتجاه واحد، على مرحلتين.",
-            "الاتجاه المقابل يُنقل إلى موعد آخر بدل قطعه في الذروة."],
-      v: "المُختار", cls: "ok",
-      verdict: "الوحيد الذي يخفّض الانتظار ولا يزيد زمن الرحلة"
+    works: {
+      t: "تضييق إلى حارتين لكل اتجاه",
+      how: ["لا مسار يُغلق: المحور مقسوم حارتين لكل اتجاه على مقطع الأعمال وحده.",
+            "المتقاطع يبقى عاملًا، والحركة تمرّ على المحور نفسه."],
+      v: "المُطبَّق", cls: "ok",
+      verdict: "43% من كلفة الإغلاق الكامل، والتأخير كله على المحور"
     }
   };
 
@@ -44,13 +44,13 @@
   function armCard(id, a, d, idx) {
     var m = AR[id], base = d.arms.baseline;
     var BIG = {
-      closure: ["+" + num(d.display.closure_vh), "ساعة انتظار مضافة على الشبكة"],
-      detour:  ["−" + d.display.detour_pct, "فقط أقل من الإغلاق — الفرق لا يُذكر"],
-      uturn:   ["×" + d.display.uturn_ratio, "التأخير: " + num(d.display.uturn_vh) + " ساعة — ضِعف الإغلاق"],
-      half:    ["−" + d.display.half_vh, "ساعة انتظار أقل، وزمن الرحلة كما هو"]
+      closure: ["+" + num(d.display.closure_vh), "ساعة تأخير — مقابل خط الأساس السالك"],
+      detour:  [d.arms.detour.dur_min.toFixed(0) + " دقيقة", "زمن الرحلة — كالإغلاق تمامًا (" + d.arms.closure.dur_min.toFixed(0) + " د)؛ التوسعة تُخرج الوقوف من الشارع لا من الشبكة"],
+      uturn:   [d.arms.uturn.dur_min.toFixed(0) + " دقيقة", "زمن الرحلة — ضِعف خط الأساس (" + d.arms.baseline.dur_min.toFixed(0) + " د)، أسوأ الخيارات"],
+      works:   ["+" + num(d.display.works_vh), "ساعة تأخير — " + d.display.works_share_pct + "% من كلفة الإغلاق"]
     };
     var netTxt = BIG[id][0];
-    var durTxt = a.dur_min.toFixed(id === "half" || id === "baseline" ? 1 : 0);
+    var durTxt = a.dur_min.toFixed(0);
     var card = el("article", "arm " + (m.cls === "ok" ? "is-chosen" : ""));
 
     card.appendChild(el("div", "arm-top",
@@ -97,11 +97,12 @@
   }
 
   function render(d) {
-    var arms = d.arms, order = ["closure", "detour", "uturn", "half"];
+    var arms = d.arms, order = ["closure", "detour", "uturn", "works"];
+    var base = arms.baseline, w = arms.works, c = arms.closure;
 
     /* العنوان الفرعي: شروط الاختبار */
     var pill = document.getElementById("sol-pill");
-    if (pill) pill.textContent = num(arms.baseline.n) + " تشغيلات لكل حل · " + num(d.test.trips) + " رحلة";
+    if (pill) pill.textContent = num(arms.baseline.n) + " تشغيلات لكل حل · " + num(d.test.trips) + " رحلة · خط الأساس سالك بلا أعمال";
 
     /* بطاقات الأذرع */
     var box = document.getElementById("sol-arms");
@@ -114,41 +115,39 @@
       db.innerHTML =
         '<p class="ddef">الكثافة هنا ليست عدد السيارات: هي <b>كم ضلعًا في الشبكة تأثّر</b> ' +
         "(زاد تأخيره أكثر من خمس ثوانٍ)، و<b>كيف توزّع التأخير على الشوارع</b>. " +
-        "حلّ يوزّع الوقوف على شبكة كاملة أسوأ من حلّ يحصره في ثلاث نقاط.</p>" +
+        "حلّ يوزّع الوقوف على شبكة كاملة أسوأ من حلّ يحصره في ثلاث نقاط — والمُطبَّق هو الثاني.</p>" +
         '<div class="density">' + order.map(function (i) { return densityBar(i, arms[i], d, maxHit); }).join("") + "</div>" +
-        '<small class="dnote">النسبة من أصل ' + num(d.test.network_edges) + " ضلعًا في شبكة الممر.</small>" +
-        '<div class="stwrap">' + streetTable("closure", arms.closure, d) + streetTable("half", arms.half, d) + "</div>";
+        '<small class="dnote">النسبة من أصل ' + num(w.edges_total) + " ضلعًا في نطاق الممر.</small>" +
+        '<div class="stwrap">' + streetTable("closure", arms.closure, d) + streetTable("works", arms.works, d) + "</div>";
     }
 
-    /* النموذج المختبر للإغلاق */
+    /* المرجع: الإغلاق الكامل مقابل المُطبَّق على الأرض */
     var md = document.getElementById("sol-model");
     if (md) {
-      var c = arms.closure;
       md.innerHTML =
         '<div class="mgrid">' +
-        '<div><b class="ltr">' + d.display.closure_min + "</b><i>دقيقة للرحلة</i></div>" +
-        '<div><b class="ltr">+' + num(d.display.closure_vh) + "</b><i>ساعة انتظار</i></div>" +
-        '<div><b class="ltr">' + num(c.edges_hit) + "</b><i>ضلعًا تأثّر</i></div>" +
+        '<div><b class="ltr">' + num(d.display.closure_vh) + "</b><i>ساعة تأخير — الإغلاق الكامل</i></div>" +
+        '<div><b class="ltr">' + num(d.display.works_vh) + "</b><i>ساعة تأخير — المُطبَّق على الأرض</i></div>" +
+        '<div><b class="ltr">' + d.display.works_share_pct + "%</b><i>حصة المُطبَّق من كلفة الإغلاق</i></div>" +
         "</div>" +
-        "<p>هذا هو النموذج المرجعي: إغلاق كامل للممر كما يحدث فعلًا عند تنفيذ أعمال على الطريق. " +
-        "شُغّل خمس مرات على الشبكة والطلب نفسه، فخرج بزمن رحلة " + c.dur_min.toFixed(0) + " دقيقة مقابل " +
-        d.arms.baseline.dur_min.toFixed(0) + " في خط الأساس، وبانتظار إضافي " +
-        num(d.display.closure_vh) + " ساعة‑مركبة.</p>" +
-        '<p class="mnote">والتأخير لا يختفي بالتحويل: ' + d.display.stays_pct +
-        " من ساعات التأخير تبقى داخل الشبكة، و" + c.top3_share + "% منها في ثلاثة شوارع فقط.</p>" +
-        '<p class="msrc">المصدر: runs/results.csv · runs/damage_closure300.edges.csv</p>' +
-        '<div class="cmp"><span></span><b>الإغلاق الكامل</b><b>الحل المُختار</b>' +
-        '<span>زمن الرحلة</span><b class="ltr">' + d.display.closure_min + ' د</b><b class="ltr">' + arms.half.dur_min.toFixed(1) + ' د</b>' +
-        '<span>الانتظار</span><b class="ltr">+' + num(d.display.closure_vh) + ' ساعة</b><b class="ltr">−' + d.display.half_vh + ' ساعة</b>' +
-        '<span>أضلاع تأثّرت</span><b class="ltr">' + num(c.edges_hit) + '</b><b class="ltr">' + num(arms.half.edges_hit) + '</b></div>' +
-        streetTable("closure", c, d);
+        "<p>خط الأساس هو <b>الطريق سالكًا بلا أعمال</b>: " + base.dur_min.toFixed(0) + " دقيقة للرحلة. " +
+        "عليه نقيس كل حل: الإغلاق الكامل يرفعها إلى " + c.dur_min.toFixed(0) + " دقيقة، " +
+        "والمُطبَّق على الأرض (حارتان لكل اتجاه) يرفعها إلى " + w.dur_min.toFixed(0) + " دقيقة فقط.</p>" +
+        '<p class="mnote">والتأخير يبقى في مكانه: ' + w.top3_share + "% من تأخير المُطبَّق في ثلاثة شوارع، " +
+        "مقابل " + c.top3_share + "% في الإغلاق الكامل.</p>" +
+        '<p class="msrc">المصدر: runs/results.csv · runs/damage_closure300.edges.csv · runs/damage_works300.edges.csv</p>' +
+        '<div class="cmp"><span></span><b>الإغلاق الكامل</b><b>المُطبَّق على الأرض</b>' +
+        '<span>زمن الرحلة</span><b class="ltr">' + c.dur_min.toFixed(0) + ' د</b><b class="ltr">' + w.dur_min.toFixed(1) + ' د</b>' +
+        '<span>التأخير (ساعة)</span><b class="ltr">+' + num(d.display.closure_vh) + '</b><b class="ltr">+' + num(d.display.works_vh) + '</b>' +
+        '<span>أضلاع تأثّرت</span><b class="ltr">' + num(c.edges_hit) + '</b><b class="ltr">' + num(w.edges_hit) + '</b></div>' +
+        streetTable("works", w, d);
     }
 
     /* كيف يُختبر كل حل */
     var tb = document.getElementById("sol-test");
     if (tb) {
       var steps = [
-        ["الشبكة", "شبكة الممر كما استُخرجت من الخريطة — " + num(d.test.network_edges) + " ضلعًا، والطلب نفسه في كل تشغيل."],
+        ["الشبكة", "شبكة الممر كما استُخرجت من الخريطة — " + num(w.edges_total) + " ضلعًا، والطلب نفسه في كل تشغيل."],
         ["الطلب", num(d.test.trips) + " رحلة في نفس الذروة، لكل حل ولكل تشغيل."],
         ["التكرار", num(arms.baseline.n) + " تشغيلات لكل حل ببذور عشوائية مختلفة، ونأخذ متوسطها لا أفضلها."],
         ["المعيار", "ساعات الانتظار على الشبكة وحدها — لا السرعة ولا الرأي."]
@@ -161,46 +160,48 @@
     /* سطر القرار */
     var bn = document.getElementById("sol-banner");
     if (bn) {
-      bn.innerHTML = '<b>توصية انسياب:</b> الاتجاه الواحد على مرحلتين هو الحل الوحيد الذي يخفض الانتظار ' +
-        '(<span class="ltr">−' + d.display.half_vh + '</span> ساعة) بزمن رحلة كما هو ' +
-        '(<span class="ltr">' + arms.half.dur_min.toFixed(1) + '</span> د مقابل ' + arms.baseline.dur_min.toFixed(1) + ')، وثمنه ' +
-        '<span class="ltr">' + d.display.half_extra_km + '</span> كم التفافًا. الإغلاق الكامل يضيف ' +
-        '<span class="ltr">+' + num(d.display.closure_vh) + '</span> ساعة، والدوران يضاعفها.';
+      bn.innerHTML = '<b>الخلاصة:</b> المُطبَّق على الأرض (حارتان لكل اتجاه) يكلّف ' +
+        '<span class="ltr">+' + num(d.display.works_vh) + '</span> ساعة تأخير في الذروة — ' +
+        '<span class="ltr">' + d.display.works_share_pct + '%</span> من الإغلاق الكامل ' +
+        '(<span class="ltr">+' + num(d.display.closure_vh) + '</span> ساعة)، والدوران يضاعفها. ' +
+        'أي أن الوضع الحالي يوفّر <span class="ltr">' + num(d.display.closure_vh - d.display.works_vh) + '</span> ساعة ' +
+        'مقارنة بالإغلاق الكامل — وأغلى ما فيه أنه واقع لا تقدير.';
     }
 
-    /* الحل المُختار: كيف يعمل */
+    /* المُطبَّق: كيف يعمل */
     var ch = document.getElementById("sol-chosen");
     if (ch) {
-      var h = arms.half;
       ch.innerHTML =
-        '<div class="chosen-h"><b>' + AR.half.t + "</b>" +
-        '<span class="v v-ok">' + AR.half.v + "</span></div>" +
+        '<div class="chosen-h"><b>' + AR.works.t + '</b>' +
+        '<span class="v v-ok">' + AR.works.v + "</span></div>" +
         '<ol class="chosen-steps">' +
-        "<li><b>المرحلة الأولى:</b> الممر مفتوح باتجاه واحد فقط، والاتجاه المقابل يُحوَّل إلى طريق الأمير تركي.</li>" +
-        "<li><b>المرحلة الثانية:</b> يُقلب الاتجاه بعد انتهاء أعمال الجهة الأولى — لا يُغلق الممر كاملًا في أي يوم.</li>" +
-        "<li><b>الثمن المعلن:</b> التفاف " + d.display.half_extra_km + " كم لكل سيارة متأثرة، مقابل انتظار أقل بـ" +
-        d.display.half_vh + " ساعة.</li>" +
+        "<li><b>ما يحدث:</b> لا يُغلق أي مسار. المحور على مقطع الأعمال يصير حارتين لكل اتجاه بدل أربع.</li>" +
+        "<li><b>الأثر المقيس:</b> +" + d.display.works_vh + " ساعة تأخير على نافذة الذروة، وزمن الرحلة " +
+        w.dur_min.toFixed(0) + " دقيقة بدل " + base.dur_min.toFixed(0) + " في خط الأساس.</li>" +
+        "<li><b>لماذا هو الأرخص المتاح:</b> التأخير محصور في " + num(w.edges_hit) + " ضلعًا من " +
+        num(w.edges_total) + "، و" + w.top3_share + "% منه في ثلاثة شوارع — ما يجعل المعالجة ممكنة.</li>" +
         "</ol>" +
         '<div class="chosen-kpis">' +
-        '<span><em>زمن الرحلة</em><b class="ltr">' + h.dur_min.toFixed(2) + " د</b><small>خط الأساس " + d.arms.baseline.dur_min.toFixed(2) + " د</small></span>" +
-        '<span><em>تفاوت التشغيلات</em><b class="ltr">±' + h.dur_sd.toFixed(2) + " د</b><small>" + num(h.n) + " تشغيلات — النتيجة ليست صدفة</small></span>" +
-        '<span><em>أضلاع تأثّرت</em><b class="ltr">' + num(h.edges_hit) + "</b><small>مقابل " + num(arms.closure.edges_hit) + " في الإغلاق الكامل</small></span>" +
+        '<span><em>زمن الرحلة</em><b class="ltr">' + w.dur_min.toFixed(1) + " د</b><small>خط الأساس " + base.dur_min.toFixed(1) + " د</small></span>" +
+        '<span><em>تفاوت التشغيلات</em><b class="ltr">±' + w.dur_sd.toFixed(2) + " د</b><small>" + num(w.n) + " تشغيلات — النتيجة ليست صدفة</small></span>" +
+        '<span><em>أضلاع تأثّرت</em><b class="ltr">' + num(w.edges_hit) + "</b><small>مقابل " + num(c.edges_hit) + " في الإغلاق الكامل</small></span>" +
         "</div>";
     }
 
-    /* توصيات الوكيل */
+    /* توصيات */
     var rc = document.getElementById("sol-recs");
     if (rc) {
       var recs = [
-        ["اعتمد الحل الرابع", "أعلى أثر بأقل ثمن: زمن الرحلة " + arms.half.dur_min.toFixed(1) +
-         " دقيقة مقابل " + arms.baseline.dur_min.toFixed(1) + "، والانتظار ينخفض " + d.display.half_vh + " ساعة.", "شرط: تنفيذ على مرحلتين"],
-        ["نفّذ على مرحلتين لا دفعة واحدة", "مرحلة أولى باتجاه واحد، ثم تُقلب بعد انتهاء الجهة الأولى. هذا هو التتابع الذي قِسناه؛ ولم نقِس تنفيذًا دفعة واحدة.", "شرط: جدول أعمال معلن"],
-        ["أعلن البديل قبل البدء", "التفاف " + d.display.half_extra_km + " كم لكل سيارة متأثرة، و" + d.display.stays_pct +
-         " من التأخير يبقى داخل الشبكة؛ فإن لم يُعلن التحويل ويُسيَّر عاد التأخير إلى حجم الإغلاق الكامل.", "شرط: لافتات ومسار بديل على بلدي"],
-        ["قِس بعد التنفيذ بالمعيار نفسه", "ساعات الانتظار على الشبكة مقابل خط الأساس " +
-         num(arms.baseline.wait_h) + " ساعة. فرق يتجاوز 5% يعني أن التوقيت أو الاتجاه لم يُطبَّق كما قِسناه.", "شرط: تقرير بعد أسبوعين"],
-        ["أبقِ الإغلاق الكامل على الرف", "سيناريو طوارئ مرجعي (+" + num(d.display.closure_vh) +
-         " ساعة)، لا خطة تنفيذ اعتيادية.", "شرط: قرار طوارئ موثّق"]
+        ["لا تُغلق الممر كاملًا", "الفارق مقيس: " + num(d.display.closure_vh - d.display.works_vh) +
+         " ساعة تأخير أقل في الذروة مع التضييق. الإغلاق الكامل يبقى سيناريو طوارئ لا خطة.", "شرط: قرار موثّق للطوارئ"],
+        ["عالج الثلاثة لا الشبكة", w.top3_share + "% من التأخير في ثلاثة شوارع. معالجة تلك النقاط " +
+         "أرخص من أي توسعة، وهي التي تجعل الـ" + num(d.display.works_vh) + " ساعة قابلة للخفض.", "شرط: قياس بعد المعالجة"],
+        ["أعلن البديل قبل البدء", "التأخير ينتقل ولا يختفي: " + d.display.stays_pct +
+         " منه يبقى داخل الشبكة. الإعلان والمسار البديل على بلدي شرط نجاح لا تحسين.", "شرط: لافتات ومسار بديل"],
+        ["قِس بعد التنفيذ بالمعيار نفسه", "ساعات التأخير على الشبكة مقابل خط الأساس " + base.dur_min.toFixed(1) +
+         " دقيقة للرحلة. فرق يتجاوز 5% يعني أن التضييق لم يُطبَّق كما قِسناه.", "شرط: تقرير بعد أسبوعين"],
+        ["لا تعتمد التوسعة ولا الدوران", "التوسعة تعطي " + d.arms.detour.dur_min.toFixed(0) + " د للرحلة — كالإغلاق تمامًا؛ " +
+         "والدوران يعطي " + d.arms.uturn.dur_min.toFixed(0) + " د. كلاهما أُسقط بالقياس لا بالرأي.", "شرط: —"]
       ];
       rc.innerHTML = recs.map(function (r, i) {
         return '<div class="rec"><span class="rank">' + (i + 1) + "</span><div><b>" + r[0] +
