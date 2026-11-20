@@ -270,9 +270,13 @@ def fig_arms(W=1680, H=1230):
 
 
 # ── 3 · الحل المُختار ────────────────────────────────────────────────────────
-def fig_chosen(w=1600, h=900):
+def fig_chosen(w=1600, h=900, fs=1.0, chrome=True, out="map_chosen"):
     """لوحة الحل المُختار — تُقرأ بذاتها: أين التقاطع، أين يبقى المحور مفتوحًا،
-    وما المرحلتان، وما معنى اللون والسماكة."""
+    وما المرحلتان، وما معنى اللون والسماكة.
+
+    fs     : مضاعف أحجام الخط (شريحة العرض تحتاج ≈2× لأنها تصغير)
+    chrome : إطار العنوان والمفتاح والحاشية — تُحذف حين يحملها نصّ الشريحة
+    out    : اسم ملف الإخراج"""
     P = make_proj(w, h - 10, m=34, box=WB)
     x, y = P(JUNC)
     b = [f'<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" '
@@ -293,47 +297,50 @@ def fig_chosen(w=1600, h=900):
     # أسماء الشوارع على خطوطها — لا يترك للقارئ أن يستنتج
     west = min(ap, key=lambda p: p[0])
     px, py = P(west)
-    b.append(T(px + 18, py - 14, "شارع أنس بن مالك", 21, "#dce6f7", "l"))
+    b.append(T(px + 18, py - 14, "شارع أنس بن مالك", round(21 * fs), "#dce6f7", "l"))
     tp = [p for e in net["edges"] if ST[e[1]] == TURKI for p in pts(e)]
     tS = min(tp, key=lambda p: p[1])
     tpx, tpy = P(tS)
-    b.append(T(tpx - 16, tpy - 10, TURKI, 19, "#cfd9e6", "r"))
+    b.append(T(tpx - 16, tpy - 10, TURKI, round(19 * fs), "#cfd9e6", "r"))
 
     # المرحلتان: شارتا رقم قرب طرفي المحور
     for k, (p, lab) in enumerate(((west, "المرحلة ١: نصف المحور مفتوح"),
                                   (max(ap, key=lambda p: p[0]), "المرحلة ٢: يُقلب بعد انتهاء الأولى")), 1):
         qx, qy = P(p)
-        b.append(f'<circle cx="{qx:.0f}" cy="{qy:.0f}" r="15" fill="{SKY}" fill-opacity=".95"/>')
-        b.append(f'<text x="{qx:.0f}" y="{qy+6:.0f}" fill="#08122e" font-size="17" '
+        r = 15 * fs
+        b.append(f'<circle cx="{qx:.0f}" cy="{qy:.0f}" r="{r:.0f}" fill="{SKY}" fill-opacity=".95"/>')
+        b.append(f'<text x="{qx:.0f}" y="{qy + r * .42:.0f}" fill="#08122e" font-size="{round(17 * fs)}" '
                  f'font-weight="700" text-anchor="middle">{k}</text>')
-        b.append(T(qx, qy - 26, lab, 18, "#dce6f7", "c"))
+        b.append(T(qx, qy - 26 * fs, lab, round(18 * fs), "#dce6f7", "c"))
 
-    b.append(f'<rect x="34" y="28" width="880" height="132" rx="14" fill="#081b4a" fill-opacity=".92"/>')
-    b.append(T(898, 76, "الحل المُختار على الخريطة", 33, INK, "r", "700"))
-    b.append(T(898, 112, f"اتجاه واحد بمرحلتين · −{D['half_vh']} ساعة انتظار · "
-                         f"+{D['half_extra_km']} كم التفاف", 23, SKY, "r", "700"))
-    b.append(T(898, 142, f"{SOL['arms']['half']['edges_hit']} ضلعًا يتأثر فقط من "
-                         f"{SOL['arms']['half']['edges_total']:,} ضلعًا في نطاق القياس", 19, MUTED, "r"))
+    if chrome:
+        b.append(f'<rect x="34" y="28" width="880" height="132" rx="14" fill="#081b4a" fill-opacity=".92"/>')
+        b.append(T(898, 76, "الحل المُختار على الخريطة", 33, INK, "r", "700"))
+        b.append(T(898, 112, f"اتجاه واحد بمرحلتين · −{D['half_vh']} ساعة انتظار · "
+                             f"+{D['half_extra_km']} كم التفاف", 23, SKY, "r", "700"))
+        b.append(T(898, 142, f"{SOL['arms']['half']['edges_hit']} ضلعًا يتأثر فقط من "
+                             f"{SOL['arms']['half']['edges_total']:,} ضلعًا في نطاق القياس", 19, MUTED, "r"))
 
-    # مفتاح مقروء بدل سطر صغير في الحاشية
-    lx, ly = 34, h - 214
-    b.append(f'<rect x="{lx}" y="{ly}" width="600" height="178" rx="12" fill="#081b4a" fill-opacity=".92"/>')
-    b.append(T(lx + 568, ly + 32, "كيف تُقرأ الخريطة", 22, INK, "r", "700"))
-    rows = [(SKY, "", "المحور مفتوح — اتجاه واحد"),
-            (TURKI_C, ' stroke-dasharray="7 5"', TURKI),
-            (RED, "", "تأخير كبير على الضلع"),
-            ("#e2701e", "", "تأخير متوسط"),
-            (GREY, "", "بلا تغيير")]
-    for i, (colr, dash, lab) in enumerate(rows):
-        yy = ly + 58 + i * 21
-        b.append(f'<rect x="{lx + 540}" y="{yy - 9}" width="30" height="9" rx="4" fill="{colr}"/>'
-                 + (f'<rect x="{lx + 540}" y="{yy - 9}" width="30" height="9" rx="4" fill="none" '
-                    f'stroke="{colr}" stroke-width="2" stroke-dasharray="6 4"/>' if dash else ""))
-        b.append(T(lx + 524, yy, lab, 18, "#dbe5f7", "r"))
-    b.append(T(w - 40, h - 26, "السهم = الاتجاه المفتوح · سماكة الخط = حجم التأخير المضاف على الضلع",
-               18, MUTED, "r"))
-    b.append(T(lx + 568, ly + 152, "المرحلتان: يُقلب الاتجاه بعد انتهاء أعمال الجهة الأولى", 16, MUTED, "r"))
-    open(os.path.join(IMG, "map_chosen.svg"), "w", encoding="utf-8").write(doc(w, h, "".join(b)))
+    if chrome:
+        # مفتاح مقروء بدل سطر صغير في الحاشية
+        lx, ly = 34, h - 214
+        b.append(f'<rect x="{lx}" y="{ly}" width="600" height="178" rx="12" fill="#081b4a" fill-opacity=".92"/>')
+        b.append(T(lx + 568, ly + 32, "كيف تُقرأ الخريطة", 22, INK, "r", "700"))
+        rows = [(SKY, "", "المحور مفتوح — اتجاه واحد"),
+                (TURKI_C, ' stroke-dasharray="7 5"', TURKI),
+                (RED, "", "تأخير كبير على الضلع"),
+                ("#e2701e", "", "تأخير متوسط"),
+                (GREY, "", "بلا تغيير")]
+        for i, (colr, dash, lab) in enumerate(rows):
+            yy = ly + 58 + i * 21
+            b.append(f'<rect x="{lx + 540}" y="{yy - 9}" width="30" height="9" rx="4" fill="{colr}"/>'
+                     + (f'<rect x="{lx + 540}" y="{yy - 9}" width="30" height="9" rx="4" fill="none" '
+                        f'stroke="{colr}" stroke-width="2" stroke-dasharray="6 4"/>' if dash else ""))
+            b.append(T(lx + 524, yy, lab, 18, "#dbe5f7", "r"))
+        b.append(T(w - 40, h - 26, "السهم = الاتجاه المفتوح · سماكة الخط = حجم التأخير المضاف على الضلع",
+                   18, MUTED, "r"))
+        b.append(T(lx + 568, ly + 152, "المرحلتان: يُقلب الاتجاه بعد انتهاء أعمال الجهة الأولى", 16, MUTED, "r"))
+    open(os.path.join(IMG, out + ".svg"), "w", encoding="utf-8").write(doc(w, h, "".join(b)))
 
 
 # ── 4 · كثافة التأخير على طول الطريق ─────────────────────────────────────────
@@ -397,6 +404,7 @@ if __name__ == "__main__":
     fig_problem()
     fig_arms()
     fig_chosen()
+    fig_chosen(fs=2.0, chrome=False, out="map_chosen_slide")
     nb, gmax = fig_density()
     print("buckets %d | gmax %.0f" % (nb, gmax))
     print("junction %.5f %.5f | edges %d | hit-edges %d" % (JUNC[0], JUNC[1], len(GEOM), len(_hit)))
